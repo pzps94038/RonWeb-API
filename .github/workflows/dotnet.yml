@@ -23,4 +23,4 @@ jobs:
     - name: Restore RonWeb.Database
       run: dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
     - name: Build
-      run: dotnet "RonWeb.API/RonWeb.API.csproj" --no-restore
+      run: dotnet build "RonWeb.API/RonWeb.API.csproj" --no-restore
