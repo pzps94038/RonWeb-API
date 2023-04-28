@@ -24,3 +24,10 @@ jobs:
       run: dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
     - name: Build
       run: dotnet build "RonWeb.API/RonWeb.API.csproj" --no-restore
+    - name: Upload build artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v2
+      with:
+        name: RonWeb.API
+        path: /home/runner/work/RonWeb-API/
+        retention-days: 1
