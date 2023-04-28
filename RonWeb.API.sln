@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33530.505
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonWeb.API", "RonWeb.API\RonWeb.API.csproj", "{88C2FE22-8C33-4C4E-99A7-318FD4339F2F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonWeb.Database", "RonWeb.Database\RonWeb.Database.csproj", "{4833E50B-DF68-499F-A4D5-2106E39C5673}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{88C2FE22-8C33-4C4E-99A7-318FD4339F2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{88C2FE22-8C33-4C4E-99A7-318FD4339F2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{88C2FE22-8C33-4C4E-99A7-318FD4339F2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{88C2FE22-8C33-4C4E-99A7-318FD4339F2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4833E50B-DF68-499F-A4D5-2106E39C5673}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4833E50B-DF68-499F-A4D5-2106E39C5673}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4833E50B-DF68-499F-A4D5-2106E39C5673}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4833E50B-DF68-499F-A4D5-2106E39C5673}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F7B18FDD-834F-44F8-9D50-93EA8B018061}
+	EndGlobalSection
+EndGlobal
