@@ -14,7 +14,7 @@ namespace RonWeb.API.Helper.Shared
 		Error,
 	}
 
-	public static class LogHelper
+	public static class MongoLogHelper
     {
 		public static async void Info(string msg)
 		{
