@@ -13,6 +13,8 @@ namespace RonWeb.API.Models.Shared
     {
         [Description("00")]
         Success,
+        [Description("98")]
+        NotFound,
         [Description("99")]
         Fail
     }

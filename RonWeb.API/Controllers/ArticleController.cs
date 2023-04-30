@@ -5,9 +5,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Enum;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Article;
 using RonWeb.API.Models.Article;
+using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 
@@ -21,21 +23,14 @@ namespace RonWeb.API.Controllers
         {
             this._helper = helper;
         }
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
-        {
-            return new string[] { "value1", "value2" };
-        }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public async Task<BaseResponse<ArticleModel>> Get(string id)
+        [HttpGet]
+        public async Task<BaseResponse<List<ArticleItem>>> Get(int limit, int offset, OrderEnum order, string? keyword)
         {
-            var result = new BaseResponse<ArticleModel>();
+            var result = new BaseResponse<List<ArticleItem>>();
             try
             {
-                var data = await this._helper.GetByIdAsync(id);
+                var data = await this._helper.GetListAsync(limit, offset, order, keyword);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
@@ -46,25 +41,34 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.Fail.Description();
                 MongoLogHelper.Error(ex);
             }
+
             return result;
         }
 
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody]string value)
+        [HttpGet("{id}")]
+        public async Task<BaseResponse<GetByIdArticle>> Get(string id)
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var result = new BaseResponse<GetByIdArticle>();
+            try
+            {
+                var data = await this._helper.GetByIdAsync(id);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.Success.Description();
+                result.Data = data;
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+                MongoLogHelper.Error(ex);
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.Fail.Description();
+                MongoLogHelper.Error(ex);
+            }
+            return result;
         }
     }
 }
