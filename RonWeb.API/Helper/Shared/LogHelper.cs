@@ -13,7 +13,7 @@ namespace RonWeb.API.Helper.Shared
 		Error,
 	}
 
-	public static class LogHelper: ILogHelper
+	public static class LogHelper
     {
 		public static async void Info(string msg)
 		{
