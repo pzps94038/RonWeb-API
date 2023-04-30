@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using RonWeb.API.Enum;
+using RonWeb.Core;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 builder.Services.AddCors(options => {
     options.AddPolicy("CorsPolicy", builder => builder
-        .WithOrigins(Environment.GetEnvironmentVariable("Origins")!.Split(','))
+        .WithOrigins(Environment.GetEnvironmentVariable(EnvVarEnum.ORIGINS.Description())!.Split(','))
         .AllowAnyMethod()
         .AllowAnyHeader()
         .AllowCredentials());
@@ -27,9 +29,9 @@ builder.Services.Scan(scan => scan
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                string key = Environment.GetEnvironmentVariable("JWTKey")!;
-                string issuer = Environment.GetEnvironmentVariable("Issuer")!;
-                string audience = Environment.GetEnvironmentVariable("Audience")!;
+                string key = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
+                string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
+                string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,

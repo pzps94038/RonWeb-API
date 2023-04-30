@@ -7,13 +7,15 @@ using RonWeb.Database.Models;
 using RonWeb.Database.Mongo;
 using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
+using RonWeb.API.Enum;
+
 namespace RonWeb.API.Helper
 {
     public class ArticleHelper : IArticleHelper
     {
         public async Task<ArticleModel> GetByIdAsync(string id)
         {
-            string conStr = Environment.GetEnvironmentVariable("RonWeb_MongoDbConnectionStrings")!;
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
             var data = await srv.Query<Article>(MongoTableEnum.Article.Description())

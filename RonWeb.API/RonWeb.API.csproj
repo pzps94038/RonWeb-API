@@ -31,6 +31,7 @@
     <None Remove="Models\Article\" />
     <None Remove="Helper\Article\" />
     <None Remove="Helper\Shared\" />
+    <None Remove="Enum\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\" />
@@ -40,5 +41,6 @@
     <Folder Include="Models\Article\" />
     <Folder Include="Helper\Article\" />
     <Folder Include="Helper\Shared\" />
+    <Folder Include="Enum\" />
   </ItemGroup>
 </Project>

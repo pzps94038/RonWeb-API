@@ -14,10 +14,12 @@
     <None Remove="Mongo\" />
     <None Remove="Mongo\Models\" />
     <None Remove="Mongo\Service\" />
+    <None Remove="Mongo\Enum\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mongo\" />
     <Folder Include="Mongo\Models\" />
     <Folder Include="Mongo\Service\" />
+    <Folder Include="Mongo\Enum\" />
   </ItemGroup>
 </Project>

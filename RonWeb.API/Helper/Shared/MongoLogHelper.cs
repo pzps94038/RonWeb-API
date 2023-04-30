@@ -1,4 +1,5 @@
 ﻿using System;
+using RonWeb.API.Enum;
 using RonWeb.API.Interface.Shared;
 using RonWeb.Core;
 using RonWeb.Database.Models;
@@ -17,7 +18,7 @@ namespace RonWeb.API.Helper.Shared
     {
 		public static async void Info(string msg)
 		{
-            string conStr = Environment.GetEnvironmentVariable("RonWeb_MongoDbConnectionStrings")!;
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var data = new ExceptionLog()
             {
@@ -30,7 +31,7 @@ namespace RonWeb.API.Helper.Shared
 
         public static async void Error(Exception ex)
         {
-            string conStr = Environment.GetEnvironmentVariable("RonWeb_MongoDbConnectionStrings")!;
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var data = new ExceptionLog()
             {
