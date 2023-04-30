@@ -15,7 +15,7 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string ArticleId { get; set; }
+        public string ArticleId { get; set; } = string.Empty;
 
         /// <summary>
         /// 文章標題
