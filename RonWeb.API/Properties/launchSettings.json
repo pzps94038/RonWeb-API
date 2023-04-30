@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://json.schemastore.org/launchsettings.json",
   "iisSettings": {
     "windowsAuthentication": false,
@@ -11,30 +11,45 @@
   "profiles": {
     "http": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "http://localhost:5269",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RonWeb_MongoDbConnectionStrings": "mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority",
+        "Origins": "https://localhost:4000,https://pzps94038.github.io,https://ronweb.herokuapp.com",
+        "JWTKey": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
+        "Issuer": "RonWeb",
+        "Audience": "RonWeb"
+      },
+      "dotnetRunMessages": true
     },
     "https": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
       "launchBrowser": true,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:7127;http://localhost:5269",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
-      }
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RonWeb_MongoDbConnectionStrings": "mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority",
+        "Origins": "https://localhost:4000,https://pzps94038.github.io,https://ronweb.herokuapp.com",
+        "JWTKey": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
+        "Issuer": "RonWeb",
+        "Audience": "RonWeb"
+      },
+      "dotnetRunMessages": true
     },
     "IIS Express": {
       "commandName": "IISExpress",
       "launchBrowser": true,
       "launchUrl": "swagger",
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "RonWeb_MongoDbConnectionStrings": "mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority",
+        "Origins": "https://localhost:4000,https://pzps94038.github.io,https://ronweb.herokuapp.com",
+        "JWTKey": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
+        "Issuer": "RonWeb",
+        "Audience": "RonWeb"
       }
     }
   }

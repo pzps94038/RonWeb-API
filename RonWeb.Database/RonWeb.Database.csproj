@@ -10,4 +10,14 @@
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Mongo\" />
+    <None Remove="Mongo\Models\" />
+    <None Remove="Mongo\Service\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mongo\" />
+    <Folder Include="Mongo\Models\" />
+    <Folder Include="Mongo\Service\" />
+  </ItemGroup>
 </Project>

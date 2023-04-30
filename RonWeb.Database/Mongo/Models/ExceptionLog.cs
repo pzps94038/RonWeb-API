@@ -18,10 +18,22 @@ namespace RonWeb.Database.Models
         public string Id = string.Empty;
 
         /// <summary>
-        /// 例外信息
+        /// 訊息
         /// </summary>
-        [BsonElement("ExceptionDetail")]
-        public string ExceptionDetail = string.Empty;
+        [BsonElement("Message")]
+        public string? Message;
+
+        /// <summary>
+        /// 堆疊
+        /// </summary>
+        [BsonElement("StackTrace")]
+        public string? StackTrace;
+
+        /// <summary>
+        /// 信息級別
+        /// </summary>
+        [BsonElement("Level")]
+        public string Level = string.Empty;
 
         /// <summary>
         /// 建立日期

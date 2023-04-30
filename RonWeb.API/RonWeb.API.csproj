@@ -6,13 +6,39 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' " />
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
+    <PackageReference Include="Scrutor" Version="4.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\RonWeb.Database\RonWeb.Database.csproj" />
+    <ProjectReference Include="..\RonWeb.Core\RonWeb.Core.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <None Remove="Interface\" />
+    <None Remove="Interface\Shared\" />
+    <None Remove="Interface\Article\" />
+    <None Remove="Helper\" />
+    <None Remove="Models\Article\" />
+    <None Remove="Helper\Article\" />
+    <None Remove="Helper\Shared\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Interface\" />
+    <Folder Include="Interface\Shared\" />
+    <Folder Include="Interface\Article\" />
+    <Folder Include="Helper\" />
+    <Folder Include="Models\Article\" />
+    <Folder Include="Helper\Article\" />
+    <Folder Include="Helper\Shared\" />
+  </ItemGroup>
 </Project>
