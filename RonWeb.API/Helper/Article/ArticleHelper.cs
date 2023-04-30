@@ -21,7 +21,6 @@ namespace RonWeb.API.Helper
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
             var data = await srv.Query<Article>(MongoTableEnum.Article.Description())
-                .Where(a => a.ArticleId == id)
                 .Join(category, a=> a.CategoryId, b=> b.CategoryId, (a,b)=> new GetByIdArticle()
                 {
                     ArticleId = a.ArticleId!,
@@ -32,14 +31,14 @@ namespace RonWeb.API.Helper
                     ViewCount = a.ViewCount,
                     CreateDate = a.CreateDate,
                 })
-                .SingleOrDefaultAsync();
+                .SingleOrDefaultAsync(a => a.ArticleId == id);
             if (data == null)
             {
                 throw new NotFoundException();
             }
             var label = srv.Query<ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
             var lists = await srv.Query<ArticleLabelMapping>(MongoTableEnum.ArticleLabelMapping.Description())
-                .Where(a => a.ArticleId == data.ArticleId)
+                 .Where(a => a.ArticleId == data.ArticleId)
                  .Join(label, a => a.LabelId, b => b.LabelId, (a, b) => new Label()
                  {
                      LabelId = a.LabelId,
@@ -133,7 +132,7 @@ namespace RonWeb.API.Helper
                 default:
                     throw new NotFoundException();
             }
-            var groupList = await group.Take(limit).Skip(offset).ToListAsync();
+            var groupList = await group.Skip(offset).Take(limit).ToListAsync();
             foreach (var item in groupList)
             {
                 var articleItem = new ArticleItem()
