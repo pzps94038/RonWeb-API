@@ -22,6 +22,8 @@ jobs:
       run: dotnet restore "RonWeb.API/RonWeb.API.csproj"
     - name: Restore RonWeb.Database
       run: dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
+    - name: Restore RonWeb.Core
+      run: dotnet restore "RonWeb.Core/RonWeb.Core.csproj"
     - name: Build
       run: dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --no-restore
     - name: Create directory
