@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
+using RonWeb.Database.Mongo.MongoAttribute;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace RonWeb.Database.Models
 {
+    [MongoAttribute("ArticleCategory")]
     public class ArticleCategory
     {
         /// <summary>

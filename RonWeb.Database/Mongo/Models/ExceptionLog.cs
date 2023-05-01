@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RonWeb.Database.Mongo.MongoAttribute;
 
 namespace RonWeb.Database.Models
 {
+    [MongoAttribute("ExceptionLog")]
     public class ExceptionLog
     {
         /// <summary>

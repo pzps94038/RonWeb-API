@@ -1,8 +1,10 @@
 ﻿using MongoDB.Bson.Serialization.Attributes;
 using MongoDB.Bson;
+using RonWeb.Database.Mongo.MongoAttribute;
 
 namespace RonWeb.Database.Models
 {
+    [MongoAttribute("UserMain")]
     public class UserMain
     {
         /// <summary>

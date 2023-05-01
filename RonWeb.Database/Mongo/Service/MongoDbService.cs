@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using MongoDB.Driver;
 using MongoDB.Driver.Linq;
+using RonWeb.Database.Mongo.MongoAttribute;
+
 namespace RonWeb.Database.Service
 {
     public class MongoDbService
@@ -47,55 +49,57 @@ namespace RonWeb.Database.Service
             this._dbName = dbName;
         }
 
-        public IMongoCollection<T> GetCollection<T>(string collectionName)
+        public IMongoCollection<T> GetCollection<T>()
         {
-            return this.db.GetCollection<T>(collectionName);
+            Type type = typeof(T);
+            MongoAttribute tag = (MongoAttribute)Attribute.GetCustomAttribute(type, typeof(MongoAttribute))!;
+            return this.db.GetCollection<T>(tag.TableName);
         }
 
-        public IMongoQueryable<T> Query<T>(string collectionName)
+        public IMongoQueryable<T> Query<T>()
         {
-            return this.GetCollection<T>(collectionName).AsQueryable();
+            return this.GetCollection<T>().AsQueryable();
         }
 
-        public async Task CreateAsync<T>(string collectionName, T data)
+        public async Task CreateAsync<T>(T data)
         {
-            await this.db.GetCollection<T>(collectionName).InsertOneAsync(data);
+            await this.GetCollection<T>().InsertOneAsync(data);
         }
 
-        public async Task CreateManyAsync<T>(string collectionName, List<T> list)
+        public async Task CreateManyAsync<T>(List<T> list)
         {
-            await this.db.GetCollection<T>(collectionName).InsertManyAsync(list);
+            await this.GetCollection<T>().InsertManyAsync(list);
         }
 
 
-        public async Task<UpdateResult> UpdateAsync<T>(string collectionName, FilterDefinition<T> filter, UpdateDefinition<T> update)
+        public async Task<UpdateResult> UpdateAsync<T>(FilterDefinition<T> filter, UpdateDefinition<T> update)
         {
-            return await this.db.GetCollection<T>(collectionName).UpdateOneAsync(filter, update);
+            return await this.GetCollection<T>().UpdateOneAsync(filter, update);
         }
 
-        public async Task<UpdateResult> UpdateManyAsync<T>(string collectionName, FilterDefinition<T> filter, UpdateDefinition<T> update)
+        public async Task<UpdateResult> UpdateManyAsync<T>(FilterDefinition<T> filter, UpdateDefinition<T> update)
         {
-            return await this.db.GetCollection<T>(collectionName).UpdateManyAsync(filter, update);
+            return await this.GetCollection<T>().UpdateManyAsync(filter, update);
         }
 
-        public async Task<DeleteResult> DeleteAsync<T>(string collectionName, FilterDefinition<T> filter)
+        public async Task<DeleteResult> DeleteAsync<T>(FilterDefinition<T> filter)
         {
-            return await this.db.GetCollection<T>(collectionName).DeleteOneAsync(filter);
+            return await this.GetCollection<T>().DeleteOneAsync(filter);
         }
 
-        public async Task<DeleteResult> DeleteManyAsync<T>(string collectionName, FilterDefinition<T> filter)
+        public async Task<DeleteResult> DeleteManyAsync<T>(FilterDefinition<T> filter)
         {
-            return await this.db.GetCollection<T>(collectionName).DeleteManyAsync(filter);
+            return await this.GetCollection<T>().DeleteManyAsync(filter);
         }
 
-        public async Task<string> CreateIndexAsync<T>(string collectionName, CreateIndexModel<T> data)
+        public async Task<string> CreateIndexAsync<T>(CreateIndexModel<T> data)
         {
-           return await this.db.GetCollection<T>(collectionName).Indexes.CreateOneAsync(data);
+           return await this.GetCollection<T>().Indexes.CreateOneAsync(data);
         }
 
-        public async Task<IEnumerable<string>> CreateManyIndexAsync<T>(string collectionName, List<CreateIndexModel<T>> list)
+        public async Task<IEnumerable<string>> CreateManyIndexAsync<T>(List<CreateIndexModel<T>> list)
         {
-            return await this.db.GetCollection<T>(collectionName).Indexes.CreateManyAsync(list);
+            return await this.GetCollection<T>().Indexes.CreateManyAsync(list);
         }
     }
 }

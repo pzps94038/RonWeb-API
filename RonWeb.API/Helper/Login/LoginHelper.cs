@@ -25,7 +25,7 @@ namespace RonWeb.API.Helper.Login
             string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
             var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
             var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
-            var user = await srv.Query<UserMain>(MongoTableEnum.UserMain.Description())
+            var user = await srv.Query<UserMain>()
                 .Where(a => a.Account == data.Account)
                 .Where(a => a.Password == encryptPassword)
                 .SingleOrDefaultAsync();
@@ -58,7 +58,7 @@ namespace RonWeb.API.Helper.Login
                     ExpirationDate = refreshTokenExpTime,
                     CreateDate = DateTime.Now
                 };
-                await srv.CreateAsync<RefreshTokenLog>(MongoTableEnum.RefreshTokenLog.Description(), log);
+                await srv.CreateAsync<RefreshTokenLog>(log);
                 return new Token(token, refreshToken);
             }
         }

@@ -20,8 +20,8 @@ namespace RonWeb.API.Helper
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
-            var data = await srv.Query<Article>(MongoTableEnum.Article.Description())
+            var category = srv.Query<ArticleCategory>();
+            var data = await srv.Query<Article>()
                 .Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new GetByIdArticleResponse()
                 {
                     ArticleId = a.Id,
@@ -37,8 +37,8 @@ namespace RonWeb.API.Helper
             {
                 throw new NotFoundException();
             }
-            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
-            var lists = await srv.Query<ArticleLabelMapping>(MongoTableEnum.ArticleLabelMapping.Description())
+            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>();
+            var lists = await srv.Query<ArticleLabelMapping>()
                  .Where(a => a.ArticleId == data.ArticleId)
                  .Join(label, a => a.LabelId, b => b.Id, (a, b) => new Label()
                  {
@@ -55,10 +55,10 @@ namespace RonWeb.API.Helper
             var result = new List<ArticleItem>();
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var article = srv.Query<Article>(MongoTableEnum.Article.Description());
-            var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
-            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
-            var mapping = srv.Query<ArticleLabelMapping> (MongoTableEnum.ArticleLabelMapping.Description());
+            var article = srv.Query<Article>();
+            var category = srv.Query<ArticleCategory>();
+            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>();
+            var mapping = srv.Query<ArticleLabelMapping> ();
             var query = article.Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new
             {
                 a.Id,
