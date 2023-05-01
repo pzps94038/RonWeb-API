@@ -7,7 +7,9 @@ namespace RonWeb.API.Enum
         JWTKEY,
         ISSUER,
         AUDIENCE,
-        RON_WEB_MONGO_DB_CONSTR
+        RON_WEB_MONGO_DB_CONSTR,
+        AESIV,
+        AESKEY
     }
 }
 

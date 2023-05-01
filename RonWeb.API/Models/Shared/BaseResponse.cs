@@ -52,6 +52,8 @@ namespace RonWeb.API.Models.Shared
         [Description("找不到資料")]
         NotFound,
         [Description("已有重複資料")]
-        Unique
+        Unique,
+        [Description("系統發生錯誤")]
+        SystemFail
     }
 }
