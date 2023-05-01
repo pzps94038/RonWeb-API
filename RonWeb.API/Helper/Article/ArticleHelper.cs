@@ -16,7 +16,6 @@ namespace RonWeb.API.Helper
 {
     public class ArticleHelper : IArticleHelper
     {
-
         public async Task<GetByIdArticleResponse> GetAsync(string id)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
