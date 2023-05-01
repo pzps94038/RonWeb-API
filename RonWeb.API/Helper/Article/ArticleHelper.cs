@@ -16,6 +16,7 @@ namespace RonWeb.API.Helper
 {
     public class ArticleHelper : IArticleHelper
     {
+
         public async Task<GetByIdArticleResponse> GetAsync(string id)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
@@ -149,6 +150,50 @@ namespace RonWeb.API.Helper
                 result.Add(articleItem);
             }
             return result;
+        }
+
+        public async Task UpdateAsync(string id, UpdateArticleRequest data)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            using (var session = await srv.client.StartSessionAsync()) 
+            {
+                try
+                {
+                    var filter = Builders<Database.Models.Article>.Filter.Eq(a => a.Id, id);
+                    var update = Builders<Database.Models.Article>.Update
+                        .Set(a => a.ArticleTitle, data.ArticleTitle)
+                        .Set(a => a.Content, data.Content)
+                        .Set(a => a.CategoryId, data.CategoryId)
+                        .Set(a => a.UpdateDate, DateTime.Now);
+                    await srv.UpdateAsync(filter, update);
+                    // 首先刪除原來的文章標籤
+                    var mappingFilter = Builders<Database.Models.ArticleLabelMapping>.Filter.Eq(a => a.ArticleId, id);
+                    await srv.DeleteManyAsync(mappingFilter);
+                    // 新增當前文章的標籤
+                    var mappingLabels = data.Labels.Select(a => new ArticleLabelMapping()
+                    {
+                        LabelId = a.LabelId,
+                        ArticleId = id,
+                        CreateDate = DateTime.Now,
+                    }).ToList();
+                    await srv.CreateManyAsync(mappingLabels);
+                    await session.CommitTransactionAsync();
+                }
+                catch 
+                {
+                    await session.AbortTransactionAsync();
+                    throw;
+                }
+            }
+        }
+
+        public async Task DeleteAsync(string data)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            var filter = Builders<Database.Models.Article>.Filter.Eq(a => a.Id, data);
+            await srv.DeleteAsync(filter);
         }
     }
 }

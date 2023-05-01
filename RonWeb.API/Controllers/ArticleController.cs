@@ -77,6 +77,59 @@ namespace RonWeb.API.Controllers
             }
             return result;
         }
+
+        /// <summary>
+        /// 修改文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}")]
+        public async Task<BaseResponse> Patch(string id, [FromBody] UpdateArticleRequest data)
+        {
+            var result = new BaseResponse();
+
+            try
+            {
+                await this._helper.UpdateAsync(id, data);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.ModifyFail.Description();
+                MongoLogHelper.Error(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 刪除文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<BaseResponse> Delete(string id)
+        {
+            var result = new BaseResponse();
+
+            try
+            {
+                await this._helper.DeleteAsync(id);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.DeleteFail.Description();
+                MongoLogHelper.Error(ex);
+            }
+
+            return result;
+        }
     }
 }
 
