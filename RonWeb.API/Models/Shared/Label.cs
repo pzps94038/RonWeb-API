@@ -1,5 +1,5 @@
 ﻿using System;
-namespace RonWeb.API.Models.Article
+namespace RonWeb.API.Models.Shared
 {
 	public class Label
 	{

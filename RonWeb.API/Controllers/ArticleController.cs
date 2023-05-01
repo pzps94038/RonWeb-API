@@ -51,7 +51,7 @@ namespace RonWeb.API.Controllers
             var result = new BaseResponse<GetByIdArticle>();
             try
             {
-                var data = await this._helper.GetByIdAsync(id);
+                var data = await this._helper.GetAsync(id);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
@@ -60,7 +60,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
-                MongoLogHelper.Error(ex);
+                MongoLogHelper.Warn(ex);
             }
             catch (Exception ex)
             {

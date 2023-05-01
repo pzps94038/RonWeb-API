@@ -33,6 +33,9 @@
     <None Remove="Helper\Shared\" />
     <None Remove="Enum\" />
     <None Remove="Models\CustomizeException\" />
+    <None Remove="Helper\ArticleLabel\" />
+    <None Remove="Interface\ArticleLabel\" />
+    <None Remove="Models\ArticleLabel\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\" />
@@ -44,5 +47,8 @@
     <Folder Include="Helper\Shared\" />
     <Folder Include="Enum\" />
     <Folder Include="Models\CustomizeException\" />
+    <Folder Include="Helper\ArticleLabel\" />
+    <Folder Include="Interface\ArticleLabel\" />
+    <Folder Include="Models\ArticleLabel\" />
   </ItemGroup>
 </Project>

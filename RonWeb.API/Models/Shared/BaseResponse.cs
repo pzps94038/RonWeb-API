@@ -6,13 +6,21 @@ namespace RonWeb.API.Models.Shared
     {
         public string ReturnCode { get; set; } = string.Empty;
         public string ReturnMessage { get; set; } = string.Empty;
-        public T? Data { get; set; }
+        public T Data { get; set; }
+    }
+
+    public class BaseResponse
+    {
+        public string ReturnCode { get; set; } = string.Empty;
+        public string ReturnMessage { get; set; } = string.Empty;
     }
 
     public enum ReturnCode
     {
         [Description("00")]
         Success,
+        [Description("97")]
+        Unique,
         [Description("98")]
         NotFound,
         [Description("99")]
@@ -43,5 +51,7 @@ namespace RonWeb.API.Models.Shared
         LoginFail,
         [Description("找不到資料")]
         NotFound,
+        [Description("已有重複資料")]
+        Unique
     }
 }

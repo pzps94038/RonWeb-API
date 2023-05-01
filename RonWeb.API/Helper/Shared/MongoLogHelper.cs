@@ -11,6 +11,7 @@ namespace RonWeb.API.Helper.Shared
 	public enum Level
 	{
 		Info,
+        Warn,
 		Error,
 	}
 
@@ -27,6 +28,33 @@ namespace RonWeb.API.Helper.Shared
 				CreateDate = DateTime.Now
 			};
 			await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
+        }
+
+        public static async void Warn(string msg)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            var data = new ExceptionLog()
+            {
+                Message = msg,
+                Level = Level.Warn.Description(),
+                CreateDate = DateTime.Now
+            };
+            await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
+        }
+
+        public static async void Warn(Exception ex)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            var data = new ExceptionLog()
+            {
+                StackTrace = ex.StackTrace,
+                Message = ex.Message,
+                Level = Level.Warn.Description(),
+                CreateDate = DateTime.Now
+            };
+            await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
         }
 
         public static async void Error(Exception ex)

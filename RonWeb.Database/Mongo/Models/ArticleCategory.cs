@@ -15,7 +15,7 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string CategoryId = string.Empty;
+        public string Id = string.Empty;
 
         /// <summary>
         /// 類別名稱

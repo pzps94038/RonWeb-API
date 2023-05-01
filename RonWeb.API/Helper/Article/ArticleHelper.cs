@@ -10,20 +10,21 @@ using MongoDB.Driver.Linq;
 using RonWeb.API.Enum;
 using RonWeb.API.Models.CustomizeException;
 using System.Collections.Generic;
+using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Helper
 {
     public class ArticleHelper: IArticleHelper
     {
-        public async Task<GetByIdArticle> GetByIdAsync(string id)
+        public async Task<GetByIdArticle> GetAsync(string id)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
             var data = await srv.Query<Article>(MongoTableEnum.Article.Description())
-                .Join(category, a=> a.CategoryId, b=> b.CategoryId, (a,b)=> new GetByIdArticle()
+                .Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new GetByIdArticle()
                 {
-                    ArticleId = a.ArticleId!,
+                    ArticleId = a.Id,
                     ArticleTitle = a.ArticleTitle,
                     Content = a.Content,
                     CategoryId = a.CategoryId,
@@ -36,10 +37,10 @@ namespace RonWeb.API.Helper
             {
                 throw new NotFoundException();
             }
-            var label = srv.Query<ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
+            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
             var lists = await srv.Query<ArticleLabelMapping>(MongoTableEnum.ArticleLabelMapping.Description())
                  .Where(a => a.ArticleId == data.ArticleId)
-                 .Join(label, a => a.LabelId, b => b.LabelId, (a, b) => new Label()
+                 .Join(label, a => a.LabelId, b => b.Id, (a, b) => new Label()
                  {
                      LabelId = a.LabelId,
                      LabelName = b.LabelName
@@ -56,20 +57,20 @@ namespace RonWeb.API.Helper
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var article = srv.Query<Article>(MongoTableEnum.Article.Description());
             var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
-            var label = srv.Query<ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
+            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
             var mapping = srv.Query<ArticleLabelMapping> (MongoTableEnum.ArticleLabelMapping.Description());
-            var query = article.Join(category, a=> a.CategoryId, b=> b.CategoryId, (a,b)=> new
+            var query = article.Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new
             {
-                a.ArticleId,
+                a.Id,
                 a.ArticleTitle,
                 a.CategoryId,
                 b.CategoryName,
                 a.Content,
                 a.CreateDate,
                 a.ViewCount,
-            }).Join(mapping, a => a.ArticleId, b => b.ArticleId, (a, b) => new
+            }).Join(mapping, a => a.Id, b => b.ArticleId, (a, b) => new
             {
-                a.ArticleId,
+                a.Id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -77,9 +78,9 @@ namespace RonWeb.API.Helper
                 a.CreateDate,
                 a.ViewCount,
                 b.LabelId
-            }).Join(label, a => a.LabelId, b => b.LabelId, (a, b) => new
+            }).Join(label, a => a.LabelId, b => b.Id, (a, b) => new
             {
-                a.ArticleId,
+                a.Id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -102,7 +103,7 @@ namespace RonWeb.API.Helper
             }
             var group = query.Select(a=> new
             {
-                a.ArticleId,
+                a.Id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -113,7 +114,7 @@ namespace RonWeb.API.Helper
                 
             }).GroupBy(a => new
             {
-                a.ArticleId,
+                a.Id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -137,7 +138,7 @@ namespace RonWeb.API.Helper
             {
                 var articleItem = new ArticleItem()
                 {
-                    ArticleId = item.Key.ArticleId,
+                    ArticleId = item.Key.Id,
                     ArticleTitle = item.Key.ArticleTitle,
                     CategoryId = item.Key.CategoryId,
                     CategoryName = item.Key.CategoryName,
