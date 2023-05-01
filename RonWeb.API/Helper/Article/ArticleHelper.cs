@@ -14,13 +14,13 @@ using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Helper
 {
-    public class ArticleHelper: IArticleHelper
+    public class ArticleHelper : IArticleHelper
     {
         public async Task<GetByIdArticleResponse> GetAsync(string id)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var category = srv.Query<ArticleCategory>();
+            var category = srv.Query<Database.Models.ArticleCategory>();
             var data = await srv.Query<Article>()
                 .Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new GetByIdArticleResponse()
                 {
@@ -56,7 +56,7 @@ namespace RonWeb.API.Helper
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var article = srv.Query<Article>();
-            var category = srv.Query<ArticleCategory>();
+            var category = srv.Query<RonWeb.Database.Models.ArticleCategory>();
             var label = srv.Query<RonWeb.Database.Models.ArticleLabel>();
             var mapping = srv.Query<ArticleLabelMapping> ();
             var query = article.Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new

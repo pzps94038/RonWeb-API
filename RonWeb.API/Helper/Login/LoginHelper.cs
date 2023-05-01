@@ -15,7 +15,7 @@ using System.Security.Claims;
 
 namespace RonWeb.API.Helper.Login
 {
-	public class LoginHelper: ILoginHelper
+	public class LoginHelper : ILoginHelper
     {
         public async Task<Token> Login(LoginRequest data)
         {

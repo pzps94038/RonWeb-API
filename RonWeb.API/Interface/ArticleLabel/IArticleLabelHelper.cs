@@ -5,7 +5,7 @@ using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Interface.ArticleLabel
 {
-    public interface IArticleLabelHelper: IGetListAsync<Label>, ICreateAsync<CreateArticleLabelRequest>, IUpdateAsync<Label>, IDeleteAsync<string>
+    public interface IArticleLabelHelper : IGetListAsync<Label>, ICreateAsync<CreateArticleLabelRequest>, IUpdateAsync<Label>, IDeleteAsync<string>
     {
     }
 }

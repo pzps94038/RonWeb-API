@@ -1,17 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Helper.Shared;
-using RonWeb.API.Interface.ArticleLabel;
 using RonWeb.API.Interface.Login;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Login;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RonWeb.API.Controllers
 {
@@ -24,6 +17,11 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
+        /// <summary>
+        /// 登入
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<BaseResponse<Token>> Post([FromBody]LoginRequest req)
         {
