@@ -41,10 +41,8 @@
     <None Remove="Interface\Login\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interface\" />
     <Folder Include="Interface\Shared\" />
     <Folder Include="Interface\Article\" />
-    <Folder Include="Helper\" />
     <Folder Include="Models\Article\" />
     <Folder Include="Helper\Article\" />
     <Folder Include="Helper\Shared\" />

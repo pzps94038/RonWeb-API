@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Enum;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Article;
@@ -24,6 +18,14 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
+        /// <summary>
+        /// 取得文章列表
+        /// </summary>
+        /// <param name="limit"></param>
+        /// <param name="offset"></param>
+        /// <param name="order"></param>
+        /// <param name="keyword"></param>
+        /// <returns></returns>
         [HttpGet]
         public async Task<BaseResponse<List<ArticleItem>>> Get(int limit, int offset, OrderEnum order, string? keyword)
         {
@@ -45,6 +47,11 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 取得文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpGet("{id}")]
         public async Task<BaseResponse<GetByIdArticleResponse>> Get(string id)
         {
