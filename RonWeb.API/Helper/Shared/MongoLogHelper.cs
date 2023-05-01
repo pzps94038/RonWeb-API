@@ -27,7 +27,7 @@ namespace RonWeb.API.Helper.Shared
 				Level = Level.Info.Description(),
 				CreateDate = DateTime.Now
 			};
-			await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
+			await srv.CreateAsync<ExceptionLog>(data);
         }
 
         public static async void Warn(string msg)
@@ -40,7 +40,7 @@ namespace RonWeb.API.Helper.Shared
                 Level = Level.Warn.Description(),
                 CreateDate = DateTime.Now
             };
-            await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
+            await srv.CreateAsync<ExceptionLog>(data);
         }
 
         public static async void Warn(Exception ex)
@@ -54,7 +54,7 @@ namespace RonWeb.API.Helper.Shared
                 Level = Level.Warn.Description(),
                 CreateDate = DateTime.Now
             };
-            await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
+            await srv.CreateAsync<ExceptionLog>(data);
         }
 
         public static async void Error(Exception ex)
@@ -68,7 +68,7 @@ namespace RonWeb.API.Helper.Shared
                 Level = Level.Error.Description(),
                 CreateDate = DateTime.Now
             };
-            await srv.CreateAsync<ExceptionLog>(MongoTableEnum.ExceptionLog.Description(), data);
+            await srv.CreateAsync<ExceptionLog>(data);
         }
     }
 }

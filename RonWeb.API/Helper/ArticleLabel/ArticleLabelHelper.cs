@@ -22,7 +22,7 @@ namespace RonWeb.API.Helper.ArticleLabel
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var hasData = await srv.Query<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description())
+            var hasData = await srv.Query<RonWeb.Database.Models.ArticleLabel>()
                 .FirstOrDefaultAsync(a => a.LabelName == data.LabelName);
             if (hasData != null)
             {
@@ -37,16 +37,16 @@ namespace RonWeb.API.Helper.ArticleLabel
                 Builders<RonWeb.Database.Models.ArticleLabel>.IndexKeys.Ascending("LabelName"),
                 new CreateIndexOptions { Unique = true }
             );
-            var collection = srv.GetCollection<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
+            var collection = srv.GetCollection<RonWeb.Database.Models.ArticleLabel>();
             await collection.Indexes.CreateOneAsync(indexModel);
-            await srv.CreateAsync(MongoTableEnum.ArticleLabel.Description(), label);
+            await srv.CreateAsync(label);
         }
 
         public async Task<List<Label>> GetListAsync()
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var list = await srv.Query<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description())
+            var list = await srv.Query<RonWeb.Database.Models.ArticleLabel>()
                 .Select(a=> new Label()
                 {
                     LabelId = a.Id,
@@ -59,19 +59,17 @@ namespace RonWeb.API.Helper.ArticleLabel
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var collection = srv.GetCollection<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
             var filter = Builders<RonWeb.Database.Models.ArticleLabel>.Filter.Eq(a => a.Id, data.LabelId);
             var update = Builders<RonWeb.Database.Models.ArticleLabel>.Update.Set(a => a.LabelName, data.LabelName);
-            await collection.UpdateOneAsync(filter, update);
+            await srv.UpdateAsync<RonWeb.Database.Models.ArticleLabel>(filter, update);
         }
 
         public async Task DeleteAsync(string data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var collection = srv.GetCollection<RonWeb.Database.Models.ArticleLabel>(MongoTableEnum.ArticleLabel.Description());
             var filter = Builders<RonWeb.Database.Models.ArticleLabel>.Filter.Eq(a => a.Id, data);
-            await collection.DeleteOneAsync(filter);
+            await srv.DeleteAsync<RonWeb.Database.Models.ArticleLabel>(filter);
         }
     }
 }

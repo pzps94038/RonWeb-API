@@ -5,9 +5,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using RonWeb.Database.Mongo.MongoAttribute;
 
 namespace RonWeb.Database.Models
 {
+    [MongoAttribute("ArticleLabel")]
     public class ArticleLabel
     {
         /// <summary>
