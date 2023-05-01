@@ -20,7 +20,9 @@
         "ORIGINS": "https://localhost:4000,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
-        "AUDIENCE": "RonWeb"
+        "AUDIENCE": "RonWeb",
+        "AESIV": "2133456789CBCZEF",
+        "AESKEY": "FEDCCA9872543210"
       },
       "dotnetRunMessages": true
     },
@@ -35,7 +37,9 @@
         "ORIGINS": "https://localhost:4000,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
-        "AUDIENCE": "RonWeb"
+        "AUDIENCE": "RonWeb",
+        "AESIV": "2133456789CBCZEF",
+        "AESKEY": "FEDCCA9872543210"
       },
       "dotnetRunMessages": true
     },
@@ -49,7 +53,9 @@
         "ORIGINS": "https://localhost:4000,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
-        "AUDIENCE": "RonWeb"
+        "AUDIENCE": "RonWeb",
+        "AESIV": "2133456789CBCZEF",
+        "AESKEY": "FEDCCA9872543210"
       }
     }
   }
