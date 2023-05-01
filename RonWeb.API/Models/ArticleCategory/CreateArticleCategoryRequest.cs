@@ -2,6 +2,6 @@
 {
     public class CreateArticleCategoryRequest
     {
-        public string CategoryName = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
     }
 }
