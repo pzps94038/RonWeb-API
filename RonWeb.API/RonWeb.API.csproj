@@ -36,6 +36,7 @@
     <None Remove="Helper\ArticleLabel\" />
     <None Remove="Interface\ArticleLabel\" />
     <None Remove="Models\ArticleLabel\" />
+    <None Remove="Models\Login\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\" />
@@ -50,5 +51,6 @@
     <Folder Include="Helper\ArticleLabel\" />
     <Folder Include="Interface\ArticleLabel\" />
     <Folder Include="Models\ArticleLabel\" />
+    <Folder Include="Models\Login\" />
   </ItemGroup>
 </Project>

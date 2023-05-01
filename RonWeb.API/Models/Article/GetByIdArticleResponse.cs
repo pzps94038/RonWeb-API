@@ -3,7 +3,7 @@ using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Models.Article
 {
-	public class GetByIdArticle
+	public class GetByIdArticleResponse
     {
 		public string ArticleId { get; set; } = string.Empty;
 		public string ArticleTitle { get; set; } = string.Empty;

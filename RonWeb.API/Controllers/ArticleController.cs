@@ -46,9 +46,9 @@ namespace RonWeb.API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<BaseResponse<GetByIdArticle>> Get(string id)
+        public async Task<BaseResponse<GetByIdArticleResponse>> Get(string id)
         {
-            var result = new BaseResponse<GetByIdArticle>();
+            var result = new BaseResponse<GetByIdArticleResponse>();
             try
             {
                 var data = await this._helper.GetAsync(id);

@@ -16,13 +16,13 @@ namespace RonWeb.API.Helper
 {
     public class ArticleHelper: IArticleHelper
     {
-        public async Task<GetByIdArticle> GetAsync(string id)
+        public async Task<GetByIdArticleResponse> GetAsync(string id)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var category = srv.Query<ArticleCategory>(MongoTableEnum.ArticleCategory.Description());
             var data = await srv.Query<Article>(MongoTableEnum.Article.Description())
-                .Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new GetByIdArticle()
+                .Join(category, a=> a.CategoryId, b=> b.Id, (a,b)=> new GetByIdArticleResponse()
                 {
                     ArticleId = a.Id,
                     ArticleTitle = a.ArticleTitle,

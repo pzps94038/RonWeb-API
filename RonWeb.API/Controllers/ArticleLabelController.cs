@@ -50,7 +50,7 @@ namespace RonWeb.API.Controllers
         }
 
         [HttpPost]
-        public async Task<BaseResponse> Post([FromBody]CreateArticleLabel value)
+        public async Task<BaseResponse> Post([FromBody]CreateArticleLabelRequest value)
         {
             var result = new BaseResponse();
 

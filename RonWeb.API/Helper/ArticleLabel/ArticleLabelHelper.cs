@@ -18,7 +18,7 @@ namespace RonWeb.API.Helper.ArticleLabel
 {
     public class ArticleLabelHelper: IArticleLabelHelper
     {
-        public async Task CreateAsync(CreateArticleLabel data)
+        public async Task CreateAsync(CreateArticleLabelRequest data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
