@@ -1,42 +1,46 @@
-﻿using System;
-using RonWeb.API.Enum;
-using RonWeb.API.Interface.Login;
-using RonWeb.API.Models.Login;
+﻿using RonWeb.API.Enum;
+using RonWeb.API.Interface.RefreshToken;
+using RonWeb.API.Models.RefreshToken;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using RonWeb.Database.Models;
 using RonWeb.Database.Mongo;
 using RonWeb.Database.Service;
-using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using RonWeb.Database.Models;
 
-namespace RonWeb.API.Helper.Login
+namespace RonWeb.API.Helper.RefreshToken
 {
-	public class LoginHelper : ILoginHelper
+    public class RefreshTokenHelper : IRefreshTokenHelper
     {
-        public async Task<Token> Login(LoginRequest data)
+        public async Task<Token> Refresh(RefreshTokenRequest data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            string iv = Environment.GetEnvironmentVariable(EnvVarEnum.AESIV.Description())!;
-            string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
-            var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
-            var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
-            var user = await srv.Query<UserMain>()
-                .Where(a => a.Account == data.Account)
-                .Where(a => a.Password == encryptPassword)
+            var userMain = srv.Query<Database.Models.UserMain>();
+            // 沒過期才能換新token
+            var log = await srv.Query<Database.Models.RefreshTokenLog>()
+                .Where(a=> a.UserId == data.UserId)
+                .Where(a=> a.RefreshToken == data.RefreshToken)
+                .Join(userMain, a=> a.UserId, b=> b.Id, (a,b)=> new 
+                {
+                    UserId = b.Id,
+                    Email = b.Email,
+                    ExpirationDate = a.ExpirationDate,
+                })
                 .SingleOrDefaultAsync();
-            if (user == null)
+            if (log == null)
             {
                 throw new NotFoundException();
             }
-            else
+            else if (log.ExpirationDate < DateTime.Now)
+            {
+                throw new AuthExpiredException();
+            }
+            else 
             {
                 string refreshToken = JwtTool.CreateRefreshToken();
-                var claims = JwtTool.CreateClaims(user.Email ?? "", user.Id, RoleEnum.ManagerUser.Description());
+                var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId, RoleEnum.ManagerUser.Description());
                 string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
                 string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
                 string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
@@ -51,10 +55,10 @@ namespace RonWeb.API.Helper.Login
                     ExpirationTime = toeknExpTime
                 };
                 var token = JwtTool.GenerateToken(model);
-                var log = new RefreshTokenLog()
+                var tokenLog = new RefreshTokenLog()
                 {
                     RefreshToken = refreshToken,
-                    UserId = user.Id,
+                    UserId = log.UserId,
                     ExpirationDate = refreshTokenExpTime,
                     CreateDate = DateTime.Now
                 };
@@ -64,4 +68,3 @@ namespace RonWeb.API.Helper.Login
         }
     }
 }
-
