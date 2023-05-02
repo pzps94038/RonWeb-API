@@ -42,3 +42,28 @@ jobs:
         name: RonWeb.API
         path: dist
         retention-days: 1
+    - name: Deploy Heroku
+      if: github.ref == 'refs/heads/main'
+      uses: akhileshns/heroku-deploy@v3.12.13
+      with:
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
+        stack: "container"
+        usedocker: true
+        docker_build_args: |
+          RON_WEB_MONGO_DB_CONSTR
+          ORIGINS
+          JWTKEY
+          ISSUER
+          AUDIENCE
+          AESIV
+          AESKEY
+      env:
+        RON_WEB_MONGO_DB_CONSTR: ${{ secrets.RON_WEB_MONGO_DB_CONSTR }}
+        ORIGINS: ${{ secrets.ORIGINS }}
+        JWTKEY: ${{ secrets.JWTKEY }}
+        ISSUER: ${{ secrets.ISSUER }}
+        AUDIENCE: ${{ secrets.AUDIENCE }}
+        AESIV: ${{ secrets.AESIV }}
+        AESKEY: ${{ secrets.AESKEY }}
