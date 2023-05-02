@@ -17,6 +17,10 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
+        /// <summary>
+        /// 取得所有分類
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<BaseResponse<List<Category>>> Get()
         {
@@ -37,6 +41,11 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 建立分類
+        /// </summary>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<BaseResponse> Post([FromBody]CreateArticleCategoryRequest data)
         {
@@ -62,6 +71,12 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 修改分類
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
         [HttpPatch("{id}")]
         public async Task<BaseResponse> Patch(string id, [FromBody]Category data)
         {
@@ -81,6 +96,11 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// 刪除分類
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpDelete("{id}")]
         public async Task<BaseResponse> Delete(string id)
         {
