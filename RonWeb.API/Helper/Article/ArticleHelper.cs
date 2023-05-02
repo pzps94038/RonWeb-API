@@ -47,6 +47,11 @@ namespace RonWeb.API.Helper
                  })
                 .ToListAsync();
             data.Labels = lists;
+            var viewCount = data.ViewCount + 1;
+            var filter = Builders<Database.Models.Article>.Filter.Eq(a => a.Id, id);
+            var update = Builders<Database.Models.Article>.Update
+                .Set(a => a.ViewCount, viewCount);
+            await srv.UpdateAsync(filter, update);
             return data;
         }
 
