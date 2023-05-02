@@ -42,7 +42,7 @@ jobs:
         name: RonWeb.API
         path: dist
         retention-days: 1
-    - name: Deploy Heroku
+    - name: Deploy Heroku ${{ secrets.ORIGINS }}
       if: github.ref == 'refs/heads/main'
       uses: akhileshns/heroku-deploy@v3.12.13
       with:
