@@ -1,3 +1,13 @@
 build:
   docker:
     web: Dockerfile
+setup:
+  config:
+    S3_BUCKET: my-example-bucket
+    RON_WEB_MONGO_DB_CONSTR: mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority
+    ORIGINS: https://pzps94038.github.io,https://ronweb.herokuapp.com
+    JWTKEY: WMOPCMWOIPRXWOAPRMLFMSKLAZAFSAIDFMISOAF
+    ISSUER: RonWeb
+    AUDIENCE: RonWeb
+    AESIV: 2133356749CXCZEF
+    AESKEY: FEDCCB9872743211
