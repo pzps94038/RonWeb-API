@@ -50,6 +50,15 @@ jobs:
         heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
         heroku_app_name: ${{ secrets.HEROKU_APP_NAME }}
         stack: "container"
+        usedocker: true
+        docker_build_args: |
+          RON_WEB_MONGO_DB_CONSTR
+          ORIGINS
+          JWTKEY
+          ISSUER
+          AUDIENCE
+          AESIV
+          AESKEY
       env:
         RON_WEB_MONGO_DB_CONSTR: ${{ secrets.RON_WEB_MONGO_DB_CONSTR }}
         ORIGINS: ${{ secrets.ORIGINS }}
