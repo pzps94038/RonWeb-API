@@ -1,6 +1,21 @@
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /app
 
+ARG RON_WEB_MONGO_DB_CONSTR
+ARG ORIGINS
+ARG JWTKEY
+ARG ISSUER
+ARG AUDIENCE
+ARG AESIV
+ARG AESKEY
+
+ENV RON_WEB_MONGO_DB_CONSTR=$RON_WEB_MONGO_DB_CONSTR \
+    ORIGINS=$ORIGINS \
+    JWTKEY=$JWTKEY \
+    ISSUER=$ISSUER \
+    AUDIENCE=$AUDIENCE \
+    AESIV=$AESIV \
+    AESKEY=$AESKEY
 # Copy File
 COPY ["RonWeb.API/RonWeb.API.csproj", "RonWeb.API/"]
 COPY ["RonWeb.Database/RonWeb.Database.csproj", "RonWeb.Database/"]
