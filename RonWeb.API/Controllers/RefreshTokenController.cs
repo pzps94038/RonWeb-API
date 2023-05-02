@@ -22,6 +22,11 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
+        /// <summary>
+        /// 刷新Token
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<BaseResponse<Token>> Post([FromBody]RefreshTokenRequest req)
         {
