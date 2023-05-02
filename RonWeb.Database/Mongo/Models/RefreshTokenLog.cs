@@ -28,11 +28,11 @@ namespace RonWeb.Database.Models
         /// <summary>
         /// 帳號
         /// </summary>
-        [BsonElement("Account")]
-        public string Account { get; set; } = string.Empty;
+        [BsonElement("UserId")]
+        public string UserId { get; set; } = string.Empty;
 
         /// <summary>
-        /// 過期日期
+        /// 過期時間
         /// </summary>
         [BsonElement("ExpirationDate")]
         public DateTime ExpirationDate { get; set; }

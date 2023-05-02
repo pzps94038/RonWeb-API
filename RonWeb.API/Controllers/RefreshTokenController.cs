@@ -3,43 +3,53 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-
+using RonWeb.API.Helper.Shared;
+using RonWeb.API.Interface.Login;
+using RonWeb.API.Interface.RefreshToken;
+using RonWeb.API.Models.CustomizeException;
+using RonWeb.API.Models.RefreshToken;
+using RonWeb.API.Models.Shared;
+using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
     public class RefreshTokenController : Controller
     {
-        // GET: api/values
-        [HttpGet]
-        public IEnumerable<string> Get()
+        private readonly IRefreshTokenHelper _helper;
+        public RefreshTokenController(IRefreshTokenHelper helper)
         {
-            return new string[] { "value1", "value2" };
+            this._helper = helper;
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
-        {
-            return "value";
-        }
-
-        // POST api/values
         [HttpPost]
-        public void Post([FromBody]string value)
+        public async Task<BaseResponse<Token>> Post([FromBody]RefreshTokenRequest req)
         {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
+            var result = new BaseResponse<Token>();
+            try
+            {
+                var data = await this._helper.Refresh(req);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.LoginSuccess.Description();
+                result.Data = data;
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
+            catch (AuthExpiredException ex) 
+            {
+                result.ReturnCode = ReturnCode.AuthExpired.Description();
+                result.ReturnMessage = ReturnMessage.AuthExpired.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.SystemFail.Description();
+                MongoLogHelper.Error(ex);
+            }
+            return result;
         }
     }
 }

@@ -19,6 +19,8 @@ namespace RonWeb.API.Models.Shared
     {
         [Description("00")]
         Success,
+        [Description("96")]
+        AuthExpired,
         [Description("97")]
         Unique,
         [Description("98")]
@@ -54,6 +56,8 @@ namespace RonWeb.API.Models.Shared
         [Description("已有重複資料")]
         Unique,
         [Description("系統發生錯誤")]
-        SystemFail
+        SystemFail,
+        [Description("身分驗證過期")]
+        AuthExpired
     }
 }
