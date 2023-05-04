@@ -16,7 +16,7 @@
       "applicationUrl": "http://localhost:5269",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "RON_WEB_MONGO_DB_CONSTR": "mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority",
+        "RON_WEB_MONGO_DB_CONSTR": "",
         "ORIGINS": "https://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
@@ -27,7 +27,8 @@
         "GMAIL_DISPLAY_NAME": "",
         "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
-        "ERROR_LOG_EMAIL_ADDRESS": ""
+        "ERROR_LOG_EMAIL_ADDRESS": "",
+        "RE_CAPTCHA_SERVER_TOKEN": ""
       },
       "dotnetRunMessages": true
     },
@@ -38,7 +39,7 @@
       "applicationUrl": "https://localhost:7127;http://localhost:5269",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "RON_WEB_MONGO_DB_CONSTR": "mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority",
+        "RON_WEB_MONGO_DB_CONSTR": "",
         "ORIGINS": "https://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
@@ -49,7 +50,8 @@
         "GMAIL_DISPLAY_NAME": "",
         "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
-        "ERROR_LOG_EMAIL_ADDRESS": ""
+        "ERROR_LOG_EMAIL_ADDRESS": "",
+        "RE_CAPTCHA_SERVER_TOKEN": ""
       },
       "dotnetRunMessages": true
     },
@@ -59,7 +61,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "RON_WEB_MONGO_DB_CONSTR": "mongodb+srv://pzps94038:l47t35YPkDiSK0ft@ronweb.pbafiie.mongodb.net/?retryWrites=true&w=majority",
+        "RON_WEB_MONGO_DB_CONSTR": "",
         "ORIGINS": "https://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
@@ -70,7 +72,8 @@
         "GMAIL_DISPLAY_NAME": "",
         "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
-        "ERROR_LOG_EMAIL_ADDRESS": ""
+        "ERROR_LOG_EMAIL_ADDRESS": "",
+        "RE_CAPTCHA_SERVER_TOKEN": ""
       }
     }
   }

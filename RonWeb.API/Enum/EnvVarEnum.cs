@@ -14,7 +14,8 @@ namespace RonWeb.API.Enum
         GMAIL_ADDRESS,
         GMAIL_DISPLAY_NAME,
         GMAIL_SENDER_EMAIL,
-        GMAIL_PWD
+        GMAIL_PWD,
+        RE_CAPTCHA_SERVER_TOKEN
     }
 }
 
