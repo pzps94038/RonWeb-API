@@ -40,6 +40,9 @@
     <None Remove="Models\Login\" />
     <None Remove="Helper\Login\" />
     <None Remove="Interface\Login\" />
+    <None Remove="Helper\ContactUs\" />
+    <None Remove="Interface\ContactUs\" />
+    <None Remove="Models\ContactUs\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\Shared\" />
@@ -55,5 +58,8 @@
     <Folder Include="Models\Login\" />
     <Folder Include="Helper\Login\" />
     <Folder Include="Interface\Login\" />
+    <Folder Include="Helper\ContactUs\" />
+    <Folder Include="Interface\ContactUs\" />
+    <Folder Include="Models\ContactUs\" />
   </ItemGroup>
 </Project>
