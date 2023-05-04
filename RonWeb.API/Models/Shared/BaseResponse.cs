@@ -59,6 +59,8 @@ namespace RonWeb.API.Models.Shared
         SystemFail,
         [Description("身分驗證過期")]
         AuthExpired,
+        [Description("身分驗證失敗")]
+        AuthFail,
         [Description("寄送信件成功")]
         SendMailSuccess,
         [Description("寄送信件失敗")]

@@ -34,6 +34,11 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.SendMailFail.Description();
             }
+            catch (AuthFailException ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.AuthFail.Description();
+            }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
