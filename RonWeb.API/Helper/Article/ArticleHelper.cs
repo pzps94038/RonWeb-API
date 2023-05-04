@@ -166,6 +166,7 @@ namespace RonWeb.API.Helper
             {
                 try
                 {
+                    session.StartTransaction();
                     var filter = Builders<Database.Models.Article>.Filter.Eq(a => a.Id, id);
                     var update = Builders<Database.Models.Article>.Update
                         .Set(a => a.ArticleTitle, data.ArticleTitle)
@@ -210,6 +211,7 @@ namespace RonWeb.API.Helper
             {
                 try
                 {
+                    session.StartTransaction();
                     var article = new RonWeb.Database.Models.Article()
                     {
                         ArticleTitle = data.ArticleTitle,
