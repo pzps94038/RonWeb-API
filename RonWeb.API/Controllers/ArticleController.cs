@@ -79,6 +79,33 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
+        /// 新增文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public async Task<BaseResponse> Post(CreateArticleRequest data)
+        {
+            var result = new BaseResponse();
+
+            try
+            {
+                await this._helper.CreateAsync(data);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.CreateFail.Description();
+                MongoLogHelper.Error(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// 修改文章
         /// </summary>
         /// <param name="id"></param>

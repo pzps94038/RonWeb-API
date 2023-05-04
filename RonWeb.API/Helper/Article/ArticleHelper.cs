@@ -11,6 +11,8 @@ using RonWeb.API.Enum;
 using RonWeb.API.Models.CustomizeException;
 using System.Collections.Generic;
 using RonWeb.API.Models.Shared;
+using Microsoft.AspNetCore.WebUtilities;
+using System.Text.Encodings.Web;
 
 namespace RonWeb.API.Helper
 {
@@ -167,7 +169,7 @@ namespace RonWeb.API.Helper
                     var filter = Builders<Database.Models.Article>.Filter.Eq(a => a.Id, id);
                     var update = Builders<Database.Models.Article>.Update
                         .Set(a => a.ArticleTitle, data.ArticleTitle)
-                        .Set(a => a.Content, data.Content)
+                        .Set(a => a.Content, HtmlEncoder.Default.Encode(data.Content))
                         .Set(a => a.CategoryId, data.CategoryId)
                         .Set(a => a.UpdateDate, DateTime.Now);
                     await srv.UpdateAsync(filter, update);
@@ -198,6 +200,41 @@ namespace RonWeb.API.Helper
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var filter = Builders<Database.Models.Article>.Filter.Eq(a => a.Id, data);
             await srv.DeleteAsync(filter);
+        }
+
+        public async Task CreateAsync(CreateArticleRequest data)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            using (var session = await srv.client.StartSessionAsync())
+            {
+                try
+                {
+                    var article = new RonWeb.Database.Models.Article()
+                    {
+                        ArticleTitle = data.ArticleTitle,
+                        Content = HtmlEncoder.Default.Encode(data.Content),
+                        CategoryId = data.CategoryId,
+                        ViewCount = 0,
+                        CreateDate = DateTime.Now,
+                        CreateBy = data.CreateBy
+                    };
+                    await srv.CreateAsync(article);
+                    var mappings = data.Labels.Select(a => new RonWeb.Database.Models.ArticleLabelMapping()
+                    {
+                        ArticleId = article.Id,
+                        LabelId = a.LabelId,
+                        CreateDate = DateTime.Now
+                    }).ToList();
+                    await srv.CreateManyAsync(mappings);
+                    await session.CommitTransactionAsync();
+                }
+                catch
+                {
+                    await session.AbortTransactionAsync();
+                    throw;
+                }
+            }
         }
     }
 }
