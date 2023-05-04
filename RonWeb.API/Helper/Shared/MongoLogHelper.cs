@@ -90,7 +90,14 @@ namespace RonWeb.API.Helper.Shared
             }
             catch (Exception mailEx)
             {
-                
+                var mailExLog = new ExceptionLog()
+                {
+                    StackTrace = mailEx.StackTrace,
+                    Message = mailEx.Message,
+                    Level = Level.Error.Description(),
+                    CreateDate = DateTime.Now
+                };
+                await srv.CreateAsync<ExceptionLog>(mailExLog);
             }
         }
     }
