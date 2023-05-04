@@ -83,7 +83,9 @@ namespace RonWeb.Core
             var smtp = new SmtpClient("smtp.gmail.com", 587)
             {
                 Credentials = new System.Net.NetworkCredential("SenderEmail", gmail.GmailSmtPwd),
-                EnableSsl = true
+                EnableSsl = true,
+                UseDefaultCredentials = false,
+                DeliveryMethod = SmtpDeliveryMethod.Network
             };
 
             // 投遞出去
