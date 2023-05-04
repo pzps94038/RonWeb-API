@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net.Mail;
+using System.Text.Encodings.Web;
 
 namespace RonWeb.Core
 {
@@ -60,7 +61,7 @@ namespace RonWeb.Core
 
 	public class GmailTool
 	{
-        public void SendMail(GMail gmail)
+        public async Task SendMail(GMail gmail)
         {
             using (var mail = new MailMessage())
             {
@@ -72,7 +73,7 @@ namespace RonWeb.Core
                 // 主旨
                 mail.Subject = gmail.Subject;
                 // 內文
-                mail.Body = gmail.Body;
+                mail.Body = HtmlEncoder.Default.Encode(gmail.Body);
                 // 內文是否為 HTML
                 mail.IsBodyHtml = gmail.IsBodyHtml;
                 // 優先權
@@ -93,7 +94,7 @@ namespace RonWeb.Core
                 {
                     smtp.Credentials = new System.Net.NetworkCredential(gmail.SenderEmail, gmail.GmailSmtPwd);
                     smtp.EnableSsl = true;
-                    smtp.Send(mail);
+                    await smtp.SendMailAsync(mail);
                 }
             }
         }
