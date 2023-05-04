@@ -32,7 +32,7 @@ namespace RonWeb.API.Controllers
             {
                 await this._helper.SendContactUsMail(req);
                 result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.SendMailFail.Description();
+                result.ReturnMessage = ReturnMessage.SendMailSuccess.Description();
             }
             catch (AuthFailException ex)
             {
