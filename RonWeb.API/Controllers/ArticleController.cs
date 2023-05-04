@@ -85,7 +85,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> Post(CreateArticleRequest data)
+        public async Task<BaseResponse> Post([FromBody] CreateArticleRequest data)
         {
             var result = new BaseResponse();
 
