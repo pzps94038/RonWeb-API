@@ -13,6 +13,7 @@ namespace RonWeb.API.Enum
         ERROR_LOG_EMAIL_ADDRESS,
         GMAIL_ADDRESS,
         GMAIL_DISPLAY_NAME,
+        GMAIL_SENDER_EMAIL,
         GMAIL_PWD
     }
 }

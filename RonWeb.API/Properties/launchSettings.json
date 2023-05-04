@@ -25,6 +25,7 @@
         "AESKEY": "FEDCCA9872543210",
         "GMAIL_ADDRESS": "",
         "GMAIL_DISPLAY_NAME": "",
+        "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": ""
       },
@@ -46,6 +47,7 @@
         "AESKEY": "FEDCCA9872543210",
         "GMAIL_ADDRESS": "",
         "GMAIL_DISPLAY_NAME": "",
+        "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": ""
       },
@@ -66,6 +68,7 @@
         "AESKEY": "FEDCCA9872543210",
         "GMAIL_ADDRESS": "",
         "GMAIL_DISPLAY_NAME": "",
+        "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": ""
       }

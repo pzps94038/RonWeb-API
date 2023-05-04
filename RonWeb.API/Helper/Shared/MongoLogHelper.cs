@@ -72,15 +72,16 @@ namespace RonWeb.API.Helper.Shared
             var tool = new GmailTool();
             var gmailAddress = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_ADDRESS.Description())!;
             var gmailDisplayName = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_DISPLAY_NAME.Description())!;
+            var senderMail = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_SENDER_EMAIL.Description())!;
             var gmailPwd = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_PWD.Description())!;
             var errorLogAddress = Environment.GetEnvironmentVariable(EnvVarEnum.ERROR_LOG_EMAIL_ADDRESS.Description())!.Split(',').ToList();
-            var mail = new GMail(gmailAddress, gmailDisplayName, gmailPwd);
+            var mail = new GMail(gmailAddress, gmailDisplayName, senderMail, gmailPwd);
             mail.Emails = errorLogAddress;
             mail.Subject = "RonWeb-系統發生異常";
             mail.Body = @$"<h1>系統發生異常</h1>
-                            異常訊息: {ex.Message}</br>
-                            異常時間: {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}</br>
-                            異常Stack: {ex.StackTrace}
+                            <h2>異常訊息: {ex.Message}</br></h2>
+                            <h2>異常時間: {DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")}</br></h2>
+                            <p>異常Stack: {ex.StackTrace}</p>
                         ";
             mail.Priority = System.Net.Mail.MailPriority.High;
             tool.SendMail(mail);

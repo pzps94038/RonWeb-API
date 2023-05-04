@@ -40,11 +40,20 @@ namespace RonWeb.Core
         /// </summary>
         public MailAddress From;
 
+        /// <summary>
+        /// 使用哪個email
+        /// </summary>
+        public string SenderEmail { get; set; }
+
+        /// <summary>
+        /// gmail應用密碼
+        /// </summary>
         public string GmailSmtPwd { get; set; }
 
-        public GMail(string address, string displayName, string pwd)
+        public GMail(string address, string displayName, string senderEmail, string pwd)
         {
             this.From = new MailAddress(address, displayName);
+            this.SenderEmail = senderEmail;
             this.GmailSmtPwd = pwd;
         }
     }
@@ -53,45 +62,40 @@ namespace RonWeb.Core
 	{
         public void SendMail(GMail gmail)
         {
-            var mail = new MailMessage();
-
-            // 收件人 Email 地址
-            foreach (var email in gmail.Emails)
+            using (var mail = new MailMessage())
             {
-                mail.To.Add(email);
+                // 收件人 Email 地址
+                foreach (var email in gmail.Emails)
+                {
+                    mail.To.Add(email);
+                }
+                // 主旨
+                mail.Subject = gmail.Subject;
+                // 內文
+                mail.Body = gmail.Body;
+                // 內文是否為 HTML
+                mail.IsBodyHtml = gmail.IsBodyHtml;
+                // 優先權
+                mail.Priority = gmail.Priority;
+
+                // 發信來源,最好與你發送信箱相同,否則容易被其他的信箱判定為垃圾郵件.
+                mail.From = gmail.From;
+
+                // 附加檔案,如果沒有附加檔案不用這一趴
+                foreach (var path in gmail.AttachmentPaths)
+                {
+                    Attachment attachment = new Attachment(path);
+                    mail.Attachments.Add(attachment);
+                }
+
+                // Gmail 的 SMTP 設定
+                using (var smtp = new SmtpClient("smtp.gmail.com", 587))
+                {
+                    smtp.Credentials = new System.Net.NetworkCredential(gmail.SenderEmail, gmail.GmailSmtPwd);
+                    smtp.EnableSsl = true;
+                    smtp.Send(mail);
+                }
             }
-            // 主旨
-            mail.Subject = gmail.Subject;
-            // 內文
-            mail.Body = gmail.Body;
-            // 內文是否為 HTML
-            mail.IsBodyHtml = gmail.IsBodyHtml;
-            // 優先權
-            mail.Priority = gmail.Priority;
-
-            // 發信來源,最好與你發送信箱相同,否則容易被其他的信箱判定為垃圾郵件.
-            mail.From = gmail.From;
-
-            // 附加檔案,如果沒有附加檔案不用這一趴
-            foreach (var path in gmail.AttachmentPaths)
-            {
-                Attachment attachment = new Attachment(path);
-                mail.Attachments.Add(attachment);
-            }
-
-            // Gmail 的 SMTP 設定
-            var smtp = new SmtpClient("smtp.gmail.com", 587)
-            {
-                Credentials = new System.Net.NetworkCredential("SenderEmail", gmail.GmailSmtPwd),
-                EnableSsl = true,
-                UseDefaultCredentials = false,
-                DeliveryMethod = SmtpDeliveryMethod.Network
-            };
-
-            // 投遞出去
-            smtp.Send(mail);
-
-            mail.Dispose();
         }
     }
 }
