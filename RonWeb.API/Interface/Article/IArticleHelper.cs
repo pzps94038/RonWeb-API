@@ -5,7 +5,11 @@ using RonWeb.API.Models.Article;
 
 namespace RonWeb.API.Interface.Article
 {
-	public interface IArticleHelper : IGetAsync<GetByIdArticleResponse, string>, IDeleteAsync<string>, IUpdateAsync<UpdateArticleRequest>
+	public interface IArticleHelper :
+		IGetAsync<GetByIdArticleResponse, string>,
+		IDeleteAsync<string>,
+		IUpdateAsync<UpdateArticleRequest>,
+		ICreateAsync<CreateArticleRequest>
 	{
 		public Task<List<ArticleItem>> GetListAsync(int limit, int offset, OrderEnum order, string? keyword);
 	}
