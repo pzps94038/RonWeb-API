@@ -5,7 +5,8 @@ namespace RonWeb.API.Models.ContactUs
 	{
 		public string ClientToken { get; set; } = string.Empty;
 		public string Subject { get; set; } = string.Empty;
-		public string Body { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public string Body { get; set; } = string.Empty;
     }
 }
 

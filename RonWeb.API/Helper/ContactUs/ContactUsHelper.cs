@@ -37,7 +37,7 @@ namespace RonWeb.API.Helper.ContactUs
                 var errorLogAddress = Environment.GetEnvironmentVariable(EnvVarEnum.ERROR_LOG_EMAIL_ADDRESS.Description())!.Split(',').ToList();
                 var mail = new GMail(gmailAddress, gmailDisplayName, senderMail, gmailPwd);
                 mail.Emails = errorLogAddress;
-                mail.Subject = data.Subject;
+                mail.Subject = $"RONWEB-來自{data.Email}的信件-{data.Subject}";
                 mail.Body = data.Body;
                 mail.Priority = System.Net.Mail.MailPriority.Normal;
                 var tool = new GmailTool();
