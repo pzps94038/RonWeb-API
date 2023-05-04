@@ -28,7 +28,7 @@ namespace RonWeb.API.Helper.ContactUs
             var res = await client.PostAsync(url, byteContent);
             string result = await res.Content.ReadAsStringAsync();
             var recapcha = JsonConvert.DeserializeObject<ReCAPTCHA>(result)!;
-            if (recapcha.Success && recapcha.Score > 5)
+            if (recapcha.Success && recapcha.Score > 0.5)
             {
                 var gmailAddress = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_ADDRESS.Description())!;
                 var gmailDisplayName = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_DISPLAY_NAME.Description())!;
