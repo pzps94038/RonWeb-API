@@ -9,7 +9,11 @@ namespace RonWeb.API.Enum
         AUDIENCE,
         RON_WEB_MONGO_DB_CONSTR,
         AESIV,
-        AESKEY
+        AESKEY,
+        ERROR_LOG_EMAIL_ADDRESS,
+        GMAIL_ADDRESS,
+        GMAIL_DISPLAY_NAME,
+        GMAIL_PWD
     }
 }
 
