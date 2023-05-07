@@ -43,6 +43,12 @@
     <None Remove="Helper\ContactUs\" />
     <None Remove="Interface\ContactUs\" />
     <None Remove="Models\ContactUs\" />
+    <None Remove="Interface\Search\" />
+    <None Remove="Models\Search\" />
+    <None Remove="Helper\Search\" />
+    <None Remove="Models\Register\" />
+    <None Remove="Interface\Register\" />
+    <None Remove="Helper\Register\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\Shared\" />
@@ -61,5 +67,11 @@
     <Folder Include="Helper\ContactUs\" />
     <Folder Include="Interface\ContactUs\" />
     <Folder Include="Models\ContactUs\" />
+    <Folder Include="Interface\Search\" />
+    <Folder Include="Models\Search\" />
+    <Folder Include="Helper\Search\" />
+    <Folder Include="Models\Register\" />
+    <Folder Include="Interface\Register\" />
+    <Folder Include="Helper\Register\" />
   </ItemGroup>
 </Project>

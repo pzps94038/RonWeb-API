@@ -26,11 +26,17 @@ namespace RonWeb.Database.Models
         public string ArticleTitle { get; set; } = string.Empty;
 
         /// <summary>
+        /// 文章預覽內容
+        /// </summary>
+        [BsonElement("PreviewContent")]
+        public string PreviewContent { get; set; } = string.Empty;
+
+        /// <summary>
         /// 文章內容
         /// </summary>
         [BsonElement("Content")]
         public string Content { get; set; } = string.Empty;
-
+        
         /// <summary>
         /// 類別id
         /// </summary>

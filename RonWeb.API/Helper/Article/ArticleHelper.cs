@@ -28,6 +28,7 @@ namespace RonWeb.API.Helper
                 {
                     ArticleId = a.Id,
                     ArticleTitle = a.ArticleTitle,
+                    PreviewContent = a.PreviewContent,
                     Content = a.Content,
                     CategoryId = a.CategoryId,
                     CategoryName = b.CategoryName,
@@ -57,7 +58,7 @@ namespace RonWeb.API.Helper
             return data;
         }
 
-        public async Task<List<ArticleItem>> GetListAsync(int limit, int offset, OrderEnum order, string? keyword)
+        public async Task<GetArticleResponse> GetListAsync(int? page)
         {
             var result = new List<ArticleItem>();
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
@@ -72,6 +73,7 @@ namespace RonWeb.API.Helper
                 a.ArticleTitle,
                 a.CategoryId,
                 b.CategoryName,
+                a.PreviewContent,
                 a.Content,
                 a.CreateDate,
                 a.ViewCount,
@@ -81,6 +83,7 @@ namespace RonWeb.API.Helper
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
+                a.PreviewContent,
                 a.Content,
                 a.CreateDate,
                 a.ViewCount,
@@ -91,30 +94,20 @@ namespace RonWeb.API.Helper
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
+                a.PreviewContent,
                 a.Content,
                 a.CreateDate,
                 a.ViewCount,
                 a.LabelId,
                 b.LabelName
             });
-
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                keyword = keyword.Trim();
-                query = query.Where(a =>
-                    a.ArticleTitle.Contains(keyword) ||
-                    a.Content.Contains(keyword) ||
-                    a.CategoryName.Contains(keyword) ||
-                    a.LabelName.Contains(keyword)
-                );
-            }
             var group = query.Select(a=> new
             {
                 a.Id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
-                Description = a.Content.Substring(0, 150),
+                a.PreviewContent,
                 a.CreateDate,
                 a.LabelId,
                 a.LabelName
@@ -125,22 +118,16 @@ namespace RonWeb.API.Helper
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
-                a.Description,
+                a.PreviewContent,
                 a.CreateDate,
             });
 
-            switch (order)
-            {
-                case OrderEnum.TA:
-                    group = group.OrderBy(a => a.Key.CreateDate);
-                    break;
-                case OrderEnum.TD:
-                    group = group.OrderByDescending(a => a.Key.CreateDate);
-                    break;
-                default:
-                    throw new NotFoundException();
-            }
-            var groupList = await group.Skip(offset).Take(limit).ToListAsync();
+            group = group.OrderByDescending(a => a.Key.CreateDate);
+            var curPage = page.GetValueOrDefault(1);
+            var pageSize = 10;
+            var skip = (curPage - 1) * pageSize;
+            var total = group.Count();
+            var groupList = skip == 0 ? await group.Take(pageSize).ToListAsync() : await group.Skip(skip).Take(pageSize).ToListAsync();
             foreach (var item in groupList)
             {
                 var articleItem = new ArticleItem()
@@ -149,13 +136,17 @@ namespace RonWeb.API.Helper
                     ArticleTitle = item.Key.ArticleTitle,
                     CategoryId = item.Key.CategoryId,
                     CategoryName = item.Key.CategoryName,
-                    Description = item.Key.Description,
+                    PreviewContent = item.Key.PreviewContent,
                     CreateDate = item.Key.CreateDate,
                     Labels = item.Select(a => new Label() { LabelId = a.LabelId, LabelName = a.LabelName }).ToList()
                 };
                 result.Add(articleItem);
             }
-            return result;
+            return new GetArticleResponse()
+            {
+                Total = total,
+                Articles = result
+            };
         }
 
         public async Task UpdateAsync(string id, UpdateArticleRequest data)
@@ -171,6 +162,7 @@ namespace RonWeb.API.Helper
                     var update = Builders<Database.Models.Article>.Update
                         .Set(a => a.ArticleTitle, data.ArticleTitle)
                         .Set(a => a.Content, HtmlEncoder.Default.Encode(data.Content))
+                        .Set(a => a.PreviewContent, HtmlEncoder.Default.Encode(data.PreviewContent))
                         .Set(a => a.CategoryId, data.CategoryId)
                         .Set(a => a.UpdateDate, DateTime.Now);
                     await srv.UpdateAsync(filter, update);
@@ -212,10 +204,12 @@ namespace RonWeb.API.Helper
                 try
                 {
                     session.StartTransaction();
+                    await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleAsync(a => a.Id == data.CategoryId);
                     var article = new RonWeb.Database.Models.Article()
                     {
                         ArticleTitle = data.ArticleTitle,
                         Content = HtmlEncoder.Default.Encode(data.Content),
+                        PreviewContent = HtmlEncoder.Default.Encode(data.PreviewContent),
                         CategoryId = data.CategoryId,
                         ViewCount = 0,
                         CreateDate = DateTime.Now,
