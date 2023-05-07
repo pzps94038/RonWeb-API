@@ -27,12 +27,12 @@ namespace RonWeb.API.Controllers
         /// <param name="keyword"></param>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<List<ArticleItem>>> Get(int limit, int offset, OrderEnum order, string? keyword)
+        public async Task<BaseResponse<GetArticleResponse>> Get(int? page)
         {
-            var result = new BaseResponse<List<ArticleItem>>();
+            var result = new BaseResponse<GetArticleResponse> ();
             try
             {
-                var data = await this._helper.GetListAsync(limit, offset, order, keyword);
+                var data = await this._helper.GetListAsync(page);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
