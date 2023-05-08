@@ -21,10 +21,6 @@ namespace RonWeb.API.Controllers
         /// <summary>
         /// 取得文章列表
         /// </summary>
-        /// <param name="limit"></param>
-        /// <param name="offset"></param>
-        /// <param name="order"></param>
-        /// <param name="keyword"></param>
         /// <returns></returns>
         [HttpGet]
         public async Task<BaseResponse<GetArticleResponse>> Get(int? page)

@@ -50,33 +50,6 @@ namespace RonWeb.API.Controllers
 
         [HttpGet]
         [Route("[action]")]
-        public async Task<BaseResponse<KeywordeResponse>> Label(string id, int? page)
-        {
-            var result = new BaseResponse<KeywordeResponse>();
-            try
-            {
-                var data = await this._helper.Label(id, page);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException ex)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                MongoLogHelper.Error(ex);
-            }
-
-            return result;
-        }
-
-        [HttpGet]
-        [Route("[action]")]
         public async Task<BaseResponse<KeywordeResponse>> Category(string id, int? page)
         {
             var result = new BaseResponse<KeywordeResponse>();

@@ -58,9 +58,6 @@
     <Folder Include="Helper\Shared\" />
     <Folder Include="Enum\" />
     <Folder Include="Models\CustomizeException\" />
-    <Folder Include="Helper\ArticleLabel\" />
-    <Folder Include="Interface\ArticleLabel\" />
-    <Folder Include="Models\ArticleLabel\" />
     <Folder Include="Models\Login\" />
     <Folder Include="Helper\Login\" />
     <Folder Include="Interface\Login\" />
