@@ -8,6 +8,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.ArticleLabel;
+using MongoDB.Bson;
 
 namespace RonWeb.API.Helper.ArticleLabel
 {
@@ -42,19 +43,20 @@ namespace RonWeb.API.Helper.ArticleLabel
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var list = await srv.Query<Database.Models.ArticleLabel>()
-                .Select(a=> new Label()
+                .Select(a=> new
                 {
-                    LabelId = a.Id,
+                    LabelId = a._id,
                     LabelName = a.LabelName
                 }).ToListAsync();
-            return list;
+            var result = list.Select(a => new Label() { LabelId = a.LabelId.ToString(), LabelName = a.LabelName }).ToList();
+            return result;
         }
 
         public async Task UpdateAsync(string id, Label data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.ArticleLabel>.Filter.Eq(a => a.Id, id);
+            var filter = Builders<Database.Models.ArticleLabel>.Filter.Eq(a => a._id, ObjectId.Parse(id));
             var update = Builders<Database.Models.ArticleLabel>.Update.Set(a => a.LabelName, data.LabelName);
             await srv.UpdateAsync(filter, update);
         }
@@ -63,7 +65,7 @@ namespace RonWeb.API.Helper.ArticleLabel
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.ArticleLabel>.Filter.Eq(a => a.Id, data);
+            var filter = Builders<Database.Models.ArticleLabel>.Filter.Eq(a => a._id, ObjectId.Parse(data));
             await srv.DeleteAsync(filter);
         }
     }

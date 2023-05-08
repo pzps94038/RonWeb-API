@@ -8,6 +8,7 @@ using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.Database.Models;
+using MongoDB.Bson;
 
 namespace RonWeb.API.Helper.RefreshToken
 {
@@ -20,11 +21,11 @@ namespace RonWeb.API.Helper.RefreshToken
             var userMain = srv.Query<Database.Models.UserMain>();
             // 沒過期才能換新token
             var log = await srv.Query<Database.Models.RefreshTokenLog>()
-                .Where(a=> a.UserId == data.UserId)
+                .Where(a=> a.UserId == ObjectId.Parse(data.UserId))
                 .Where(a=> a.RefreshToken == data.RefreshToken)
-                .Join(userMain, a=> a.UserId, b=> b.Id, (a,b)=> new 
+                .Join(userMain, a=> a.UserId, b=> b._id, (a,b)=> new 
                 {
-                    UserId = b.Id,
+                    UserId = b._id,
                     Email = b.Email,
                     ExpirationDate = a.ExpirationDate,
                 })
@@ -40,7 +41,7 @@ namespace RonWeb.API.Helper.RefreshToken
             else 
             {
                 string refreshToken = JwtTool.CreateRefreshToken();
-                var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId, RoleEnum.ManagerUser.Description());
+                var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
                 string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
                 string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
                 string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
