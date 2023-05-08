@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using MongoDB.Bson;
+using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Enum;
 using RonWeb.API.Interface.ArticleCategory;
@@ -41,7 +42,7 @@ namespace RonWeb.API.Helper.ArticleCategory
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a.Id, data);
+            var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, ObjectId.Parse(data));
             await srv.DeleteAsync(filter);
         }
 
@@ -50,19 +51,20 @@ namespace RonWeb.API.Helper.ArticleCategory
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var list = await srv.Query<Database.Models.ArticleCategory>()
-                .Select(a => new Category()
+                .Select(a => new
                 {
-                    CategoryId = a.Id,
+                    CategoryId = a._id,
                     CategoryName = a.CategoryName
                 }).ToListAsync();
-            return list;
+            var result = list.Select(a => new Category() { CategoryId = a.CategoryId.ToString(), CategoryName = a.CategoryName }).ToList();
+            return result;
         }
 
         public async Task UpdateAsync(string id, Category data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a.Id, id);
+            var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, ObjectId.Parse(id));
             var update = Builders<Database.Models.ArticleCategory>.Update.Set(a => a.CategoryName, data.CategoryName);
             await srv.UpdateAsync(filter, update);
         }

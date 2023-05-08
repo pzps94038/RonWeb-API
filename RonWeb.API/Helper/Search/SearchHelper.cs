@@ -11,6 +11,7 @@ using MongoDB.Driver.Linq;
 using MongoDB.Driver;
 using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 using RonWeb.API.Models.CustomizeException;
+using MongoDB.Bson;
 
 namespace RonWeb.API.Helper.Search
 {
@@ -22,7 +23,7 @@ namespace RonWeb.API.Helper.Search
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var article = srv.Query<Article>();
-            var category = await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleOrDefaultAsync(a=> a.Id == id);
+            var category = await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleOrDefaultAsync(a=> a._id == ObjectId.Parse(id));
             if (category == null)
             {
                 throw new NotFoundException();
@@ -30,9 +31,9 @@ namespace RonWeb.API.Helper.Search
             var categoryQuery = srv.Query<RonWeb.Database.Models.ArticleCategory>();
             var label = srv.Query<RonWeb.Database.Models.ArticleLabel>();
             var mapping = srv.Query<ArticleLabelMapping>();
-            var query = article.Join(categoryQuery, a => a.CategoryId, b => b.Id, (a, b) => new
+            var query = article.Join(categoryQuery, a => a.CategoryId, b => b._id, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 b.CategoryName,
@@ -41,10 +42,10 @@ namespace RonWeb.API.Helper.Search
                 a.CreateDate,
                 a.ViewCount,
             })
-            .Where(a=> a.CategoryId == id)
-            .Join(mapping, a => a.Id, b => b.ArticleId, (a, b) => new
+            .Where(a=> a.CategoryId == ObjectId.Parse(id))
+            .Join(mapping, a => a._id, b => b.ArticleId, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -53,9 +54,9 @@ namespace RonWeb.API.Helper.Search
                 a.CreateDate,
                 a.ViewCount,
                 b.LabelId
-            }).Join(label, a => a.LabelId, b => b.Id, (a, b) => new
+            }).Join(label, a => a.LabelId, b => b._id, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -68,7 +69,7 @@ namespace RonWeb.API.Helper.Search
             });
             var group = query.Select(a => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -79,7 +80,7 @@ namespace RonWeb.API.Helper.Search
 
             }).GroupBy(a => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -97,13 +98,13 @@ namespace RonWeb.API.Helper.Search
             {
                 var articleItem = new ArticleItem()
                 {
-                    ArticleId = item.Key.Id,
+                    ArticleId = item.Key._id.ToString(),
                     ArticleTitle = item.Key.ArticleTitle,
-                    CategoryId = item.Key.CategoryId,
+                    CategoryId = item.Key.CategoryId.ToString(),
                     CategoryName = item.Key.CategoryName,
                     PreviewContent = item.Key.PreviewContent,
                     CreateDate = item.Key.CreateDate,
-                    Labels = item.Select(a => new Label() { LabelId = a.LabelId, LabelName = a.LabelName }).ToList()
+                    Labels = item.Select(a => new Label() { LabelId = a.LabelId.ToString(), LabelName = a.LabelName }).ToList()
                 };
                 result.Add(articleItem);
             }
@@ -124,9 +125,9 @@ namespace RonWeb.API.Helper.Search
             var category = srv.Query<RonWeb.Database.Models.ArticleCategory>();
             var label = srv.Query<RonWeb.Database.Models.ArticleLabel>();
             var mapping = srv.Query<ArticleLabelMapping>();
-            var query = article.Join(category, a => a.CategoryId, b => b.Id, (a, b) => new
+            var query = article.Join(category, a => a.CategoryId, b => b._id, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 b.CategoryName,
@@ -134,9 +135,9 @@ namespace RonWeb.API.Helper.Search
                 a.Content,
                 a.CreateDate,
                 a.ViewCount,
-            }).Join(mapping, a => a.Id, b => b.ArticleId, (a, b) => new
+            }).Join(mapping, a => a._id, b => b.ArticleId, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -145,9 +146,9 @@ namespace RonWeb.API.Helper.Search
                 a.CreateDate,
                 a.ViewCount,
                 b.LabelId
-            }).Join(label, a => a.LabelId, b => b.Id, (a, b) => new
+            }).Join(label, a => a.LabelId, b => b._id, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -171,7 +172,7 @@ namespace RonWeb.API.Helper.Search
             }
             var group = query.Select(a => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -182,7 +183,7 @@ namespace RonWeb.API.Helper.Search
 
             }).GroupBy(a => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -200,13 +201,13 @@ namespace RonWeb.API.Helper.Search
             {
                 var articleItem = new ArticleItem()
                 {
-                    ArticleId = item.Key.Id,
+                    ArticleId = item.Key._id.ToString(),
                     ArticleTitle = item.Key.ArticleTitle,
-                    CategoryId = item.Key.CategoryId,
+                    CategoryId = item.Key.CategoryId.ToString(),
                     CategoryName = item.Key.CategoryName,
                     PreviewContent = item.Key.PreviewContent,
                     CreateDate = item.Key.CreateDate,
-                    Labels = item.Select(a => new Label() { LabelId = a.LabelId, LabelName = a.LabelName }).ToList()
+                    Labels = item.Select(a => new Label() { LabelId = a.LabelId.ToString(), LabelName = a.LabelName }).ToList()
                 };
                 result.Add(articleItem);
             }
@@ -224,7 +225,7 @@ namespace RonWeb.API.Helper.Search
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var article = srv.Query<Article>();
-            var label = await srv.Query<RonWeb.Database.Models.ArticleLabel>().SingleOrDefaultAsync(a => a.Id == id);
+            var label = await srv.Query<RonWeb.Database.Models.ArticleLabel>().SingleOrDefaultAsync(a => a._id == ObjectId.Parse(id));
             if (label == null)
             {
                 throw new NotFoundException();
@@ -232,9 +233,9 @@ namespace RonWeb.API.Helper.Search
             var category= srv.Query<RonWeb.Database.Models.ArticleCategory>();
             var labelQuery = srv.Query<RonWeb.Database.Models.ArticleLabel>();
             var mapping = srv.Query<ArticleLabelMapping>();
-            var query = article.Join(category, a => a.CategoryId, b => b.Id, (a, b) => new
+            var query = article.Join(category, a => a.CategoryId, b => b._id, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 b.CategoryName,
@@ -243,10 +244,10 @@ namespace RonWeb.API.Helper.Search
                 a.CreateDate,
                 a.ViewCount,
             })
-            .Where(a => a.CategoryId == id)
-            .Join(mapping, a => a.Id, b => b.ArticleId, (a, b) => new
+            .Where(a => a.CategoryId == ObjectId.Parse(id))
+            .Join(mapping, a => a._id, b => b.ArticleId, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -255,9 +256,9 @@ namespace RonWeb.API.Helper.Search
                 a.CreateDate,
                 a.ViewCount,
                 b.LabelId
-            }).Join(labelQuery, a => a.LabelId, b => b.Id, (a, b) => new
+            }).Join(labelQuery, a => a.LabelId, b => b._id, (a, b) => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -268,10 +269,10 @@ namespace RonWeb.API.Helper.Search
                 a.LabelId,
                 b.LabelName
             })
-            .Where(a=> a.LabelId == id);
+            .Where(a=> a.LabelId == ObjectId.Parse(id));
             var group = query.Select(a => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -282,7 +283,7 @@ namespace RonWeb.API.Helper.Search
 
             }).GroupBy(a => new
             {
-                a.Id,
+                a._id,
                 a.ArticleTitle,
                 a.CategoryId,
                 a.CategoryName,
@@ -300,13 +301,13 @@ namespace RonWeb.API.Helper.Search
             {
                 var articleItem = new ArticleItem()
                 {
-                    ArticleId = item.Key.Id,
+                    ArticleId = item.Key._id.ToString(),
                     ArticleTitle = item.Key.ArticleTitle,
-                    CategoryId = item.Key.CategoryId,
+                    CategoryId = item.Key.CategoryId.ToString(),
                     CategoryName = item.Key.CategoryName,
                     PreviewContent = item.Key.PreviewContent,
                     CreateDate = item.Key.CreateDate,
-                    Labels = item.Select(a => new Label() { LabelId = a.LabelId, LabelName = a.LabelName }).ToList()
+                    Labels = item.Select(a => new Label() { LabelId = a.LabelId.ToString(), LabelName = a.LabelName }).ToList()
                 };
                 result.Add(articleItem);
             }

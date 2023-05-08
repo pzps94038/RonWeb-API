@@ -17,7 +17,7 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = string.Empty;
+        public ObjectId _id { get; set; }
 
         /// <summary>
         /// 文章標題
@@ -41,7 +41,7 @@ namespace RonWeb.Database.Models
         /// 類別id
         /// </summary>
         [BsonElement("CategoryId")]
-        public string CategoryId { get; set; } = string.Empty;
+        public ObjectId CategoryId { get; set; }
 
         /// <summary>
         /// 瀏覽次數

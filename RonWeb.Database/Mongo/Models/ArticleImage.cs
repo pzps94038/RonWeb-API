@@ -17,31 +17,31 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = string.Empty;
+        public ObjectId _id { get; set; }
 
         /// <summary>
         /// 文章id
         /// </summary>
         [BsonElement("ArticleId")]
-        public string ArticleId = string.Empty;
+        public ObjectId ArticleId { get; set; }
 
         /// <summary>
         /// 圖片id
         /// </summary>
         [BsonElement("ImageId")]
-        public string ImageId = string.Empty;
+        public ObjectId ImageId { get; set; }
 
         /// <summary>
         /// 圖片名稱
         /// </summary>
         [BsonElement("ImageName")]
-        public string ImageName = string.Empty;
+        public string ImageName { get; set; } = string.Empty;
 
         /// <summary>
         /// 圖片路徑
         /// </summary>
         [BsonElement("ImagePath")]
-        public string ImagePath = string.Empty;
+        public string ImagePath { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立日期

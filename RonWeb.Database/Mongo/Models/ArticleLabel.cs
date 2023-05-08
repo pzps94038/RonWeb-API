@@ -17,13 +17,13 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id = string.Empty;
+        public ObjectId _id { get; set; }
 
         /// <summary>
         /// 標籤名稱
         /// </summary>
         [BsonElement("LabelName")]
-        public string LabelName = string.Empty;
+        public string LabelName { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立日期

@@ -12,7 +12,7 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; } = string.Empty;
+        public ObjectId _id { get; set; }
 
         /// <summary>
         /// 帳號

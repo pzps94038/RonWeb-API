@@ -5,7 +5,7 @@ namespace RonWeb.API.Models.Login
 {
 	public class LoginResponse
 	{
-		public Token token { get; set; } = new Token();
+		public Token Token { get; set; } = new Token();
 	}
 }
 

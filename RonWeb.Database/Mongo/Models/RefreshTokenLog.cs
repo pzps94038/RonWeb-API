@@ -17,7 +17,7 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id = string.Empty;
+        public ObjectId _id { get; set; }
 
         /// <summary>
         /// RefreshToken
@@ -29,7 +29,7 @@ namespace RonWeb.Database.Models
         /// 帳號
         /// </summary>
         [BsonElement("UserId")]
-        public string UserId { get; set; } = string.Empty;
+        public ObjectId UserId { get; set; }
 
         /// <summary>
         /// 過期時間

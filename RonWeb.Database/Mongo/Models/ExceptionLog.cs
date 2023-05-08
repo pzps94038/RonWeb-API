@@ -17,25 +17,25 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id = string.Empty;
+        public ObjectId _id { get; set; }
 
         /// <summary>
         /// 訊息
         /// </summary>
         [BsonElement("Message")]
-        public string? Message;
+        public string? Message { get; set; }
 
         /// <summary>
         /// 堆疊
         /// </summary>
         [BsonElement("StackTrace")]
-        public string? StackTrace;
+        public string? StackTrace { get; set; }
 
         /// <summary>
         /// 信息級別
         /// </summary>
         [BsonElement("Level")]
-        public string Level = string.Empty;
+        public string Level { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立日期

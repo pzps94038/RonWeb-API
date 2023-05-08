@@ -36,7 +36,7 @@ namespace RonWeb.API.Helper.Login
             else
             {
                 string refreshToken = JwtTool.CreateRefreshToken();
-                var claims = JwtTool.CreateClaims(user.Email ?? "", user.Id, RoleEnum.ManagerUser.Description());
+                var claims = JwtTool.CreateClaims(user.Email ?? "", user._id.ToString(), RoleEnum.ManagerUser.Description());
                 string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
                 string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
                 string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
@@ -54,7 +54,7 @@ namespace RonWeb.API.Helper.Login
                 var log = new RefreshTokenLog()
                 {
                     RefreshToken = refreshToken,
-                    UserId = user.Id,
+                    UserId = user._id,
                     ExpirationDate = refreshTokenExpTime,
                     CreateDate = DateTime.Now
                 };

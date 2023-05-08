@@ -10,8 +10,125 @@ namespace RonWeb.Core
         public AESConvertDataException() : base("AES轉換資料失敗") { }
     }
 
+    public class RsaKey
+    {
+        public string PublicKey { get; set; } = string.Empty;
+        public string PrivateKey { get; set; } = string.Empty;
+        public RsaKey(string publicKey, string privateKey)
+        {
+            this.PublicKey = publicKey;
+            this.PrivateKey = privateKey;
+        }
+    }
+
     public class EncryptTool
 	{
+        /// <summary>
+        /// 產生RsaKey
+        /// </summary>
+        /// <returns></returns>
+        public static RsaKey GenerateRsaKey()
+        {
+            using (var rsa = new RSACryptoServiceProvider(2048))
+            {
+                // 生成public key
+                var publicKeyParam = rsa.ExportParameters(false);
+                string publicKey = Convert.ToBase64String(publicKeyParam.Modulus!);
+                var privateKeyParam = rsa.ExportParameters(true);
+                string privateKey = Convert.ToBase64String(privateKeyParam.D!);
+                return new RsaKey(publicKey, privateKey);
+            }
+        }
+
+        /// <summary>
+        /// RSA加密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="rsaKey"></param>
+        /// <returns></returns>
+        public static string RsaEncrypt(string data, RsaKey rsaKey)
+        {
+            var rsa = new RSACryptoServiceProvider();
+            rsa.ImportParameters(new RSAParameters
+            {
+                Modulus = Convert.FromBase64String(rsaKey.PublicKey),
+            });
+            rsa.ImportParameters(new RSAParameters
+            {
+                D = Convert.FromBase64String(rsaKey.PrivateKey),
+            });
+            var encryptedData = rsa.Encrypt(Encoding.UTF8.GetBytes(data), false);
+            return Convert.ToBase64String(encryptedData);
+        }
+
+        /// <summary>
+        /// RSA加密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="rsaKey"></param>
+        /// <returns></returns>
+        public static string RsaEncrypt<T>(T data, RsaKey rsaKey)
+        {
+            string plainText = JsonConvert.SerializeObject(data);
+            var rsa = new RSACryptoServiceProvider();
+            rsa.ImportParameters(new RSAParameters
+            {
+                Modulus = Convert.FromBase64String(rsaKey.PublicKey),
+            });
+            rsa.ImportParameters(new RSAParameters
+            {
+                D = Convert.FromBase64String(rsaKey.PrivateKey),
+            });
+            var encryptedData = rsa.Encrypt(Encoding.UTF8.GetBytes(plainText), false);
+            return Convert.ToBase64String(encryptedData);
+        }
+
+        /// <summary>
+        /// RSA解密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="rsaKey"></param>
+        /// <returns></returns>
+        public static string RsaDecrypt(string data, RsaKey rsaKey)
+        {
+            var rsa = new RSACryptoServiceProvider();
+            rsa.ImportParameters(new RSAParameters
+            {
+                Modulus = Convert.FromBase64String(rsaKey.PublicKey),
+            });
+            rsa.ImportParameters(new RSAParameters
+            {
+                D = Convert.FromBase64String(rsaKey.PrivateKey),
+            });
+            var encryptedData = rsa.Decrypt(Encoding.UTF8.GetBytes(data), false);
+            return Encoding.UTF8.GetString(encryptedData);
+        }
+
+        /// <summary>
+        /// RSA解密
+        /// </summary>
+        /// <param name="data"></param>
+        /// <param name="rsaKey"></param>
+        /// <returns></returns>
+        public static T RsaDecrypt<T>(string data, RsaKey rsaKey)
+        {
+            var rsa = new RSACryptoServiceProvider();
+            rsa.ImportParameters(new RSAParameters
+            {
+                Modulus = Convert.FromBase64String(rsaKey.PublicKey),
+            });
+            rsa.ImportParameters(new RSAParameters
+            {
+                D = Convert.FromBase64String(rsaKey.PrivateKey),
+            });
+            var encryptedData = rsa.Decrypt(Encoding.UTF8.GetBytes(data), false);
+            var result = JsonConvert.DeserializeObject<T>(Encoding.UTF8.GetString(encryptedData));
+            if (result == null)
+                throw new AESConvertDataException();
+            else
+                return result;
+        }
+
         /// <summary>
         /// SHA256加密
         /// </summary>
