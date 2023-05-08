@@ -78,9 +78,8 @@ namespace RonWeb.API.Helper
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var article = srv.Query<Article>();
             var category = srv.Query<RonWeb.Database.Models.ArticleCategory>();
-            var label = srv.Query<RonWeb.Database.Models.ArticleLabel>();
-            var mapping = srv.Query<ArticleLabelMapping> ();
-            var c = article.Join(category, a => a.CategoryId, b => b._id, (a, b) => new
+            // 撈文章
+            var query = article.Join(category, a => a.CategoryId, b => b._id, (a, b) => new
             {
                 a._id,
                 a.ArticleTitle,
@@ -90,85 +89,47 @@ namespace RonWeb.API.Helper
                 a.Content,
                 a.CreateDate,
                 a.ViewCount,
-            }).ToList();
-            var query = article.Join(category, a=> a.CategoryId, b=> b._id, (a,b)=> new
-            {
-                a._id,
-                a.ArticleTitle,
-                a.CategoryId,
-                b.CategoryName,
-                a.PreviewContent,
-                a.Content,
-                a.CreateDate,
-                a.ViewCount,
-            }).Join(mapping, a => a._id, b => b.ArticleId, (a, b) => new
-            {
-                a._id,
-                a.ArticleTitle,
-                a.CategoryId,
-                a.CategoryName,
-                a.PreviewContent,
-                a.Content,
-                a.CreateDate,
-                a.ViewCount,
-                b.LabelId
-            }).Join(label, a => a.LabelId, b => b._id, (a, b) => new
-            {
-                a._id,
-                a.ArticleTitle,
-                a.CategoryId,
-                a.CategoryName,
-                a.PreviewContent,
-                a.Content,
-                a.CreateDate,
-                a.ViewCount,
-                a.LabelId,
-                b.LabelName
-            });
-            var group = query.Select(a=> new
-            {
-                a._id,
-                a.ArticleTitle,
-                a.CategoryId,
-                a.CategoryName,
-                a.PreviewContent,
-                a.CreateDate,
-                a.LabelId,
-                a.LabelName
-                
-            }).GroupBy(a => new
-            {
-                a._id,
-                a.ArticleTitle,
-                a.CategoryId,
-                a.CategoryName,
-                a.PreviewContent,
-                a.CreateDate,
-            });
-
-            group = group.OrderByDescending(a => a.Key.CreateDate);
+            }).OrderByDescending(a => a.CreateDate);
             var curPage = page.GetValueOrDefault(1);
             var pageSize = 10;
             var skip = (curPage - 1) * pageSize;
-            var total = group.Count();
-            var groupList = skip == 0 ? await group.Take(pageSize).ToListAsync() : await group.Skip(skip).Take(pageSize).ToListAsync();
-            foreach (var item in groupList)
+            var total = query.Count();
+            var articleList = skip == 0 ? await query.Take(pageSize).ToListAsync() : await query.Skip(skip).Take(pageSize).ToListAsync();
+            // 找對應標籤
+            var articleIdList = articleList.Select(a => a._id).ToList();
+            var mappingList = await srv.Query<ArticleLabelMapping>()
+                .Where(a=> articleIdList.Contains(a.ArticleId))
+                .ToListAsync();
+            var mappintLabels = mappingList.Select(a => a.LabelId).ToList();
+            var labelList = srv.Query<RonWeb.Database.Models.ArticleLabel>().Where(a=> mappintLabels.Contains(a._id));
+           
+            foreach (var item in articleList)
             {
+                var mapping = mappingList
+                    .Where(a => a.ArticleId == item._id)
+                    .Select(a => a.LabelId)
+                    .ToList();
                 var articleItem = new ArticleItem()
                 {
-                    ArticleId = item.Key._id.ToString(),
-                    ArticleTitle = item.Key.ArticleTitle,
-                    CategoryId = item.Key.CategoryId.ToString(),
-                    CategoryName = item.Key.CategoryName,
-                    PreviewContent = item.Key.PreviewContent,
-                    CreateDate = item.Key.CreateDate,
-                    Labels = item.Select(a => new Label() { LabelId = a.LabelId.ToString(), LabelName = a.LabelName }).ToList()
+                    ArticleId = item._id.ToString(),
+                    ArticleTitle = item.ArticleTitle,
+                    CategoryId = item.CategoryId.ToString(),
+                    CategoryName = item.CategoryName,
+                    PreviewContent = item.PreviewContent,
+                    CreateDate = item.CreateDate,
+                    Labels = labelList.Where(a=> mapping.Contains(a._id))
+                    .Select(a=> new Label() 
+                    {
+                        LabelId = a._id.ToString(),
+                        LabelName = a.LabelName
+                    })
+                    .ToList()
                 };
                 result.Add(articleItem);
             }
             return new GetArticleResponse()
             {
-                Total = total,
+                Total = 0,
                 Articles = result
             };
         }
@@ -217,6 +178,10 @@ namespace RonWeb.API.Helper
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, ObjectId.Parse(data));
             await srv.DeleteAsync(filter);
+            var mappingFilter = Builders<Database.Models.ArticleLabelMapping>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
+            await srv.DeleteAsync(mappingFilter);
+            var imgFilter = Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
+            await srv.DeleteAsync(imgFilter);
         }
 
         public async Task CreateAsync(CreateArticleRequest data)
@@ -240,12 +205,19 @@ namespace RonWeb.API.Helper
                         CreateBy = data.CreateBy
                     };
                     await srv.CreateAsync(article);
+                    
                     var mappings = data.Labels.Select(a => new RonWeb.Database.Models.ArticleLabelMapping()
                     {
                         ArticleId = article._id,
                         LabelId = ObjectId.Parse(a.LabelId),
                         CreateDate = DateTime.Now
                     }).ToList();
+                    var idList = mappings.Select(a => a.LabelId).ToList();
+                    bool allIdsExistInDb = srv.Query<RonWeb.Database.Models.ArticleLabel>().Count(a => idList.Contains(a._id)) == idList.Count;
+                    if (!allIdsExistInDb) 
+                    {
+                        throw new NotFoundException();
+                    }
                     if (mappings.Count > 0)
                     {
                         await srv.CreateManyAsync(mappings);
