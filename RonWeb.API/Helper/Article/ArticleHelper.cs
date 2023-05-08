@@ -101,7 +101,7 @@ namespace RonWeb.API.Helper
                 .Where(a=> articleIdList.Contains(a.ArticleId))
                 .ToListAsync();
             var mappintLabels = mappingList.Select(a => a.LabelId).ToList();
-            var labelList = srv.Query<RonWeb.Database.Models.ArticleLabel>().Where(a=> mappintLabels.Contains(a._id));
+            var labelList = srv.Query<RonWeb.Database.Models.ArticleLabel>().Where(a=> mappintLabels.Contains(a._id)).ToList();
            
             foreach (var item in articleList)
             {
@@ -161,7 +161,10 @@ namespace RonWeb.API.Helper
                         ArticleId = ObjectId.Parse(id),
                         CreateDate = DateTime.Now,
                     }).ToList();
-                    await srv.CreateManyAsync(mappingLabels);
+                    if (mappingLabels.Count > 0) 
+                    {
+                        await srv.CreateManyAsync(mappingLabels);
+                    }
                     await session.CommitTransactionAsync();
                 }
                 catch 
@@ -176,12 +179,24 @@ namespace RonWeb.API.Helper
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, ObjectId.Parse(data));
-            await srv.DeleteAsync(filter);
-            var mappingFilter = Builders<Database.Models.ArticleLabelMapping>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
-            await srv.DeleteAsync(mappingFilter);
-            var imgFilter = Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
-            await srv.DeleteAsync(imgFilter);
+            using (var session = await srv.client.StartSessionAsync()) 
+            {
+                try
+                {
+                    session.StartTransaction();
+                    var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, ObjectId.Parse(data));
+                    var mappingFilter = Builders<Database.Models.ArticleLabelMapping>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
+                    var imgFilter = Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
+                    await Task.WhenAll(srv.DeleteAsync(filter), srv.DeleteAsync(mappingFilter), srv.DeleteAsync(imgFilter));
+                    await session.CommitTransactionAsync();
+                }
+                catch 
+                {
+                    await session.AbortTransactionAsync();
+                    throw;
+                }
+            }
+           
         }
 
         public async Task CreateAsync(CreateArticleRequest data)
