@@ -26,7 +26,7 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
-        [HttpGet]
+        [HttpGet("{keyword}")]
         [Route("[action]")]
         public async Task<BaseResponse<KeywordeResponse>> Keyword(string keyword, int? page)
         {
@@ -48,7 +48,7 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
-        [HttpGet]
+        [HttpGet("{id}")]
         [Route("[action]")]
         public async Task<BaseResponse<KeywordeResponse>> Category(string id, int? page)
         {
