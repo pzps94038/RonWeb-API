@@ -118,6 +118,12 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
             }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+                MongoLogHelper.Warn(ex);
+            }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
@@ -143,6 +149,12 @@ namespace RonWeb.API.Controllers
                 await this._helper.DeleteAsync(id);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+                MongoLogHelper.Warn(ex);
             }
             catch (Exception ex)
             {

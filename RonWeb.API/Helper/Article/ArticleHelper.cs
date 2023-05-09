@@ -25,8 +25,11 @@ namespace RonWeb.API.Helper
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
             var category = srv.Query<Database.Models.ArticleCategory>();
-            var data = await srv.Query<Article>()
-                .Join(category, a=> a.CategoryId, b=> b._id, (a,b)=> new
+            ObjectId objId = new ObjectId();
+            if (ObjectId.TryParse(id, out objId))
+            {
+                var data = await srv.Query<Article>()
+                .Join(category, a => a.CategoryId, b => b._id, (a, b) => new
                 {
                     ArticleId = a._id,
                     ArticleTitle = a.ArticleTitle,
@@ -37,28 +40,33 @@ namespace RonWeb.API.Helper
                     ViewCount = a.ViewCount,
                     CreateDate = a.CreateDate,
                 })
-                .SingleOrDefaultAsync(a => a.ArticleId == ObjectId.Parse(id));
-            if (data == null)
+                .SingleOrDefaultAsync(a => a.ArticleId == objId);
+                if (data == null)
+                {
+                    throw new NotFoundException();
+                }
+                var viewCount = data.ViewCount + 1;
+                var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
+                var update = Builders<Database.Models.Article>.Update
+                    .Set(a => a.ViewCount, viewCount);
+                await srv.UpdateAsync(filter, update);
+                var result = new GetByIdArticleResponse()
+                {
+                    ArticleId = data.ArticleId.ToString(),
+                    ArticleTitle = data.ArticleTitle,
+                    PreviewContent = data.PreviewContent,
+                    Content = data.Content,
+                    CategoryId = data.CategoryId.ToString(),
+                    CategoryName = data.CategoryName,
+                    ViewCount = data.ViewCount,
+                    CreateDate = data.CreateDate
+                };
+                return result;
+            }
+            else 
             {
                 throw new NotFoundException();
             }
-            var viewCount = data.ViewCount + 1;
-            var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, ObjectId.Parse(id));
-            var update = Builders<Database.Models.Article>.Update
-                .Set(a => a.ViewCount, viewCount);
-            await srv.UpdateAsync(filter, update);
-            var result = new GetByIdArticleResponse()
-            {
-                ArticleId = data.ArticleId.ToString(),
-                ArticleTitle = data.ArticleTitle,
-                PreviewContent = data.PreviewContent,
-                Content = data.Content,
-                CategoryId = data.CategoryId.ToString(),
-                CategoryName = data.CategoryName,
-                ViewCount = data.ViewCount,
-                CreateDate = data.CreateDate
-            };
-            return result;
         }
 
         public async Task<GetArticleResponse> GetListAsync(int? page)
@@ -103,52 +111,68 @@ namespace RonWeb.API.Helper
 
         public async Task UpdateAsync(string id, UpdateArticleRequest data)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            using (var session = await srv.client.StartSessionAsync()) 
+            ObjectId objId = new ObjectId();
+            ObjectId categoryId = new ObjectId();
+            if (ObjectId.TryParse(id, out objId) && (ObjectId.TryParse(data.CategoryId, out categoryId)))
             {
-                try
+                string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+                var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+                using (var session = await srv.client.StartSessionAsync())
                 {
-                    session.StartTransaction();
-                    var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, ObjectId.Parse(id));
-                    var update = Builders<Database.Models.Article>.Update
-                        .Set(a => a.ArticleTitle, data.ArticleTitle)
-                        .Set(a => a.Content, HtmlEncoder.Default.Encode(data.Content))
-                        .Set(a => a.PreviewContent, HtmlEncoder.Default.Encode(data.PreviewContent))
-                        .Set(a => a.CategoryId, ObjectId.Parse(data.CategoryId))
-                        .Set(a => a.UpdateDate, DateTime.Now);
-                    await srv.UpdateAsync(filter, update);
-                    await session.CommitTransactionAsync();
+                    try
+                    {
+                        session.StartTransaction();
+                        var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
+                        var update = Builders<Database.Models.Article>.Update
+                            .Set(a => a.ArticleTitle, data.ArticleTitle)
+                            .Set(a => a.Content, HtmlEncoder.Default.Encode(data.Content))
+                            .Set(a => a.PreviewContent, HtmlEncoder.Default.Encode(data.PreviewContent))
+                            .Set(a => a.CategoryId, categoryId)
+                            .Set(a => a.UpdateDate, DateTime.Now);
+                        await srv.UpdateAsync(filter, update);
+                        await session.CommitTransactionAsync();
+                    }
+                    catch
+                    {
+                        await session.AbortTransactionAsync();
+                        throw;
+                    }
                 }
-                catch 
-                {
-                    await session.AbortTransactionAsync();
-                    throw;
-                }
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
 
         public async Task DeleteAsync(string data)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            using (var session = await srv.client.StartSessionAsync()) 
+            ObjectId objId = new ObjectId();
+            if (ObjectId.TryParse(data, out objId))
             {
-                try
+                string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+                var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+                using (var session = await srv.client.StartSessionAsync())
                 {
-                    session.StartTransaction();
-                    var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, ObjectId.Parse(data));
-                    var imgFilter = Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, ObjectId.Parse(data));
-                    await Task.WhenAll(srv.DeleteAsync(filter), srv.DeleteAsync(imgFilter));
-                    await session.CommitTransactionAsync();
-                }
-                catch 
-                {
-                    await session.AbortTransactionAsync();
-                    throw;
+                    try
+                    {
+                        session.StartTransaction();
+                        var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
+                        var imgFilter = Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, objId);
+                        await Task.WhenAll(srv.DeleteAsync(filter), srv.DeleteAsync(imgFilter));
+                        await session.CommitTransactionAsync();
+                    }
+                    catch
+                    {
+                        await session.AbortTransactionAsync();
+                        throw;
+                    }
                 }
             }
-           
+            else
+            {
+                throw new NotFoundException();
+            }
         }
 
         public async Task CreateAsync(CreateArticleRequest data)
