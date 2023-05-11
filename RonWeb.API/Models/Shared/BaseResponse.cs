@@ -49,7 +49,7 @@ namespace RonWeb.API.Models.Shared
         DeleteFail,
         [Description("登入成功")]
         LoginSuccess,
-        [Description("登入失敗")]
+        [Description("帳號或密碼錯誤")]
         LoginFail,
         [Description("找不到資料")]
         NotFound,
