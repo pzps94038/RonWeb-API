@@ -77,6 +77,10 @@ namespace RonWeb.API.Models.Shared
         [Description("寄送信件成功")]
         SendMailSuccess,
         [Description("寄送信件失敗")]
-        SendMailFail
+        SendMailFail,
+        [Description("上傳成功")]
+        UploadSuccess,
+        [Description("上傳失敗")]
+        UploadFail
     }
 }

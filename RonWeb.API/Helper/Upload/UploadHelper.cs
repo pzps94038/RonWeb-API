@@ -15,7 +15,6 @@ namespace RonWeb.API.Helper.Upload
             using (var stream = file.OpenReadStream())
             {
                 var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
-                MongoLogHelper.Info(storageBucket);
                 var url = await new FireBaseStorageTool(storageBucket).Upload(stream, new List<string>() {
                     DateTime.Now.ToString("yyyy-MM-dd"),
                     "Artticle",
