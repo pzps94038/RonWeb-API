@@ -33,22 +33,32 @@ namespace RonWeb.API.Controllers
         /// <param name="file"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<FileUploadResponse> UploadFile(IFormFile file)
+        [DisableRequestSizeLimit]
+        public async Task<FileUploadResponse> UploadFile()
         {
             var result = new FileUploadResponse();
 
             try
             {
-                MongoLogHelper.Info(JsonConvert.SerializeObject(file));
-                var url = await this._helper.UploadFile(file);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
-                result.Url = url;
+                var file = HttpContext.Request.Form.Files.FirstOrDefault();
+                if (file != null)
+                {
+                    var url = await this._helper.UploadFile(file);
+                    result.ReturnCode = ReturnCode.Success.Description();
+                    result.ReturnMessage = ReturnMessage.UploadSuccess.Description();
+                    result.Url = url;
+                }
+                else
+                {
+                    result.ReturnCode = ReturnCode.Fail.Description();
+                    result.ReturnMessage = ReturnMessage.UploadFail.Description();
+                }
+                
             }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.CreateFail.Description();
+                result.ReturnMessage = ReturnMessage.UploadFail.Description();
                 MongoLogHelper.Error(ex);
             }
 
