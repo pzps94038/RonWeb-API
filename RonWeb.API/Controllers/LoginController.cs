@@ -8,6 +8,9 @@ using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 登入
+    /// </summary>
     [Route("api/[controller]")]
     public class LoginController : Controller
     {

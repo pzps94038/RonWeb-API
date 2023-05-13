@@ -49,6 +49,8 @@
     <None Remove="Models\Register\" />
     <None Remove="Interface\Register\" />
     <None Remove="Helper\Register\" />
+    <None Remove="Helper\Upload\" />
+    <None Remove="Interface\Upload\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\Shared\" />
@@ -70,5 +72,7 @@
     <Folder Include="Models\Register\" />
     <Folder Include="Interface\Register\" />
     <Folder Include="Helper\Register\" />
+    <Folder Include="Helper\Upload\" />
+    <Folder Include="Interface\Upload\" />
   </ItemGroup>
 </Project>

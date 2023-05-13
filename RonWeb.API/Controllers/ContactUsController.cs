@@ -15,6 +15,9 @@ using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 聯絡我們
+    /// </summary>
     [Route("api/[controller]")]
     public class ContactUsController : Controller
     {
@@ -24,6 +27,11 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
+        /// <summary>
+        /// 聯絡資訊新增
+        /// </summary>
+        /// <param name="req"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<BaseResponse> Post([FromBody] ContactUsRequest req)
         {

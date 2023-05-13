@@ -8,6 +8,9 @@ using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 文章分類
+    /// </summary>
     [Route("api/[controller]")]
     public class ArticleCategoryController : Controller
     {

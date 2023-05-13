@@ -13,6 +13,9 @@ using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 刷新接口
+    /// </summary>
     [Route("api/[controller]")]
     public class RefreshTokenController : Controller
     {

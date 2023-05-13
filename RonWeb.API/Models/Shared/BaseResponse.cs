@@ -2,17 +2,30 @@
 
 namespace RonWeb.API.Models.Shared
 {
-    public class BaseResponse<T>
+    public class BaseResponse<T>: BaseResponse
     {
-        public string ReturnCode { get; set; } = string.Empty;
-        public string ReturnMessage { get; set; } = string.Empty;
         public T Data { get; set; }
     }
 
     public class BaseResponse
     {
+        /// <summary>
+        /// 回傳代碼
+        /// </summary>
         public string ReturnCode { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 回傳訊息
+        /// </summary>
         public string ReturnMessage { get; set; } = string.Empty;
+    }
+
+    public class FileUploadResponse: BaseResponse
+    {
+        /// <summary>
+        /// 檔案路徑
+        /// </summary>
+        public string Url { get; set; } = string.Empty;
     }
 
     public enum ReturnCode
