@@ -17,6 +17,9 @@ using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 搜尋相關
+    /// </summary>
     [Route("api/[controller]")]
     public class SearchController : Controller
     {
@@ -26,6 +29,12 @@ namespace RonWeb.API.Controllers
             this._helper = helper;
         }
 
+        /// <summary>
+        /// 關鍵字查詢
+        /// </summary>
+        /// <param name="keyword"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]/{keyword}")]
         public async Task<BaseResponse<KeywordeResponse>> Keyword(string keyword, int? page)
@@ -48,6 +57,13 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+
+        /// <summary>
+        /// 分類查詢
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
         [HttpGet]
         [Route("[action]/{id}")]
         public async Task<BaseResponse<KeywordeResponse>> Category(string id, int? page)
