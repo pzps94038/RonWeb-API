@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Search;
 using RonWeb.API.Interface.Upload;
@@ -38,6 +39,7 @@ namespace RonWeb.API.Controllers
 
             try
             {
+                MongoLogHelper.Info(JsonConvert.SerializeObject(file));
                 var url = await this._helper.UploadFile(file);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
