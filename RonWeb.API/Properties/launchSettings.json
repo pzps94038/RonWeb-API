@@ -17,7 +17,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "RON_WEB_MONGO_DB_CONSTR": "",
-        "ORIGINS": "https://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
+        "ORIGINS": "http://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
         "AUDIENCE": "RonWeb",
@@ -28,7 +28,8 @@
         "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": "",
-        "RE_CAPTCHA_SERVER_TOKEN": ""
+        "RE_CAPTCHA_SERVER_TOKEN": "",
+        "STORAGE_BUCKET": ""
       },
       "dotnetRunMessages": true
     },
@@ -51,7 +52,8 @@
         "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": "",
-        "RE_CAPTCHA_SERVER_TOKEN": ""
+        "RE_CAPTCHA_SERVER_TOKEN": "",
+        "STORAGE_BUCKET": ""
       },
       "dotnetRunMessages": true
     },
@@ -73,7 +75,8 @@
         "GMAIL_SENDER_EMAIL": "",
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": "",
-        "RE_CAPTCHA_SERVER_TOKEN": ""
+        "RE_CAPTCHA_SERVER_TOKEN": "",
+        "STORAGE_BUCKET": ""
       }
     }
   }

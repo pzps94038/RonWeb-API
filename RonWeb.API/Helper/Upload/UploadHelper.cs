@@ -15,7 +15,7 @@ namespace RonWeb.API.Helper.Upload
             {
                 var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
                 var url = await new FireBaseStorageTool(storageBucket).Upload(stream, new List<string>() {
-                    DateTime.Now.ToString("yyyy/MM/dd"),
+                    DateTime.Now.ToString("yyyy-MM-dd"),
                     "Artticle",
                     Guid.NewGuid().ToString()
                 });
