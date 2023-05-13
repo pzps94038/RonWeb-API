@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Hosting;
 using RonWeb.API.Enum;
+using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Upload;
 using RonWeb.Core;
 
@@ -14,6 +15,7 @@ namespace RonWeb.API.Helper.Upload
             using (var stream = file.OpenReadStream())
             {
                 var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
+                MongoLogHelper.Info(storageBucket);
                 var url = await new FireBaseStorageTool(storageBucket).Upload(stream, new List<string>() {
                     DateTime.Now.ToString("yyyy-MM-dd"),
                     "Artticle",
