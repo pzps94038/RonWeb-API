@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using RonWeb.API.Helper.Shared;
@@ -19,6 +20,7 @@ namespace RonWeb.API.Controllers
     /// 檔案上傳
     /// </summary>
     [Route("api/[controller]")]
+    [Authorize]
     public class UploadController : Controller
     {
         private readonly IUploadHelper _helper;
