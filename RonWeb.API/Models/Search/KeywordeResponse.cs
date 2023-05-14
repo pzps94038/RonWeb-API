@@ -12,7 +12,7 @@ namespace RonWeb.API.Models.Search
 		/// <summary>
 		/// 文章列表
 		/// </summary>
-		public List<ArticleItem> Articles = new List<ArticleItem>();
+		public List<ArticleItem> Articles { get; set; } = new List<ArticleItem>();
 		/// <summary>
 		/// 關鍵字
 		/// </summary>
