@@ -23,6 +23,6 @@ namespace RonWeb.API.Models.Article
         /// <summary>
         /// 創建人
         /// </summary>
-        public string CreateBy { get; set; } = string.Empty;
+        public string UserId { get; set; } = string.Empty;
     }
 }

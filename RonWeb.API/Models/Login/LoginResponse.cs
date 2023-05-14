@@ -9,6 +9,7 @@ namespace RonWeb.API.Models.Login
 		/// Token
 		/// </summary>
 		public Token Token { get; set; } = new Token();
+		public string UserId { get; set; } = string.Empty;
 	}
 }
 

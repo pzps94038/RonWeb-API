@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using System.Data;
+using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Enum;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Article;
@@ -81,6 +83,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
+        [Authorize]
         public async Task<BaseResponse> Post([FromBody] CreateArticleRequest data)
         {
             var result = new BaseResponse();
@@ -108,6 +111,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPatch("{id}")]
+        [Authorize]
         public async Task<BaseResponse> Patch(string id, [FromBody] UpdateArticleRequest data)
         {
             var result = new BaseResponse();
@@ -140,6 +144,7 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
+        [Authorize]
         public async Task<BaseResponse> Delete(string id)
         {
             var result = new BaseResponse();

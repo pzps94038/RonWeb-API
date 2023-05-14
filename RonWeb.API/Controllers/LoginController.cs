@@ -26,9 +26,9 @@ namespace RonWeb.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse<Token>> Post([FromBody]LoginRequest req)
+        public async Task<BaseResponse<LoginResponse>> Post([FromBody]LoginRequest req)
         {
-            var result = new BaseResponse<Token>();
+            var result = new BaseResponse<LoginResponse>();
             try
             {
                 var data = await this._helper.Login(req);

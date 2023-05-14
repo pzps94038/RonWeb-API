@@ -17,7 +17,7 @@ namespace RonWeb.API.Helper.Login
 {
 	public class LoginHelper : ILoginHelper
     {
-        public async Task<Token> Login(LoginRequest data)
+        public async Task<LoginResponse> Login(LoginRequest data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
@@ -59,7 +59,11 @@ namespace RonWeb.API.Helper.Login
                     CreateDate = DateTime.Now
                 };
                 await srv.CreateAsync(log);
-                return new Token(token, refreshToken);
+                return new LoginResponse()
+                {
+                    Token = new Token(token, refreshToken),
+                    UserId = user._id.ToString()
+                };
             }
         }
     }

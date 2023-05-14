@@ -24,5 +24,9 @@ namespace RonWeb.API.Models.Article
         /// 分類ID
         /// </summary>
         public string CategoryId { get; set; } = string.Empty;
+        /// <summary>
+        /// 更新人
+        /// </summary>
+        public string UserId { get; set; } = string.Empty;
     }
 }
