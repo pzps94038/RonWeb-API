@@ -6,7 +6,7 @@ namespace RonWeb.API.Interface.Login
 {
 	public interface ILoginHelper
 	{
-		public Task<Token> Login(LoginRequest data);
+		public Task<LoginResponse> Login(LoginRequest data);
 	}
 }
 
