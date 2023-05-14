@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
 using RonWeb.Core;
+using System.Reflection;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -43,7 +45,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                     ClockSkew = TimeSpan.Zero
                 };
             });
-
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "RonWeb-API", Version = "v1" });
+    // 指定 XML 檔案的路徑
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
