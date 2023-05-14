@@ -128,7 +128,8 @@ namespace RonWeb.API.Helper
                             .Set(a => a.Content, HtmlEncoder.Default.Encode(data.Content))
                             .Set(a => a.PreviewContent, HtmlEncoder.Default.Encode(data.PreviewContent))
                             .Set(a => a.CategoryId, categoryId)
-                            .Set(a => a.UpdateDate, DateTime.Now);
+                            .Set(a => a.UpdateDate, DateTime.Now)
+                            .Set(a => a.UpdateBy, data.UserId);
                         await srv.UpdateAsync(filter, update);
                         await session.CommitTransactionAsync();
                     }
@@ -193,7 +194,7 @@ namespace RonWeb.API.Helper
                         CategoryId = ObjectId.Parse(data.CategoryId),
                         ViewCount = 0,
                         CreateDate = DateTime.Now,
-                        CreateBy = data.CreateBy
+                        CreateBy = data.UserId
                     };
                     await srv.CreateAsync(article);
                     await session.CommitTransactionAsync();
