@@ -23,7 +23,7 @@ namespace RonWeb.Database.Models
         /// RefreshToken
         /// </summary>
         [BsonElement("RefreshToken")]
-        public string RefreshToken = string.Empty;
+        public string RefreshToken { get; set; } = string.Empty;
 
         /// <summary>
         /// 帳號
