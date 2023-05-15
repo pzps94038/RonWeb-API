@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.Text.Encodings.Web;
 using MongoDB.Bson;
 using System.Security.Cryptography;
+using Ganss.Xss;
 
 namespace RonWeb.API.Helper
 {
@@ -122,11 +123,12 @@ namespace RonWeb.API.Helper
                     try
                     {
                         session.StartTransaction();
+                        var sanitizer = new HtmlSanitizer();
                         var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
                         var update = Builders<Database.Models.Article>.Update
                             .Set(a => a.ArticleTitle, data.ArticleTitle)
-                            .Set(a => a.Content, HtmlEncoder.Default.Encode(data.Content))
-                            .Set(a => a.PreviewContent, HtmlEncoder.Default.Encode(data.PreviewContent))
+                            .Set(a => a.Content, sanitizer.Sanitize(data.Content))
+                            .Set(a => a.PreviewContent, sanitizer.Sanitize(data.PreviewContent))
                             .Set(a => a.CategoryId, categoryId)
                             .Set(a => a.UpdateDate, DateTime.Now)
                             .Set(a => a.UpdateBy, data.UserId);
@@ -185,12 +187,13 @@ namespace RonWeb.API.Helper
                 try
                 {
                     session.StartTransaction();
+                    var sanitizer = new HtmlSanitizer();
                     await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleAsync(a => a._id == ObjectId.Parse(data.CategoryId));
                     var article = new RonWeb.Database.Models.Article()
                     {
                         ArticleTitle = data.ArticleTitle,
-                        Content = HtmlEncoder.Default.Encode(data.Content),
-                        PreviewContent = HtmlEncoder.Default.Encode(data.PreviewContent),
+                        Content = sanitizer.Sanitize(data.Content),
+                        PreviewContent = sanitizer.Sanitize(data.PreviewContent),
                         CategoryId = ObjectId.Parse(data.CategoryId),
                         ViewCount = 0,
                         CreateDate = DateTime.Now,
