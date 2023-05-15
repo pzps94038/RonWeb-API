@@ -13,6 +13,7 @@
   <NoWarn>$(NoWarn);1591</NoWarn>
 </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
