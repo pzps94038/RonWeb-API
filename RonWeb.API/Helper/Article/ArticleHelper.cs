@@ -46,11 +46,6 @@ namespace RonWeb.API.Helper
                 {
                     throw new NotFoundException();
                 }
-                var viewCount = data.ViewCount + 1;
-                var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
-                var update = Builders<Database.Models.Article>.Update
-                    .Set(a => a.ViewCount, viewCount);
-                await srv.UpdateAsync(filter, update);
                 var result = new GetByIdArticleResponse()
                 {
                     ArticleId = data.ArticleId.ToString(),
@@ -207,6 +202,31 @@ namespace RonWeb.API.Helper
                     await session.AbortTransactionAsync();
                     throw;
                 }
+            }
+        }
+
+        public async Task UpdateArticleViews(string id)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            var category = srv.Query<Database.Models.ArticleCategory>();
+            ObjectId objId = new ObjectId();
+            if (ObjectId.TryParse(id, out objId))
+            {
+                var data = await srv.Query<Article>().SingleOrDefaultAsync(a => a._id == objId);
+                if (data == null)
+                {
+                    throw new NotFoundException();
+                }
+                var viewCount = data.ViewCount + 1;
+                var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
+                var update = Builders<Database.Models.Article>.Update
+                    .Set(a => a.ViewCount, viewCount);
+                await srv.UpdateAsync(filter, update);
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
     }

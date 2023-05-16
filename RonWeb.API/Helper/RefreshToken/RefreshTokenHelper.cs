@@ -24,7 +24,7 @@ namespace RonWeb.API.Helper.RefreshToken
             {
                 // 沒過期才能換新token
                 var log = await srv.Query<Database.Models.RefreshTokenLog>()
-                    .Where(a => a.UserId == ObjectId.Parse(data.UserId))
+                    .Where(a => a.UserId == userId)
                     .Where(a => a.RefreshToken == data.RefreshToken)
                     .Join(userMain, a => a.UserId, b => b._id, (a, b) => new
                     {
