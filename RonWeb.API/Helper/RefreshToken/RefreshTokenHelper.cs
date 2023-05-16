@@ -66,7 +66,7 @@ namespace RonWeb.API.Helper.RefreshToken
                         ExpirationDate = refreshTokenExpTime,
                         CreateDate = DateTime.Now
                     };
-                    await srv.CreateAsync(log);
+                    await srv.CreateAsync(tokenLog);
                     return new Token(token, refreshToken);
                 }
             }
