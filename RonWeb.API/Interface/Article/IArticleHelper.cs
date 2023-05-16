@@ -12,6 +12,8 @@ namespace RonWeb.API.Interface.Article
 		ICreateAsync<CreateArticleRequest>
 	{
 		public Task<GetArticleResponse> GetListAsync(int? page);
-	}
+		public Task UpdateArticleViews(string id);
+
+    }
 }
 

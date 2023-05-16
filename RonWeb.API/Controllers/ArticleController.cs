@@ -65,7 +65,6 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
-                MongoLogHelper.Warn(ex);
             }
             catch (Exception ex)
             {
@@ -98,6 +97,38 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.CreateFail.Description();
+                MongoLogHelper.Error(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 更新文章瀏覽次數
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Route("[action]/{id}")]
+        [HttpPatch]
+        
+        public async Task<BaseResponse> UpdateArticleViews(string id)
+        {
+            var result = new BaseResponse();
+            try
+            {
+                await this._helper.UpdateArticleViews(id);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.ModifyFail.Description();
                 MongoLogHelper.Error(ex);
             }
 
