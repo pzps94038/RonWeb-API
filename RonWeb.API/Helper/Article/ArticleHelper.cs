@@ -119,6 +119,10 @@ namespace RonWeb.API.Helper
                     {
                         session.StartTransaction();
                         var sanitizer = new HtmlSanitizer();
+                        // 自定義規則
+                        sanitizer.AllowedAttributes.Add("data"); // 添加對 data 屬性的支持
+                        sanitizer.AllowedAttributes.Add("href"); // 添加對 href 屬性的支持
+                        sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
                         var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
                         var update = Builders<Database.Models.Article>.Update
                             .Set(a => a.ArticleTitle, data.ArticleTitle)
@@ -183,6 +187,9 @@ namespace RonWeb.API.Helper
                 {
                     session.StartTransaction();
                     var sanitizer = new HtmlSanitizer();
+                    sanitizer.AllowedAttributes.Add("data"); // 添加對 data 屬性的支持
+                    sanitizer.AllowedAttributes.Add("href"); // 添加對 href 屬性的支持
+                    sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
                     await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleAsync(a => a._id == ObjectId.Parse(data.CategoryId));
                     var article = new RonWeb.Database.Models.Article()
                     {
