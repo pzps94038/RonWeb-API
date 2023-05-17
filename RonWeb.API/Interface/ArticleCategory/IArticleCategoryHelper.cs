@@ -4,7 +4,7 @@ using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Interface.ArticleCategory
 {
-    public interface IArticleCategoryHelper : IGetListAsync<Category>, ICreateAsync<CreateArticleCategoryRequest>, IUpdateAsync<Category>, IDeleteAsync<string>
+    public interface IArticleCategoryHelper : IGetListAsync<Category>, ICreateAsync<CreateArticleCategoryRequest>, IUpdateAsync<UpdateArticleCategoryRequest>, IDeleteAsync<string>
     {
     }
 }

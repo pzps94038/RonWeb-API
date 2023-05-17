@@ -30,5 +30,23 @@ namespace RonWeb.Database.Models
         /// </summary>
         [BsonElement("CreateDate")]
         public DateTime CreateDate { get; set; }
+
+        /// <summary>
+        /// 建立者
+        /// </summary>
+        [BsonElement("CreateBy")]
+        public ObjectId CreateBy { get; set; }
+
+        /// <summary>
+        /// 更新日期
+        /// </summary>
+        [BsonElement("UpdateDate")]
+        public DateTime? UpdateDate { get; set; }
+
+        /// <summary>
+        /// 更新者
+        /// </summary>
+        [BsonElement("UpdateBy")]
+        public ObjectId? UpdateBy { get; set; }
     }
 }

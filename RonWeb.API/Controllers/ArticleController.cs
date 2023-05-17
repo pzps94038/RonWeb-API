@@ -93,6 +93,11 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
             }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
