@@ -10,5 +10,9 @@
         /// 分類名稱
         /// </summary>
         public string CategoryName { get; set; } = string.Empty;
+        /// <summary>
+        /// 建立時間
+        /// </summary>
+        public DateTime CreateDate { get; set; }
     }
 }

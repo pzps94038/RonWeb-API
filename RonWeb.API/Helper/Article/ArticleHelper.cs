@@ -109,7 +109,8 @@ namespace RonWeb.API.Helper
         {
             ObjectId objId = new ObjectId();
             ObjectId categoryId = new ObjectId();
-            if (ObjectId.TryParse(id, out objId) && (ObjectId.TryParse(data.CategoryId, out categoryId)))
+            ObjectId userId = new ObjectId();
+            if (ObjectId.TryParse(id, out objId) && (ObjectId.TryParse(data.CategoryId, out categoryId) && (ObjectId.TryParse(data.UserId, out userId))))
             {
                 string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
                 var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
@@ -130,7 +131,7 @@ namespace RonWeb.API.Helper
                             .Set(a => a.PreviewContent, sanitizer.Sanitize(data.PreviewContent))
                             .Set(a => a.CategoryId, categoryId)
                             .Set(a => a.UpdateDate, DateTime.Now)
-                            .Set(a => a.UpdateBy, data.UserId);
+                            .Set(a => a.UpdateBy, userId);
                         await srv.UpdateAsync(filter, update);
                         await session.CommitTransactionAsync();
                     }
@@ -154,22 +155,8 @@ namespace RonWeb.API.Helper
             {
                 string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
                 var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-                using (var session = await srv.client.StartSessionAsync())
-                {
-                    try
-                    {
-                        session.StartTransaction();
-                        var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
-                        var imgFilter = Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, objId);
-                        await Task.WhenAll(srv.DeleteAsync(filter), srv.DeleteAsync(imgFilter));
-                        await session.CommitTransactionAsync();
-                    }
-                    catch
-                    {
-                        await session.AbortTransactionAsync();
-                        throw;
-                    }
-                }
+                var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
+                await srv.DeleteAsync(filter);
             }
             else
             {
@@ -199,7 +186,7 @@ namespace RonWeb.API.Helper
                         CategoryId = ObjectId.Parse(data.CategoryId),
                         ViewCount = 0,
                         CreateDate = DateTime.Now,
-                        CreateBy = data.UserId
+                        CreateBy = ObjectId.Parse(data.UserId)
                     };
                     await srv.CreateAsync(article);
                     await session.CommitTransactionAsync();

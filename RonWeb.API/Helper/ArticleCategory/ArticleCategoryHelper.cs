@@ -24,26 +24,43 @@ namespace RonWeb.API.Helper.ArticleCategory
             {
                 throw new UniqueException();
             }
-            var label = new Database.Models.ArticleCategory()
+            ObjectId userId = new ObjectId();
+            if ((ObjectId.TryParse(data.UserId, out userId)))
             {
-                CategoryName = data.CategoryName,
-                CreateDate = DateTime.Now
-            };
-            var indexModel = new CreateIndexModel<Database.Models.ArticleCategory>(
-                Builders<Database.Models.ArticleCategory>.IndexKeys.Ascending("CategoryName"),
-                new CreateIndexOptions { Unique = true }
-            );
-            var collection = srv.GetCollection<Database.Models.ArticleCategory>();
-            await collection.Indexes.CreateOneAsync(indexModel);
-            await srv.CreateAsync(label);
+                var category = new Database.Models.ArticleCategory()
+                {
+                    CategoryName = data.CategoryName,
+                    CreateDate = DateTime.Now,
+                    CreateBy = userId
+                };
+                var indexModel = new CreateIndexModel<Database.Models.ArticleCategory>(
+                    Builders<Database.Models.ArticleCategory>.IndexKeys.Ascending("CategoryName"),
+                    new CreateIndexOptions { Unique = true }
+                );
+                var collection = srv.GetCollection<Database.Models.ArticleCategory>();
+                await collection.Indexes.CreateOneAsync(indexModel);
+                await srv.CreateAsync(category);
+            }
+            else 
+            {
+                throw new NotFoundException();
+            }
         }
 
         public async Task DeleteAsync(string data)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, ObjectId.Parse(data));
-            await srv.DeleteAsync(filter);
+            ObjectId categoryId = new ObjectId();
+            if ((ObjectId.TryParse(data, out categoryId)))
+            {
+                var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, ObjectId.Parse(data));
+                await srv.DeleteAsync(filter);
+            }
+            else 
+            {
+                throw new NotFoundException();
+            }
         }
 
         public async Task<List<Category>> GetListAsync()
@@ -54,19 +71,35 @@ namespace RonWeb.API.Helper.ArticleCategory
                 .Select(a => new
                 {
                     CategoryId = a._id,
-                    CategoryName = a.CategoryName
+                    CategoryName = a.CategoryName,
+                    CreateDate = a.CreateDate
                 }).ToListAsync();
-            var result = list.Select(a => new Category() { CategoryId = a.CategoryId.ToString(), CategoryName = a.CategoryName }).ToList();
+            var result = list.Select(a => new Category() { 
+                CategoryId = a.CategoryId.ToString(), 
+                CategoryName = a.CategoryName,
+                CreateDate = a.CreateDate
+            }).ToList();
             return result;
         }
 
-        public async Task UpdateAsync(string id, Category data)
+        public async Task UpdateAsync(string id, UpdateArticleCategoryRequest data)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, ObjectId.Parse(id));
-            var update = Builders<Database.Models.ArticleCategory>.Update.Set(a => a.CategoryName, data.CategoryName);
-            await srv.UpdateAsync(filter, update);
+            ObjectId categoryId = new ObjectId();
+            ObjectId userId = new ObjectId();
+            if ((ObjectId.TryParse(data.CategoryId, out categoryId) && (ObjectId.TryParse(data.UserId, out userId))))
+            {
+                string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+                var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+                var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, categoryId);
+                var update = Builders<Database.Models.ArticleCategory>.Update.Set(a => a.CategoryName, data.CategoryName)
+                    .Set(a => a.UpdateDate, DateTime.Now)
+                    .Set(a => a.UpdateBy, userId);
+                await srv.UpdateAsync(filter, update);
+            }
+            else 
+            {
+                throw new NotFoundException();
+            }
         }
     }
 }

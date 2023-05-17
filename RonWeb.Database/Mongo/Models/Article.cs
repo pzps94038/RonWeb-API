@@ -59,7 +59,7 @@ namespace RonWeb.Database.Models
         /// 建立者
         /// </summary>
         [BsonElement("CreateBy")]
-        public string CreateBy { get; set; } = string.Empty;
+        public ObjectId CreateBy { get; set; }
 
         /// <summary>
         /// 更新日期
@@ -71,6 +71,6 @@ namespace RonWeb.Database.Models
         /// 更新者
         /// </summary>
         [BsonElement("UpdateBy")]
-        public string? UpdateBy { get; set; }
+        public ObjectId? UpdateBy { get; set; }
     }
 }

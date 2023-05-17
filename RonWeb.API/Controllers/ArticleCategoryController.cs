@@ -67,6 +67,11 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.Unique.Description();
                 MongoLogHelper.Warn(ex);
             }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
@@ -84,7 +89,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Patch(string id, [FromBody]Category data)
+        public async Task<BaseResponse> Patch(string id, [FromBody]UpdateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
             try
@@ -92,6 +97,11 @@ namespace RonWeb.API.Controllers
                 await this._helper.UpdateAsync(id, data);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
             }
             catch (Exception ex)
             {
@@ -117,6 +127,11 @@ namespace RonWeb.API.Controllers
                 await this._helper.DeleteAsync(id);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
             }
             catch (Exception ex)
             {
