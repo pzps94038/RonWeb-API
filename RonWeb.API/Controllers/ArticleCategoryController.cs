@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.ArticleCategory;
+using RonWeb.API.Models.Article;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
@@ -22,7 +23,7 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
-        /// 取得所有分類
+        /// 取得分類
         /// </summary>
         /// <returns></returns>
         [HttpGet]
@@ -35,6 +36,37 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.Fail.Description();
+                MongoLogHelper.Error(ex);
+            }
+            return result;
+        }
+
+
+        /// <summary>
+        /// 取得指定分類
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<BaseResponse<Category>> Get(string id)
+        {
+            var result = new BaseResponse<Category>();
+            try
+            {
+                var data = await this._helper.GetAsync(id);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.Success.Description();
+                result.Data = data;
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
             }
             catch (Exception ex)
             {
