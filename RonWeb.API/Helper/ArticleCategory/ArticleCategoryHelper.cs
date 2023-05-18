@@ -56,8 +56,25 @@ namespace RonWeb.API.Helper.ArticleCategory
             ObjectId categoryId = new ObjectId();
             if ((ObjectId.TryParse(data, out categoryId)))
             {
-                var filter = Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, ObjectId.Parse(data));
-                await srv.DeleteAsync(filter);
+                using (var session = await srv.client.StartSessionAsync()) 
+                {
+                    session.StartTransaction();
+                    try
+                    {
+                        var tasks = new List<Task>
+                        {
+                            srv.DeleteManyAsync(Builders<Database.Models.ArticleCategory>.Filter.Eq(a => a._id, categoryId)),
+                            srv.DeleteManyAsync(Builders<Database.Models.Article>.Filter.Eq(a => a.CategoryId, categoryId))
+                        };
+                        await Task.WhenAll(tasks);
+                        await session.CommitTransactionAsync();
+                    }
+                    catch
+                    {
+                        await session.AbortTransactionAsync();
+                        throw;
+                    }
+                }
             }
             else 
             {
