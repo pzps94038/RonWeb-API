@@ -3,10 +3,12 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Enum;
 using RonWeb.API.Interface.ArticleCategory;
+using RonWeb.API.Models.Article;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
+using RonWeb.Database.Models;
 using RonWeb.Database.Mongo;
 using RonWeb.Database.Service;
 
@@ -63,23 +65,74 @@ namespace RonWeb.API.Helper.ArticleCategory
             }
         }
 
-        public async Task<List<Category>> GetListAsync()
+        public async Task<Category> GetAsync(string id)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var list = await srv.Query<Database.Models.ArticleCategory>()
+            var category = srv.Query<Database.Models.ArticleCategory>();
+            ObjectId objId = new ObjectId();
+            if (ObjectId.TryParse(id, out objId))
+            {
+                var data = await srv.Query<Database.Models.ArticleCategory>()
+                    .SingleOrDefaultAsync(a => a._id == objId);
+                if (data == null)
+                {
+                    throw new NotFoundException();
+                }
+                var result = new Category()
+                {
+                    CategoryId = data._id.ToString(),
+                    CategoryName = data.CategoryName,
+                    CreateDate = data.CreateDate
+                };
+                return result;
+            }
+            else
+            {
+                throw new NotFoundException();
+            }
+        }
+
+        public async Task<GetArticleCategoryResponse> GetListAsync(int? page)
+        {
+            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
+            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
+            var query = srv.Query<Database.Models.ArticleCategory>()
                 .Select(a => new
                 {
                     CategoryId = a._id,
                     CategoryName = a.CategoryName,
                     CreateDate = a.CreateDate
-                }).ToListAsync();
+                });
+
+            var total = query.Count();
+
+            if (page != null) 
+            {
+                var pageSize = 10;
+                int skip = (int)((page - 1) * pageSize);
+                if (skip == 0)
+                {
+                    query = query.Take(pageSize);
+                }
+                else 
+                {
+                    query = query.Skip(skip).Take(pageSize);
+                }
+            }
+
+            var list = await query.ToListAsync();
             var result = list.Select(a => new Category() { 
                 CategoryId = a.CategoryId.ToString(), 
                 CategoryName = a.CategoryName,
                 CreateDate = a.CreateDate
             }).ToList();
-            return result;
+
+            return new GetArticleCategoryResponse() 
+            {
+                Total = total,
+                Categorys = result
+            };
         }
 
         public async Task UpdateAsync(string id, UpdateArticleCategoryRequest data)
