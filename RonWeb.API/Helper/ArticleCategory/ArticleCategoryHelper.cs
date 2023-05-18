@@ -63,23 +63,46 @@ namespace RonWeb.API.Helper.ArticleCategory
             }
         }
 
-        public async Task<List<Category>> GetListAsync()
+        public async Task<GetArticleCategoryResponse> GetListAsync(int? page)
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var list = await srv.Query<Database.Models.ArticleCategory>()
+            var query = srv.Query<Database.Models.ArticleCategory>()
                 .Select(a => new
                 {
                     CategoryId = a._id,
                     CategoryName = a.CategoryName,
                     CreateDate = a.CreateDate
-                }).ToListAsync();
+                });
+
+            var total = query.Count();
+
+            if (page != null) 
+            {
+                var pageSize = 10;
+                int skip = (int)((page - 1) * pageSize);
+                if (skip == 0)
+                {
+                    query = query.Take(pageSize);
+                }
+                else 
+                {
+                    query = query.Skip(skip).Take(pageSize);
+                }
+            }
+
+            var list = await query.ToListAsync();
             var result = list.Select(a => new Category() { 
                 CategoryId = a.CategoryId.ToString(), 
                 CategoryName = a.CategoryName,
                 CreateDate = a.CreateDate
             }).ToList();
-            return result;
+
+            return new GetArticleCategoryResponse() 
+            {
+                Total = total,
+                Categorys = result
+            };
         }
 
         public async Task UpdateAsync(string id, UpdateArticleCategoryRequest data)

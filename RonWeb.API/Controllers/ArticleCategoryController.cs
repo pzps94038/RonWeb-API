@@ -26,12 +26,12 @@ namespace RonWeb.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<List<Category>>> Get()
+        public async Task<BaseResponse<GetArticleCategoryResponse>> Get(int? page)
         {
-            var result = new BaseResponse<List<Category>>();
+            var result = new BaseResponse<GetArticleCategoryResponse>();
             try
             {
-                var data = await this._helper.GetListAsync();
+                var data = await this._helper.GetListAsync(page);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
