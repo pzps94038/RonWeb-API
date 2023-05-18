@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Mail;
 using System.Text.Encodings.Web;
+using Ganss.Xss;
 
 namespace RonWeb.Core
 {
@@ -65,6 +66,7 @@ namespace RonWeb.Core
         {
             using (var mail = new MailMessage())
             {
+                var sanitizer = new HtmlSanitizer();
                 // 收件人 Email 地址
                 foreach (var email in gmail.Emails)
                 {
@@ -73,7 +75,7 @@ namespace RonWeb.Core
                 // 主旨
                 mail.Subject = gmail.Subject;
                 // 內文
-                mail.Body = HtmlEncoder.Default.Encode(gmail.Body);
+                mail.Body = sanitizer.Sanitize(gmail.Body);
                 // 內文是否為 HTML
                 mail.IsBodyHtml = gmail.IsBodyHtml;
                 // 優先權

@@ -11,5 +11,6 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.30.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="FirebaseStorage.net" Version="1.0.3" />
+    <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
   </ItemGroup>
 </Project>
