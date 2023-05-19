@@ -1,9 +1,11 @@
 ﻿using System;
+using RonWeb.API.Models.Shared;
+
 namespace RonWeb.API.Interface.Upload
 {
 	public interface IUploadHelper
 	{
-		public Task<string> UploadFile(IFormFile file);
+		public Task<UploadFileResponse> UploadFile(IFormFile file);
 	}
 }
 
