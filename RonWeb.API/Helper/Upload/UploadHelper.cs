@@ -4,6 +4,7 @@ using RonWeb.API.Enum;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Upload;
 using RonWeb.API.Models.Shared;
+using RonWeb.API.Models.Upload;
 using RonWeb.Core;
 
 namespace RonWeb.API.Helper.Upload

@@ -1,8 +1,8 @@
 ﻿using System;
 namespace RonWeb.API.Models.Shared
 {
-	public class UploadFileResponse
-	{
+    public class UploadFile
+    {
         /// <summary>
         /// 檔名
         /// </summary>

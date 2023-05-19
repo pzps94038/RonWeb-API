@@ -9,6 +9,7 @@ namespace RonWeb.API.Models.Article
 		/// 文章總數
 		/// </summary>
 		public int Total { get; set; } = 0;
+
 		/// <summary>
 		/// 文章列表
 		/// </summary>
