@@ -36,11 +36,11 @@ namespace RonWeb.API.Models.Article
         /// <summary>
         /// 預覽上傳圖
         /// </summary>
-        public List<UploadFile> PrevFiles = new List<UploadFile>();
+        public List<UploadFile> PrevFiles { get; set; } = new List<UploadFile>();
 
         /// <summary>
         /// 內容上傳圖
         /// </summary>
-        public List<UploadFile> ContentFiles = new List<UploadFile>();
+        public List<UploadFile> ContentFiles { get; set; } = new List<UploadFile>();
     }
 }
