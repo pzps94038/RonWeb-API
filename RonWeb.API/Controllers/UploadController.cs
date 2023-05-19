@@ -37,14 +37,15 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [DisableRequestSizeLimit]
-        public async Task<BaseResponse<UploadFileResponse>> UploadFile(IFormFile file)
+        public async Task<BaseResponse<UploadFileResponse>> UploadFile(List<IFormFile> files)
         {
             var result = new BaseResponse<UploadFileResponse>();
 
             try
             {
-                if (file != null)
+                if (files.Any())
                 {
+                    var file = files.First();
                     var data = await this._helper.UploadFile(file);
                     result.ReturnCode = ReturnCode.Success.Description();
                     result.ReturnMessage = ReturnMessage.UploadSuccess.Description();
