@@ -20,14 +20,6 @@ namespace RonWeb.API.Models.Shared
         public string ReturnMessage { get; set; } = string.Empty;
     }
 
-    public class FileUploadResponse: BaseResponse
-    {
-        /// <summary>
-        /// 檔案路徑
-        /// </summary>
-        public string Url { get; set; } = string.Empty;
-    }
-
     public enum ReturnCode
     {
         [Description("00")]

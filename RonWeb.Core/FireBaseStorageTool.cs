@@ -3,7 +3,13 @@ using Firebase.Storage;
 
 namespace RonWeb.Core
 {
-	public class FireBaseStorageTool
+	public class FireBaseStorageUrl
+	{
+		public string Path { get; set; } = string.Empty;
+		public string Url { get; set; } = string.Empty;
+    }
+
+    public class FireBaseStorageTool
 	{
 		private FirebaseStorage _storage { get; set; }
 		public FireBaseStorageTool(string storageBucket)
@@ -12,24 +18,16 @@ namespace RonWeb.Core
         }
 
 		
-		public async Task<string?> Upload(Stream stream, List<string> childs)
+		public async Task<FireBaseStorageUrl?> Upload(Stream stream, string path)
 		{
-			FirebaseStorageReference? root = null;
-            foreach (var child in childs)
+			if (path != null)
 			{
-				if (root == null)
+				var url = await this._storage.Child(path).PutAsync(stream);
+				return new FireBaseStorageUrl
 				{
-					root = this._storage.Child(child);
-				}
-				else
-				{
-                    root = root.Child(child);
-                }
-            }
-			if (root != null)
-			{
-				var url = await root.PutAsync(stream);
-				return url;
+					Path = path,
+					Url = url
+				};
 			}
 			else
 			{

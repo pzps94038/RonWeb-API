@@ -9,6 +9,7 @@ using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Search;
 using RonWeb.API.Interface.Upload;
 using RonWeb.API.Models.Shared;
+using RonWeb.API.Models.Upload;
 using RonWeb.Core;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -36,19 +37,18 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [DisableRequestSizeLimit]
-        public async Task<FileUploadResponse> UploadFile()
+        public async Task<BaseResponse<UploadFileResponse>> UploadFile(IFormFile file)
         {
-            var result = new FileUploadResponse();
+            var result = new BaseResponse<UploadFileResponse>();
 
             try
             {
-                var file = HttpContext.Request.Form.Files.FirstOrDefault();
                 if (file != null)
                 {
-                    var url = await this._helper.UploadFile(file);
+                    var data = await this._helper.UploadFile(file);
                     result.ReturnCode = ReturnCode.Success.Description();
                     result.ReturnMessage = ReturnMessage.UploadSuccess.Description();
-                    result.Url = url;
+                    result.Data = data;
                 }
                 else
                 {

@@ -1,5 +1,4 @@
-﻿using System;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using RonWeb.API.Interface.Article;
 using RonWeb.API.Models.Article;
 using RonWeb.Core;
@@ -9,12 +8,8 @@ using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Enum;
 using RonWeb.API.Models.CustomizeException;
-using System.Collections.Generic;
 using RonWeb.API.Models.Shared;
-using Microsoft.AspNetCore.WebUtilities;
-using System.Text.Encodings.Web;
 using MongoDB.Bson;
-using System.Security.Cryptography;
 using Ganss.Xss;
 
 namespace RonWeb.API.Helper
@@ -125,6 +120,7 @@ namespace RonWeb.API.Helper
                         sanitizer.AllowedAttributes.Add("class");
                         sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
                         var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
+                        
                         var update = Builders<Database.Models.Article>.Update
                             .Set(a => a.ArticleTitle, data.ArticleTitle)
                             .Set(a => a.Content, sanitizer.Sanitize(data.Content))
@@ -132,7 +128,37 @@ namespace RonWeb.API.Helper
                             .Set(a => a.CategoryId, categoryId)
                             .Set(a => a.UpdateDate, DateTime.Now)
                             .Set(a => a.UpdateBy, userId);
-                        await srv.UpdateAsync(filter, update);
+                        var tasks = new List<Task>
+                        {
+                             srv.UpdateAsync(filter, update)
+                        };
+                        if (data.PrevFiles.Any())
+                        {
+                            var list = data.PrevFiles.Select(a => new ArticlePrevImage()
+                            {
+                                ArticleId = objId,
+                                FileName = a.FileName,
+                                Path = a.Path,
+                                Url = a.Url,
+                                CreateDate = DateTime.Now,
+                                CreateBy = userId
+                            }).ToList();
+                            tasks.Add(srv.CreateManyAsync(list));
+                        }
+                        if (data.ContentFiles.Any())
+                        {
+                            var list = data.ContentFiles.Select(a => new ArticleImage()
+                            {
+                                ArticleId = objId,
+                                FileName = a.FileName,
+                                Path = a.Path,
+                                Url = a.Url,
+                                CreateDate = DateTime.Now,
+                                CreateBy = userId
+                            }).ToList();
+                            tasks.Add(srv.CreateManyAsync(list));
+                        }
+                        await Task.WhenAll(tasks);
                         await session.CommitTransactionAsync();
                     }
                     catch
@@ -155,8 +181,26 @@ namespace RonWeb.API.Helper
             {
                 string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
                 var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-                var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
-                await srv.DeleteAsync(filter);
+                using (var session = await srv.client.StartSessionAsync())
+                {
+                    try
+                    {
+                        session.StartTransaction();
+                        var tasks = new List<Task>
+                        {
+                            srv.DeleteAsync(Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId)),
+                            srv.DeleteManyAsync(Builders<Database.Models.ArticlePrevImage>.Filter.Eq(a => a.ArticleId, objId)),
+                            srv.DeleteManyAsync(Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, objId))
+                        };
+                        await Task.WhenAll(tasks);
+                    }
+                    catch
+                    {
+                        await session.AbortTransactionAsync();
+                        throw;
+                    }
+                }
+                  
             }
             else
             {
@@ -168,34 +212,70 @@ namespace RonWeb.API.Helper
         {
             string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
             var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            using (var session = await srv.client.StartSessionAsync())
+            ObjectId userId = new ObjectId();
+            if (ObjectId.TryParse(data.UserId, out userId))
             {
-                try
+                using (var session = await srv.client.StartSessionAsync())
                 {
-                    session.StartTransaction();
-                    var sanitizer = new HtmlSanitizer();
-                    sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持連結
-                    sanitizer.AllowedAttributes.Add("class");
-                    sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
-                    await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleAsync(a => a._id == ObjectId.Parse(data.CategoryId));
-                    var article = new RonWeb.Database.Models.Article()
+                    try
                     {
-                        ArticleTitle = data.ArticleTitle,
-                        Content = sanitizer.Sanitize(data.Content),
-                        PreviewContent = sanitizer.Sanitize(data.PreviewContent),
-                        CategoryId = ObjectId.Parse(data.CategoryId),
-                        ViewCount = 0,
-                        CreateDate = DateTime.Now,
-                        CreateBy = ObjectId.Parse(data.UserId)
-                    };
-                    await srv.CreateAsync(article);
-                    await session.CommitTransactionAsync();
+                        session.StartTransaction();
+                        var sanitizer = new HtmlSanitizer();
+                        sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持連結
+                        sanitizer.AllowedAttributes.Add("class");
+                        sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
+                        await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleAsync(a => a._id == ObjectId.Parse(data.CategoryId));
+                        var article = new RonWeb.Database.Models.Article()
+                        {
+                            ArticleTitle = data.ArticleTitle,
+                            Content = sanitizer.Sanitize(data.Content),
+                            PreviewContent = sanitizer.Sanitize(data.PreviewContent),
+                            CategoryId = ObjectId.Parse(data.CategoryId),
+                            ViewCount = 0,
+                            CreateDate = DateTime.Now,
+                            CreateBy = userId
+                        };
+                        await srv.CreateAsync(article);
+                        var tasks = new List<Task>();
+                        if (data.PrevFiles.Any())
+                        {
+                            var list = data.PrevFiles.Select(a => new ArticlePrevImage()
+                            {
+                                ArticleId = article._id,
+                                FileName = a.FileName,
+                                Path = a.Path,
+                                Url = a.Url,
+                                CreateDate = DateTime.Now,
+                                CreateBy = userId
+                            }).ToList();
+                            tasks.Add(srv.CreateManyAsync(list));
+                        }
+                        if (data.ContentFiles.Any())
+                        {
+                            var list = data.ContentFiles.Select(a => new ArticleImage()
+                            {
+                                ArticleId = article._id,
+                                FileName = a.FileName,
+                                Path = a.Path,
+                                Url = a.Url,
+                                CreateDate = DateTime.Now,
+                                CreateBy = userId
+                            }).ToList();
+                            tasks.Add(srv.CreateManyAsync(list));
+                        }
+                        await Task.WhenAll(tasks);
+                        await session.CommitTransactionAsync();
+                    }
+                    catch
+                    {
+                        await session.AbortTransactionAsync();
+                        throw;
+                    }
                 }
-                catch
-                {
-                    await session.AbortTransactionAsync();
-                    throw;
-                }
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
 
