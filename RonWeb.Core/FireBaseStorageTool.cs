@@ -34,6 +34,15 @@ namespace RonWeb.Core
 				return null;
 			}
 		}
-	}
+
+
+        public async Task Delete(string path)
+        {
+            if (path != null)
+            {
+				await this._storage.Child(path).DeleteAsync();
+            }
+        }
+    }
 }
 
