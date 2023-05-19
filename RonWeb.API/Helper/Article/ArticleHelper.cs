@@ -100,7 +100,7 @@ namespace RonWeb.API.Helper
             }).ToList();
             return new GetArticleResponse()
             {
-                Total = 0,
+                Total = total,
                 Articles = result
             };
         }
