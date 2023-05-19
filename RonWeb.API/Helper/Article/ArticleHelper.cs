@@ -186,6 +186,14 @@ namespace RonWeb.API.Helper
                     try
                     {
                         session.StartTransaction();
+                        var articleImgList = await srv.Query<Database.Models.ArticleImage>()
+                            .Where(a => a.ArticleId == objId)
+                            .Select(a => a.Path)
+                            .ToListAsync();
+                        var articlePrevImgList = await srv.Query<Database.Models.ArticlePrevImage>()
+                           .Where(a => a.ArticleId == objId)
+                           .Select(a => a.Path)
+                           .ToListAsync();
                         var tasks = new List<Task>
                         {
                             srv.DeleteAsync(Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId)),
@@ -193,6 +201,18 @@ namespace RonWeb.API.Helper
                             srv.DeleteManyAsync(Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, objId))
                         };
                         await Task.WhenAll(tasks);
+                        var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
+                        var storageHelper = new FireBaseStorageTool(storageBucket);
+                        foreach (var file in articleImgList)
+                        {
+                            await storageHelper.Delete(file);
+                        }
+                       
+                        foreach (var file in articlePrevImgList)
+                        {
+                            await storageHelper.Delete(file);
+                        }
+                        await session.CommitTransactionAsync();
                     }
                     catch
                     {
