@@ -25,6 +25,7 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         /// 文章預覽內容
         /// </summary>
         [Required]
+        [StringLength(500)]
         public string PreviewContent { get; set; } = string.Empty;
 
         /// <summary>
