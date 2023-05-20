@@ -1,326 +1,240 @@
 ﻿using MongoDB.Driver;
 using RonWeb.API.Interface.Article;
 using RonWeb.API.Models.Article;
-using RonWeb.Core;
-using RonWeb.Database.Models;
-using RonWeb.Database.Mongo;
-using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
-using RonWeb.API.Enum;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
-using MongoDB.Bson;
 using Ganss.Xss;
+using Microsoft.EntityFrameworkCore;
+using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.MySql.RonWeb.Table;
 
 namespace RonWeb.API.Helper
 {
     public class ArticleHelper : IArticleHelper
     {
-        public async Task<GetByIdArticleResponse> GetAsync(string id)
+        public async Task<GetByIdArticleResponse> GetAsync(long id)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var category = srv.Query<Database.Models.ArticleCategory>();
-            ObjectId objId = new ObjectId();
-            if (ObjectId.TryParse(id, out objId))
+            using (var db = new RonWebDbContext())
             {
-                var data = await srv.Query<Article>()
-                .Join(category, a => a.CategoryId, b => b._id, (a, b) => new
+                var data = await db.Article.Include(a => a.ArticleCategory)
+                    .Include(a => a.ArticleLabelMapping)
+                    .ThenInclude(a => a.ArticleLabel)
+                    .Select(a => new GetByIdArticleResponse()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle,
+                        PreviewContent = a.PreviewContent,
+                        Content = a.Content,
+                        CategoryId = a.CategoryId,
+                        CategoryName = a.ArticleCategory.CategoryName,
+                        ViewCount = a.ViewCount,
+                        CreateDate = a.CreateDate,
+                        Labels = a.ArticleLabelMapping
+                            .Select(mapping => new Label
+                            {
+                                LabelId = mapping.ArticleLabel.LabelId,
+                                LabelName = mapping.ArticleLabel.LabelName
+                            })
+                            .ToList()
+                    }).SingleOrDefaultAsync(a => a.ArticleId == id);
+
+                if (data != null)
                 {
-                    ArticleId = a._id,
-                    ArticleTitle = a.ArticleTitle,
-                    PreviewContent = a.PreviewContent,
-                    Content = a.Content,
-                    CategoryId = a.CategoryId,
-                    CategoryName = b.CategoryName,
-                    ViewCount = a.ViewCount,
-                    CreateDate = a.CreateDate,
-                })
-                .SingleOrDefaultAsync(a => a.ArticleId == objId);
-                if (data == null)
+                    return data;
+                }
+                else
                 {
                     throw new NotFoundException();
                 }
-                var result = new GetByIdArticleResponse()
-                {
-                    ArticleId = data.ArticleId.ToString(),
-                    ArticleTitle = data.ArticleTitle,
-                    PreviewContent = data.PreviewContent,
-                    Content = data.Content,
-                    CategoryId = data.CategoryId.ToString(),
-                    CategoryName = data.CategoryName,
-                    ViewCount = data.ViewCount,
-                    CreateDate = data.CreateDate
-                };
-                return result;
-            }
-            else 
-            {
-                throw new NotFoundException();
             }
         }
 
         public async Task<GetArticleResponse> GetListAsync(int? page)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var article = srv.Query<Article>();
-            var category = srv.Query<RonWeb.Database.Models.ArticleCategory>();
-            // 撈文章
-            var query = article.Join(category, a => a.CategoryId, b => b._id, (a, b) => new
+            using (var db = new RonWebDbContext())
             {
-                a._id,
-                a.ArticleTitle,
-                a.CategoryId,
-                b.CategoryName,
-                a.PreviewContent,
-                a.Content,
-                a.CreateDate,
-                a.ViewCount,
-            }).OrderByDescending(a => a.CreateDate);
-            var curPage = page.GetValueOrDefault(1);
-            var pageSize = 10;
-            var skip = (curPage - 1) * pageSize;
-            var total = query.Count();
-            var list = skip == 0 ? await query.Take(pageSize).ToListAsync() : await query.Skip(skip).Take(pageSize).ToListAsync();
-            var result = list.Select(a => new ArticleItem()
-            {
-                ArticleId = a._id.ToString(),
-                ArticleTitle = a.ArticleTitle,
-                PreviewContent = a.PreviewContent,
-                CategoryId = a.CategoryId.ToString(),
-                CategoryName = a.CategoryName,
-                ViewCount = a.ViewCount,
-                CreateDate = a.CreateDate,
-            }).ToList();
-            return new GetArticleResponse()
-            {
-                Total = total,
-                Articles = result
-            };
+                var query = db.Article.Include(a => a.ArticleCategory)
+                    .Include(a => a.ArticleLabelMapping)
+                    .ThenInclude(a => a.ArticleLabel)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle,
+                        PreviewContent = a.PreviewContent,
+                        CategoryId = a.CategoryId,
+                        CategoryName = a.ArticleCategory.CategoryName,
+                        ViewCount = a.ViewCount,
+                        CreateDate = a.CreateDate,
+                        Labels = a.ArticleLabelMapping
+                            .Select(mapping => new Label
+                            {
+                                LabelId = mapping.ArticleLabel.LabelId,
+                                LabelName = mapping.ArticleLabel.LabelName
+                            })
+                            .ToList()
+                    });
+                var curPage = page.GetValueOrDefault(1);
+                var pageSize = 10;
+                var skip = (curPage - 1) * pageSize;
+                var total = query.Count();
+                List<ArticleItem> list;
+                if (skip == 0)
+                {
+                    list = await query.Take(pageSize).ToListAsync();
+                }
+                else
+                {
+                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                }
+
+                return new GetArticleResponse()
+                {
+                    Total = total,
+                    Articles = list
+                };
+            }
+            
         }
 
-        public async Task UpdateAsync(string id, UpdateArticleRequest data)
+        public async Task UpdateAsync(long id, UpdateArticleRequest data)
         {
-            ObjectId objId = new ObjectId();
-            ObjectId categoryId = new ObjectId();
-            ObjectId userId = new ObjectId();
-            if (ObjectId.TryParse(id, out objId) && (ObjectId.TryParse(data.CategoryId, out categoryId) && (ObjectId.TryParse(data.UserId, out userId))))
+            using (var db = new RonWebDbContext())
             {
-                string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-                var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-                using (var session = await srv.client.StartSessionAsync())
+                var sanitizer = new HtmlSanitizer();
+                // 自定義規則
+                sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持
+                sanitizer.AllowedAttributes.Add("class");
+                sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
+                var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+                if (article != null)
                 {
-                    try
+                    using (var tc = await db.Database.BeginTransactionAsync())
                     {
-                        session.StartTransaction();
-                        var sanitizer = new HtmlSanitizer();
-                        // 自定義規則
-                        sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持
-                        sanitizer.AllowedAttributes.Add("class");
-                        sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
-                        var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
-                        
-                        var update = Builders<Database.Models.Article>.Update
-                            .Set(a => a.ArticleTitle, data.ArticleTitle)
-                            .Set(a => a.Content, sanitizer.Sanitize(data.Content))
-                            .Set(a => a.PreviewContent, sanitizer.Sanitize(data.PreviewContent))
-                            .Set(a => a.CategoryId, categoryId)
-                            .Set(a => a.UpdateDate, DateTime.Now)
-                            .Set(a => a.UpdateBy, userId);
-                        var tasks = new List<Task>
+                        try
                         {
-                             srv.UpdateAsync(filter, update)
-                        };
-                        if (data.PrevFiles.Any())
-                        {
-                            var list = data.PrevFiles.Select(a => new ArticlePrevImage()
+                            article.ArticleTitle = data.ArticleTitle;
+                            article.Content = sanitizer.Sanitize(data.Content);
+                            article.PreviewContent = sanitizer.Sanitize(data.PreviewContent);
+                            article.CategoryId = data.CategoryId;
+                            article.UpdateBy = data.UserId;
+                            article.UpdateDate = DateTime.Now;
+                            var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
+                            db.ArticleLabelMapping.RemoveRange(mapping);
+                            var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
                             {
-                                ArticleId = objId,
-                                FileName = a.FileName,
-                                Path = a.Path,
-                                Url = a.Url,
+                                LabelId = a.LabelId,
+                                ArticleId = article.ArticleId,
                                 CreateDate = DateTime.Now,
-                                CreateBy = userId
+                                CreateBy = data.UserId
                             }).ToList();
-                            tasks.Add(srv.CreateManyAsync(list));
+                            await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
+                            await db.SaveChangesAsync();
+                            await tc.CommitAsync();
                         }
-                        if (data.ContentFiles.Any())
+                        catch
                         {
-                            var list = data.ContentFiles.Select(a => new ArticleImage()
-                            {
-                                ArticleId = objId,
-                                FileName = a.FileName,
-                                Path = a.Path,
-                                Url = a.Url,
-                                CreateDate = DateTime.Now,
-                                CreateBy = userId
-                            }).ToList();
-                            tasks.Add(srv.CreateManyAsync(list));
+                            await tc.RollbackAsync();
+                            throw;
                         }
-                        await Task.WhenAll(tasks);
-                        await session.CommitTransactionAsync();
                     }
-                    catch
-                    {
-                        await session.AbortTransactionAsync();
-                        throw;
-                    }
+
                 }
-            }
-            else
-            {
-                throw new NotFoundException();
+                else
+                {
+                    throw new NotFoundException();
+                }
             }
         }
 
-        public async Task DeleteAsync(string data)
+        public async Task DeleteAsync(long id)
         {
-            ObjectId objId = new ObjectId();
-            if (ObjectId.TryParse(data, out objId))
+            using (var db = new RonWebDbContext())
             {
-                string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-                var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-                using (var session = await srv.client.StartSessionAsync())
+                var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+                if (article != null)
                 {
-                    try
+                    using (var tc = await db.Database.BeginTransactionAsync())
                     {
-                        session.StartTransaction();
-                        var articleImgList = await srv.Query<Database.Models.ArticleImage>()
-                            .Where(a => a.ArticleId == objId)
-                            .Select(a => a.Path)
-                            .ToListAsync();
-                        var articlePrevImgList = await srv.Query<Database.Models.ArticlePrevImage>()
-                           .Where(a => a.ArticleId == objId)
-                           .Select(a => a.Path)
-                           .ToListAsync();
-                        var tasks = new List<Task>
+                        try
                         {
-                            srv.DeleteAsync(Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId)),
-                            srv.DeleteManyAsync(Builders<Database.Models.ArticlePrevImage>.Filter.Eq(a => a.ArticleId, objId)),
-                            srv.DeleteManyAsync(Builders<Database.Models.ArticleImage>.Filter.Eq(a => a.ArticleId, objId))
-                        };
-                        await Task.WhenAll(tasks);
-                        var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
-                        var storageHelper = new FireBaseStorageTool(storageBucket);
-                        foreach (var file in articleImgList)
-                        {
-                            await storageHelper.Delete(file);
+                            db.Article.Remove(article);
+                            var list = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
+                            db.ArticleLabelMapping.RemoveRange(list);
+                            await db.SaveChangesAsync();
+                            await tc.CommitAsync();
                         }
-                       
-                        foreach (var file in articlePrevImgList)
+                        catch
                         {
-                            await storageHelper.Delete(file);
+                            await tc.RollbackAsync();
+                            throw;
                         }
-                        await session.CommitTransactionAsync();
-                    }
-                    catch
-                    {
-                        await session.AbortTransactionAsync();
-                        throw;
                     }
                 }
-                  
-            }
-            else
-            {
-                throw new NotFoundException();
+                else
+                {
+                    throw new NotFoundException();
+                }
             }
         }
 
         public async Task CreateAsync(CreateArticleRequest data)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            ObjectId userId = new ObjectId();
-            if (ObjectId.TryParse(data.UserId, out userId))
+            using (var db = new RonWebDbContext())
             {
-                using (var session = await srv.client.StartSessionAsync())
+                using (var tc = await db.Database.BeginTransactionAsync())
                 {
                     try
                     {
-                        session.StartTransaction();
                         var sanitizer = new HtmlSanitizer();
                         sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持連結
                         sanitizer.AllowedAttributes.Add("class");
                         sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
-                        await srv.Query<RonWeb.Database.Models.ArticleCategory>().SingleAsync(a => a._id == ObjectId.Parse(data.CategoryId));
-                        var article = new RonWeb.Database.Models.Article()
+                        var article = new Article()
                         {
                             ArticleTitle = data.ArticleTitle,
                             Content = sanitizer.Sanitize(data.Content),
                             PreviewContent = sanitizer.Sanitize(data.PreviewContent),
-                            CategoryId = ObjectId.Parse(data.CategoryId),
+                            CategoryId = data.CategoryId,
                             ViewCount = 0,
                             CreateDate = DateTime.Now,
-                            CreateBy = userId
+                            CreateBy = data.UserId
                         };
-                        await srv.CreateAsync(article);
-                        var tasks = new List<Task>();
-                        if (data.PrevFiles.Any())
+                        await db.Article.AddAsync(article);
+                        var mapping = data.Labels.Select(a => new ArticleLabelMapping()
                         {
-                            var list = data.PrevFiles.Select(a => new ArticlePrevImage()
-                            {
-                                ArticleId = article._id,
-                                FileName = a.FileName,
-                                Path = a.Path,
-                                Url = a.Url,
-                                CreateDate = DateTime.Now,
-                                CreateBy = userId
-                            }).ToList();
-                            tasks.Add(srv.CreateManyAsync(list));
-                        }
-                        if (data.ContentFiles.Any())
-                        {
-                            var list = data.ContentFiles.Select(a => new ArticleImage()
-                            {
-                                ArticleId = article._id,
-                                FileName = a.FileName,
-                                Path = a.Path,
-                                Url = a.Url,
-                                CreateDate = DateTime.Now,
-                                CreateBy = userId
-                            }).ToList();
-                            tasks.Add(srv.CreateManyAsync(list));
-                        }
-                        await Task.WhenAll(tasks);
-                        await session.CommitTransactionAsync();
+                            ArticleId = article.ArticleId,
+                            LabelId = a.LabelId,
+                            CreateBy = data.UserId,
+                            CreateDate = DateTime.Now
+                        });
+                        await db.ArticleLabelMapping.AddRangeAsync(mapping);
+                        await db.SaveChangesAsync();
+                        await tc.CommitAsync();
                     }
                     catch
                     {
-                        await session.AbortTransactionAsync();
+                        await tc.RollbackAsync();
                         throw;
                     }
                 }
             }
-            else
-            {
-                throw new NotFoundException();
-            }
         }
 
-        public async Task UpdateArticleViews(string id)
+        public async Task UpdateArticleViews(long id)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var category = srv.Query<Database.Models.ArticleCategory>();
-            ObjectId objId = new ObjectId();
-            if (ObjectId.TryParse(id, out objId))
+            using (var db = new RonWebDbContext())
             {
-                var data = await srv.Query<Article>().SingleOrDefaultAsync(a => a._id == objId);
-                if (data == null)
+                var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+                if (article != null)
+                {
+                    article.ViewCount = article.ViewCount + 1;
+                    await db.SaveChangesAsync();
+                }
+                else
                 {
                     throw new NotFoundException();
                 }
-                var viewCount = data.ViewCount + 1;
-                var filter = Builders<Database.Models.Article>.Filter.Eq(a => a._id, objId);
-                var update = Builders<Database.Models.Article>.Update
-                    .Set(a => a.ViewCount, viewCount);
-                await srv.UpdateAsync(filter, update);
-            }
-            else
-            {
-                throw new NotFoundException();
             }
         }
     }

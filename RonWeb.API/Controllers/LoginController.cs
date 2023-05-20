@@ -45,7 +45,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.SystemFail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
             return result;
         }

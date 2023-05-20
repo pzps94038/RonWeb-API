@@ -41,7 +41,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
             return result;
         }
@@ -53,7 +53,7 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<Category>> Get(string id)
+        public async Task<BaseResponse<Category>> Get(long id)
         {
             var result = new BaseResponse<Category>();
             try
@@ -72,7 +72,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
             return result;
         }
@@ -97,7 +97,6 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Unique.Description();
                 result.ReturnMessage = ReturnMessage.Unique.Description();
-                MongoLogHelper.Warn(ex);
             }
             catch (NotFoundException ex)
             {
@@ -108,7 +107,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.CreateFail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
             return result;
         }
@@ -121,7 +120,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Patch(string id, [FromBody]UpdateArticleCategoryRequest data)
+        public async Task<BaseResponse> Patch(long id, [FromBody]UpdateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
             try
@@ -139,7 +138,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
             return result;
         }
@@ -151,7 +150,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Delete(string id)
+        public async Task<BaseResponse> Delete(long id)
         {
             var result = new BaseResponse();
             try
@@ -169,7 +168,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.DeleteFail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
             return result;
         }

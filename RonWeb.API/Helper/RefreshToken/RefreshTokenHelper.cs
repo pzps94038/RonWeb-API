@@ -9,6 +9,8 @@ using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.Database.Models;
 using MongoDB.Bson;
+using RonWeb.Database.MySql.RonWeb.DataBase;
+using Microsoft.EntityFrameworkCore;
 
 namespace RonWeb.API.Helper.RefreshToken
 {
@@ -16,22 +18,12 @@ namespace RonWeb.API.Helper.RefreshToken
     {
         public async Task<Token> Refresh(RefreshTokenRequest data)
         {
-            string conStr = Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_MONGO_DB_CONSTR.Description())!;
-            var srv = new MongoDbService(conStr, MongoDbEnum.RonWeb.Description());
-            var userMain = srv.Query<Database.Models.UserMain>();
-            ObjectId userId = new ObjectId();
-            if (ObjectId.TryParse(data.UserId, out userId))
+            using (var db = new RonWebDbContext())
             {
-                // 沒過期才能換新token
-                var log = await srv.Query<Database.Models.RefreshTokenLog>()
-                    .Where(a => a.UserId == userId)
+                var log = await db.RefreshTokenLog
+                    .Where(a => a.UserId == data.UserId)
                     .Where(a => a.RefreshToken == data.RefreshToken)
-                    .Join(userMain, a => a.UserId, b => b._id, (a, b) => new
-                    {
-                        UserId = b._id,
-                        Email = b.Email,
-                        ExpirationDate = a.ExpirationDate,
-                    })
+                    .Include(a=> a.UserMain)
                     .SingleOrDefaultAsync();
                 if (log == null)
                 {
@@ -44,7 +36,7 @@ namespace RonWeb.API.Helper.RefreshToken
                 else
                 {
                     string refreshToken = JwtTool.CreateRefreshToken();
-                    var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
+                    var claims = JwtTool.CreateClaims(log.UserMain.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
                     string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
                     string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
                     string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
@@ -59,20 +51,17 @@ namespace RonWeb.API.Helper.RefreshToken
                         ExpirationTime = toeknExpTime
                     };
                     var token = JwtTool.GenerateToken(model);
-                    var tokenLog = new RefreshTokenLog()
+                    var tokenLog = new RonWeb.Database.MySql.RonWeb.Table.RefreshTokenLog()
                     {
                         RefreshToken = refreshToken,
                         UserId = log.UserId,
                         ExpirationDate = refreshTokenExpTime,
                         CreateDate = DateTime.Now
                     };
-                    await srv.CreateAsync(tokenLog);
+                    await db.AddAsync(tokenLog);
+                    await db.SaveChangesAsync();
                     return new Token(token, refreshToken);
                 }
-            }
-            else 
-            {
-                throw new NotFoundException();
             }
         }
     }

@@ -8,7 +8,7 @@ namespace RonWeb.API.Models.Article
 		/// <summary>
 		/// 文章ID
 		/// </summary>
-		public string ArticleId { get; set; } = string.Empty;
+		public long ArticleId { get; set; }
 
 		/// <summary>
 		/// 文章標題
@@ -28,7 +28,7 @@ namespace RonWeb.API.Models.Article
 		/// <summary>
 		/// 分類ID
 		/// </summary>
-		public string CategoryId { get; set; } = string.Empty;
+		public long CategoryId { get; set; }
 
 		/// <summary>
 		/// 分類名稱
@@ -40,10 +40,15 @@ namespace RonWeb.API.Models.Article
 		/// </summary>
         public int ViewCount { get; set; } = 0;
 
-		/// <summary>
-		/// 創建日期
-		/// </summary>
-		public DateTime CreateDate { get; set; }
+        /// <summary>
+        /// 標籤列表
+        /// </summary>
+        public List<Label> Labels { get; set; } = new List<Label>();
+
+        /// <summary>
+        /// 創建日期
+        /// </summary>
+        public DateTime CreateDate { get; set; }
     }
 }
 
