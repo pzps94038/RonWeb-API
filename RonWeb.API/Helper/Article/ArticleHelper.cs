@@ -109,36 +109,39 @@ namespace RonWeb.API.Helper
                 var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
                 if (article != null)
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    var executionStrategy = db.Database.CreateExecutionStrategy();
+                    await executionStrategy.ExecuteAsync(async () =>
                     {
-                        try
+                        using (var tc = await db.Database.BeginTransactionAsync())
                         {
-                            article.ArticleTitle = data.ArticleTitle;
-                            article.Content = sanitizer.Sanitize(data.Content);
-                            article.PreviewContent = sanitizer.Sanitize(data.PreviewContent);
-                            article.CategoryId = data.CategoryId;
-                            article.UpdateBy = data.UserId;
-                            article.UpdateDate = DateTime.Now;
-                            var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(mapping);
-                            var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
+                            try
                             {
-                                LabelId = a.LabelId,
-                                ArticleId = article.ArticleId,
-                                CreateDate = DateTime.Now,
-                                CreateBy = data.UserId
-                            }).ToList();
-                            await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
-                            await db.SaveChangesAsync();
-                            await tc.CommitAsync();
+                                article.ArticleTitle = data.ArticleTitle;
+                                article.Content = sanitizer.Sanitize(data.Content);
+                                article.PreviewContent = sanitizer.Sanitize(data.PreviewContent);
+                                article.CategoryId = data.CategoryId;
+                                article.UpdateBy = data.UserId;
+                                article.UpdateDate = DateTime.Now;
+                                var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
+                                db.ArticleLabelMapping.RemoveRange(mapping);
+                                var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
+                                {
+                                    LabelId = a.LabelId,
+                                    ArticleId = article.ArticleId,
+                                    CreateDate = DateTime.Now,
+                                    CreateBy = data.UserId
+                                }).ToList();
+                                await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
+                                await db.SaveChangesAsync();
+                                await tc.CommitAsync();
+                            }
+                            catch
+                            {
+                                await tc.RollbackAsync();
+                                throw;
+                            }
                         }
-                        catch
-                        {
-                            await tc.RollbackAsync();
-                            throw;
-                        }
-                    }
-
+                    });
                 }
                 else
                 {
@@ -154,22 +157,26 @@ namespace RonWeb.API.Helper
                 var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
                 if (article != null)
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    var executionStrategy = db.Database.CreateExecutionStrategy();
+                    await executionStrategy.ExecuteAsync(async () =>
                     {
-                        try
+                        using (var tc = await db.Database.BeginTransactionAsync())
                         {
-                            db.Article.Remove(article);
-                            var list = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(list);
-                            await db.SaveChangesAsync();
-                            await tc.CommitAsync();
+                            try
+                            {
+                                db.Article.Remove(article);
+                                var list = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
+                                db.ArticleLabelMapping.RemoveRange(list);
+                                await db.SaveChangesAsync();
+                                await tc.CommitAsync();
+                            }
+                            catch
+                            {
+                                await tc.RollbackAsync();
+                                throw;
+                            }
                         }
-                        catch
-                        {
-                            await tc.RollbackAsync();
-                            throw;
-                        }
-                    }
+                    });   
                 }
                 else
                 {
@@ -182,42 +189,53 @@ namespace RonWeb.API.Helper
         {
             using (var db = new RonWebDbContext())
             {
-                using (var tc = await db.Database.BeginTransactionAsync())
+                var executionStrategy = db.Database.CreateExecutionStrategy();
+
+                await executionStrategy.ExecuteAsync(async () =>
                 {
-                    try
+                    using (var tc = await db.Database.BeginTransactionAsync())
                     {
-                        var sanitizer = new HtmlSanitizer();
-                        sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持連結
-                        sanitizer.AllowedAttributes.Add("class");
-                        sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
-                        var article = new Article()
+                        try
                         {
-                            ArticleTitle = data.ArticleTitle,
-                            Content = sanitizer.Sanitize(data.Content),
-                            PreviewContent = sanitizer.Sanitize(data.PreviewContent),
-                            CategoryId = data.CategoryId,
-                            ViewCount = 0,
-                            CreateDate = DateTime.Now,
-                            CreateBy = data.UserId
-                        };
-                        await db.Article.AddAsync(article);
-                        var mapping = data.Labels.Select(a => new ArticleLabelMapping()
+                            var sanitizer = new HtmlSanitizer();
+                            sanitizer.AllowedSchemes.Add("mailto");
+                            sanitizer.AllowedAttributes.Add("class");
+                            sanitizer.AllowedAttributes.Add("alt");
+
+                            var article = new Article()
+                            {
+                                ArticleTitle = data.ArticleTitle,
+                                Content = sanitizer.Sanitize(data.Content),
+                                PreviewContent = sanitizer.Sanitize(data.PreviewContent),
+                                CategoryId = data.CategoryId,
+                                ViewCount = 0,
+                                CreateDate = DateTime.Now,
+                                CreateBy = data.UserId
+                            };
+
+                            db.Article.Add(article);
+                            await db.SaveChangesAsync();
+
+                            var mappings = data.Labels.Select(a => new ArticleLabelMapping()
+                            {
+                                ArticleId = article.ArticleId,
+                                LabelId = a.LabelId,
+                                CreateBy = data.UserId,
+                                CreateDate = DateTime.Now
+                            });
+
+                            db.ArticleLabelMapping.AddRange(mappings);
+                            await db.SaveChangesAsync();
+
+                            await tc.CommitAsync();
+                        }
+                        catch
                         {
-                            ArticleId = article.ArticleId,
-                            LabelId = a.LabelId,
-                            CreateBy = data.UserId,
-                            CreateDate = DateTime.Now
-                        });
-                        await db.ArticleLabelMapping.AddRangeAsync(mapping);
-                        await db.SaveChangesAsync();
-                        await tc.CommitAsync();
+                            await tc.RollbackAsync();
+                            throw;
+                        }
                     }
-                    catch
-                    {
-                        await tc.RollbackAsync();
-                        throw;
-                    }
-                }
+                });
             }
         }
 
