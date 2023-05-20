@@ -42,22 +42,26 @@ namespace RonWeb.API.Helper.ArticleLabel
                 var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
                 if (label != null)
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    var executionStrategy = db.Database.CreateExecutionStrategy();
+                    await executionStrategy.ExecuteAsync(async () =>
                     {
-                        try
+                        using (var tc = await db.Database.BeginTransactionAsync())
                         {
-                            var mapping = await db.ArticleLabelMapping.Where(a => a.LabelId == id).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(mapping);
-                            db.ArticleLabel.Remove(label);
-                            await db.SaveChangesAsync();
-                            await tc.CommitAsync();
+                            try
+                            {
+                                var mapping = await db.ArticleLabelMapping.Where(a => a.LabelId == id).ToListAsync();
+                                db.ArticleLabelMapping.RemoveRange(mapping);
+                                db.ArticleLabel.Remove(label);
+                                await db.SaveChangesAsync();
+                                await tc.CommitAsync();
+                            }
+                            catch
+                            {
+                                await tc.RollbackAsync();
+                                throw;
+                            }
                         }
-                        catch
-                        {
-                            await tc.RollbackAsync();
-                            throw;
-                        }
-                    }
+                    });
                 }
                 else
                 {
