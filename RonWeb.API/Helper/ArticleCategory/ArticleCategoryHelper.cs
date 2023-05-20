@@ -41,22 +41,26 @@ namespace RonWeb.API.Helper.ArticleCategory
                 var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
                 if (category != null)
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    var executionStrategy = db.Database.CreateExecutionStrategy();
+                    await executionStrategy.ExecuteAsync(async () =>
                     {
-                        try
+                        using (var tc = await db.Database.BeginTransactionAsync())
                         {
-                            var articles = await db.Article.Where(a => a.CategoryId == id).ToListAsync();
-                            db.Article.RemoveRange(articles);
-                            db.ArticleCategory.Remove(category);
-                            await db.SaveChangesAsync();
-                            await tc.CommitAsync();
+                            try
+                            {
+                                var articles = await db.Article.Where(a => a.CategoryId == id).ToListAsync();
+                                db.Article.RemoveRange(articles);
+                                db.ArticleCategory.Remove(category);
+                                await db.SaveChangesAsync();
+                                await tc.CommitAsync();
+                            }
+                            catch
+                            {
+                                await tc.RollbackAsync();
+                                throw;
+                            }
                         }
-                        catch
-                        {
-                            await tc.RollbackAsync();
-                            throw;
-                        }
-                    }
+                    });
                 }
                 else
                 {

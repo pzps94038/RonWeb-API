@@ -159,18 +159,17 @@ namespace RonWeb.API.Helper.Search
                                  LabelName = mapping.ArticleLabel.LabelName
                              })
                              .ToList()
-                     })
-                     .OrderByDescending(a => a.CreateDate);
+                     });
                 if (!string.IsNullOrEmpty(keyword))
                 {
                     keyword = keyword.Trim();
-                    query = (IOrderedQueryable<ArticleItem>)query.Where(a =>
+                    query = query.Where(a =>
                         a.ArticleTitle.Contains(keyword) ||
                         a.PreviewContent.Contains(keyword) ||
-                        a.Content.Contains(keyword) ||
                         a.CategoryName.Contains(keyword)
                     );
                 }
+                query = query.OrderByDescending(a => a.CreateDate);
                 var curPage = page.GetValueOrDefault(1);
                 var pageSize = 10;
                 var skip = (curPage - 1) * pageSize;
