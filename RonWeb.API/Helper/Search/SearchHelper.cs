@@ -78,6 +78,64 @@ namespace RonWeb.API.Helper.Search
             }
         }
 
+        public async Task<KeywordeResponse> Label(long id, int? page)
+        {
+            using (var db = new RonWebDbContext())
+            {
+                var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
+                if (label == null)
+                {
+                    throw new NotFoundException();
+                }
+                else
+                {
+                    var query = db.Article.Include(a => a.ArticleCategory)
+                    .Include(a => a.ArticleLabelMapping)
+                    .ThenInclude(a => a.ArticleLabel)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle,
+                        PreviewContent = a.PreviewContent,
+                        CategoryId = a.CategoryId,
+                        CategoryName = a.ArticleCategory.CategoryName,
+                        ViewCount = a.ViewCount,
+                        CreateDate = a.CreateDate,
+                        Labels = a.ArticleLabelMapping
+                            .Select(mapping => new Label
+                            {
+                                LabelId = mapping.ArticleLabel.LabelId,
+                                LabelName = mapping.ArticleLabel.LabelName
+                            })
+                            .ToList()
+                    })
+                    .Where(a=> a.Labels.Any(b=> b.LabelId == id))
+                    .OrderByDescending(a => a.CreateDate);
+                    var curPage = page.GetValueOrDefault(1);
+                    var pageSize = 10;
+                    var skip = (curPage - 1) * pageSize;
+                    var total = query.Count();
+                    List<ArticleItem> list;
+                    if (skip == 0)
+                    {
+                        list = await query.Take(pageSize).ToListAsync();
+                    }
+                    else
+                    {
+                        list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                    }
+
+                    return new KeywordeResponse()
+                    {
+                        Total = total,
+                        Articles = list,
+                        Keyword = label.LabelName
+                    };
+                }
+
+            }
+        }
+
         public async Task<KeywordeResponse> Keyword(string keyword, int? page)
         {
             using (var db = new RonWebDbContext())

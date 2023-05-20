@@ -20,7 +20,7 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         /// </summary>
         [Required]
         [StringLength(20)]
-        public string LabelName = string.Empty;
+        public string LabelName { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立日期

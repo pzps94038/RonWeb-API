@@ -20,7 +20,7 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         /// </summary>
         [Required]
         [StringLength(20)]
-        public string CategoryName = string.Empty;
+        public string CategoryName { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立日期
