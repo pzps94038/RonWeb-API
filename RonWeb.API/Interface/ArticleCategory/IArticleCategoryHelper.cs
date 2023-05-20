@@ -5,7 +5,11 @@ using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Interface.ArticleCategory
 {
-    public interface IArticleCategoryHelper: IGetAsync<Category, string>,ICreateAsync<CreateArticleCategoryRequest>, IUpdateAsync<UpdateArticleCategoryRequest>, IDeleteAsync<string>
+    public interface IArticleCategoryHelper:
+        IGetAsync<long, Category>,
+        ICreateAsync<CreateArticleCategoryRequest>,
+        IUpdateAsync<long, UpdateArticleCategoryRequest>,
+        IDeleteAsync<long>
     {
         public Task<GetArticleCategoryResponse> GetListAsync(int? page);
     }

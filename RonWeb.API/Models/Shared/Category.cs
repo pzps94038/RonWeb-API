@@ -5,7 +5,7 @@
         /// <summary>
         /// 分類ID
         /// </summary>
-        public string CategoryId { get; set; } = string.Empty;
+        public long CategoryId { get; set; }
         /// <summary>
         /// 分類名稱
         /// </summary>

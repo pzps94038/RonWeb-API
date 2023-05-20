@@ -17,6 +17,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "RON_WEB_MONGO_DB_CONSTR": "",
+        "RON_WEB_MYSQL_DB_CONSTR": "",
         "ORIGINS": "http://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
@@ -41,6 +42,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "RON_WEB_MONGO_DB_CONSTR": "",
+        "RON_WEB_MYSQL_DB_CONSTR": "",
         "ORIGINS": "https://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",
@@ -64,6 +66,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "RON_WEB_MONGO_DB_CONSTR": "",
+        "RON_WEB_MYSQL_DB_CONSTR": "",
         "ORIGINS": "https://localhost:4200,https://pzps94038.github.io,https://ronweb.herokuapp.com",
         "JWTKEY": "WMOPRMWOIPRMWOAPRMLFMSKLAaAFSAIDFMISOAF",
         "ISSUER": "RonWeb",

@@ -51,7 +51,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
 
             return result;
@@ -66,7 +66,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]/{id}")]
-        public async Task<BaseResponse<KeywordeResponse>> Category(string id, int? page)
+        public async Task<BaseResponse<KeywordeResponse>> Category(long id, int? page)
         {
             var result = new BaseResponse<KeywordeResponse>();
             try
@@ -85,7 +85,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                MongoLogHelper.Error(ex);
+                LogHelper.Error(ex);
             }
 
             return result;

@@ -8,6 +8,7 @@ namespace RonWeb.API.Enum
         ISSUER,
         AUDIENCE,
         RON_WEB_MONGO_DB_CONSTR,
+        RON_WEB_MYSQL_DB_CONSTR,
         AESIV,
         AESKEY,
         ERROR_LOG_EMAIL_ADDRESS,

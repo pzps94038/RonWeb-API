@@ -81,5 +81,9 @@
     <Folder Include="Helper\Upload\" />
     <Folder Include="Interface\Upload\" />
     <Folder Include="Models\Upload\" />
+    <Folder Include="Models\ArticleLabel\" />
+    <Folder Include="Interface\ArticleLabel\" />
+    <Folder Include="Interface\ArticleLabel\" />
+    <Folder Include="Helper\ArticleLabel\" />
   </ItemGroup>
 </Project>

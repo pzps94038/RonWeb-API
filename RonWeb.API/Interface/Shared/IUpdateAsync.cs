@@ -1,9 +1,9 @@
 ﻿using System;
 namespace RonWeb.API.Interface.Shared
 {
-	public interface IUpdateAsync<T>
+	public interface IUpdateAsync<T, R>
 	{
-        public Task UpdateAsync(string id, T data);
+        public Task UpdateAsync(T id, R data);
     }
 }
 
