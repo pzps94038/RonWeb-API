@@ -41,6 +41,28 @@ namespace RonWeb.API.Helper
 
                 if (data != null)
                 {
+                    // 找到下一篇文章
+                    var nextArticle = await db.Article.Where(a => a.CreateDate > data.CreateDate)
+                        .OrderBy(a => a.CreateDate)
+                        .Take(1)
+                        .Select(a => new BlogPagination()
+                        {
+                            ArticleId = a.ArticleId,
+                            ArticleTitle = a.ArticleTitle
+                        }).FirstOrDefaultAsync();
+                    // 找到上一篇文章
+                    var prevArticle = await db.Article.Where(a => a.CreateDate < data.CreateDate)
+                        .OrderByDescending(a=> a.CreateDate)
+                        .Take(1)
+                        .Select(a => new BlogPagination()
+                        {
+                            ArticleId = a.ArticleId,
+                            ArticleTitle = a.ArticleTitle
+                        }).FirstOrDefaultAsync();
+
+                    data.NextArticle = nextArticle;
+                    data.PrevArticle = prevArticle;
+
                     return data;
                 }
                 else
