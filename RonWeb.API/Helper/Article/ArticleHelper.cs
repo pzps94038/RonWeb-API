@@ -95,7 +95,8 @@ namespace RonWeb.API.Helper
                                 LabelName = mapping.ArticleLabel.LabelName
                             })
                             .ToList()
-                    });
+                    })
+                    .OrderByDescending(a=> a.CreateDate);
                 var curPage = page.GetValueOrDefault(1);
                 var pageSize = 10;
                 var skip = (curPage - 1) * pageSize;
