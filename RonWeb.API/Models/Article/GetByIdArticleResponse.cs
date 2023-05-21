@@ -49,6 +49,16 @@ namespace RonWeb.API.Models.Article
         /// 創建日期
         /// </summary>
         public DateTime CreateDate { get; set; }
+
+		/// <summary>
+		/// 上一個文章資訊
+		/// </summary>
+		public BlogPagination? PrevArticle { get; set; }
+
+		/// <summary>
+		/// 下一個文章資訊
+		/// </summary>
+		public BlogPagination? NextArticle { get; set; }
     }
 }
 
