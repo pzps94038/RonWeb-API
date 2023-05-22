@@ -135,63 +135,6 @@ namespace RonWeb.API.Helper.Search
 
             }
         }
-
-        public async Task<KeywordeResponse> Keyword(string keyword, int? page)
-        {
-            using (var db = new RonWebDbContext())
-            {
-                var query = db.Article.Include(a => a.ArticleCategory)
-                     .Include(a => a.ArticleLabelMapping)
-                     .ThenInclude(a => a.ArticleLabel)
-                     .Select(a => new ArticleItem()
-                     {
-                         ArticleId = a.ArticleId,
-                         ArticleTitle = a.ArticleTitle,
-                         PreviewContent = a.PreviewContent,
-                         CategoryId = a.CategoryId,
-                         CategoryName = a.ArticleCategory.CategoryName,
-                         ViewCount = a.ViewCount,
-                         CreateDate = a.CreateDate,
-                         Labels = a.ArticleLabelMapping
-                             .Select(mapping => new Label
-                             {
-                                 LabelId = mapping.ArticleLabel.LabelId,
-                                 LabelName = mapping.ArticleLabel.LabelName
-                             })
-                             .ToList()
-                     });
-                if (!string.IsNullOrEmpty(keyword))
-                {
-                    keyword = keyword.Trim();
-                    query = query.Where(a =>
-                        a.ArticleTitle.Contains(keyword) ||
-                        a.PreviewContent.Contains(keyword) ||
-                        a.CategoryName.Contains(keyword)
-                    );
-                }
-                query = query.OrderByDescending(a => a.CreateDate);
-                var curPage = page.GetValueOrDefault(1);
-                var pageSize = 10;
-                var skip = (curPage - 1) * pageSize;
-                var total = query.Count();
-                List<ArticleItem> list;
-                if (skip == 0)
-                {
-                    list = await query.Take(pageSize).ToListAsync();
-                }
-                else
-                {
-                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
-                }
-
-                return new KeywordeResponse()
-                {
-                    Total = total,
-                    Articles = list,
-                    Keyword = keyword
-                };
-            }
-        }
     }
 }
 

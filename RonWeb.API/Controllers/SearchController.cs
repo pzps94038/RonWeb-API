@@ -30,35 +30,6 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
-        /// 關鍵字查詢
-        /// </summary>
-        /// <param name="keyword"></param>
-        /// <param name="page"></param>
-        /// <returns></returns>
-        [HttpGet]
-        [Route("[action]/{keyword}")]
-        public async Task<BaseResponse<KeywordeResponse>> Keyword(string keyword, int? page)
-        {
-            var result = new BaseResponse<KeywordeResponse>();
-            try
-            {
-                var data = await this._helper.Keyword(keyword, page);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
-            }
-
-            return result;
-        }
-
-
-        /// <summary>
         /// 分類查詢
         /// </summary>
         /// <param name="id"></param>

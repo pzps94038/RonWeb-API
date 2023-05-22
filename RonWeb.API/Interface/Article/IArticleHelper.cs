@@ -11,7 +11,7 @@ namespace RonWeb.API.Interface.Article
 		IUpdateAsync<long, UpdateArticleRequest>,
 		ICreateAsync<CreateArticleRequest>
 	{
-		public Task<GetArticleResponse> GetListAsync(int? page);
+		public Task<GetArticleResponse> GetListAsync(int? page, string? keyword);
 		public Task UpdateArticleViews(long id);
 
     }

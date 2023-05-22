@@ -72,7 +72,7 @@ namespace RonWeb.API.Helper
             }
         }
 
-        public async Task<GetArticleResponse> GetListAsync(int? page)
+        public async Task<GetArticleResponse> GetListAsync(int? page, string? keyword)
         {
             using (var db = new RonWebDbContext())
             {
@@ -96,7 +96,19 @@ namespace RonWeb.API.Helper
                             })
                             .ToList()
                     })
-                    .OrderByDescending(a=> a.CreateDate);
+                    ;
+                if (keyword != null) 
+                {
+                    keyword = keyword.Trim();
+                    if (!string.IsNullOrEmpty(keyword)) 
+                    {
+                        query = query.Where(a => a.ArticleTitle.Contains(keyword) ||
+                            a.PreviewContent.Contains(keyword) ||
+                            a.CategoryName.Contains(keyword)
+                        );
+                    }
+                }
+                query = query.OrderByDescending(a => a.CreateDate);
                 var curPage = page.GetValueOrDefault(1);
                 var pageSize = 10;
                 var skip = (curPage - 1) * pageSize;
