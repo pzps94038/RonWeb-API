@@ -57,6 +57,9 @@
     <None Remove="Helper\Upload\" />
     <None Remove="Interface\Upload\" />
     <None Remove="Models\Upload\" />
+    <None Remove="Models\SiteMap\" />
+    <None Remove="Interface\SiteMap\" />
+    <None Remove="Helper\SiteMap\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\Shared\" />
@@ -85,5 +88,8 @@
     <Folder Include="Interface\ArticleLabel\" />
     <Folder Include="Interface\ArticleLabel\" />
     <Folder Include="Helper\ArticleLabel\" />
+    <Folder Include="Models\SiteMap\" />
+    <Folder Include="Interface\SiteMap\" />
+    <Folder Include="Helper\SiteMap\" />
   </ItemGroup>
 </Project>
