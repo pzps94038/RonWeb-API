@@ -8,40 +8,38 @@ namespace RonWeb.API.Helper.SiteMap
 {
 	public class SiteMapHelper: ISiteMapHelper
 	{
+        public readonly RonWebDbContext db;
+
+        public SiteMapHelper(RonWebDbContext dbContext)
+        {
+            this.db = dbContext;
+        }
+
         public async Task<List<SiteMapResponse<long>>> Article()
         {
-            using (var db = new RonWebDbContext())
+            var result = await db.Article.Select(a => new SiteMapResponse<long>()
             {
-                var result = await db.Article.Select(a => new SiteMapResponse<long>()
-                {
-                    ID = a.ArticleId
-                }).ToListAsync();
-                return result;
-            }
+                ID = a.ArticleId
+            }).ToListAsync();
+            return result;
         }
 
         public async Task<List<SiteMapResponse<long>>> Category()
         {
-            using (var db = new RonWebDbContext())
+            var result = await db.ArticleCategory.Select(a => new SiteMapResponse<long>()
             {
-                var result = await db.ArticleCategory.Select(a => new SiteMapResponse<long>()
-                {
-                    ID = a.CategoryId
-                }).ToListAsync();
-                return result;
-            }
+                ID = a.CategoryId
+            }).ToListAsync();
+            return result;
         }
 
         public async Task<List<SiteMapResponse<long>>> Label()
         {
-            using (var db = new RonWebDbContext())
+            var result = await db.ArticleLabel.Select(a => new SiteMapResponse<long>()
             {
-                var result = await db.ArticleLabel.Select(a => new SiteMapResponse<long>()
-                {
-                    ID = a.LabelId
-                }).ToListAsync();
-                return result;
-            }
+                ID = a.LabelId
+            }).ToListAsync();
+            return result;
         }
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
 using RonWeb.Core;
+using RonWeb.Database.MySql.RonWeb.DataBase;
 using System.Reflection;
 using System.Text;
 
@@ -53,6 +54,7 @@ builder.Services.AddSwaggerGen(c =>
     var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
     c.IncludeXmlComments(xmlPath);
 });
+builder.Services.AddDbContext<RonWebDbContext>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

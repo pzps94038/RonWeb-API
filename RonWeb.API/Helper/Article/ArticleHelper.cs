@@ -11,13 +11,18 @@ using RonWeb.Database.MySql.RonWeb.Table;
 
 namespace RonWeb.API.Helper
 {
-    public class ArticleHelper : IArticleHelper
+    public class ArticleHelper: IArticleHelper
     {
+        public readonly RonWebDbContext db;
+
+        public ArticleHelper(RonWebDbContext dbContext)
+        {
+            this.db = dbContext;
+        }
+
         public async Task<GetByIdArticleResponse> GetAsync(long id)
         {
-            using (var db = new RonWebDbContext())
-            {
-                var data = await db.Article.Include(a => a.ArticleCategory)
+            var data = await db.Article.Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
                     .Select(a => new GetByIdArticleResponse()
@@ -39,44 +44,41 @@ namespace RonWeb.API.Helper
                             .ToList()
                     }).SingleOrDefaultAsync(a => a.ArticleId == id);
 
-                if (data != null)
-                {
-                    // 找到下一篇文章
-                    var nextArticle = await db.Article.Where(a => a.CreateDate > data.CreateDate)
-                        .OrderBy(a => a.CreateDate)
-                        .Take(1)
-                        .Select(a => new BlogPagination()
-                        {
-                            ArticleId = a.ArticleId,
-                            ArticleTitle = a.ArticleTitle
-                        }).FirstOrDefaultAsync();
-                    // 找到上一篇文章
-                    var prevArticle = await db.Article.Where(a => a.CreateDate < data.CreateDate)
-                        .OrderByDescending(a=> a.CreateDate)
-                        .Take(1)
-                        .Select(a => new BlogPagination()
-                        {
-                            ArticleId = a.ArticleId,
-                            ArticleTitle = a.ArticleTitle
-                        }).FirstOrDefaultAsync();
+            if (data != null)
+            {
+                // 找到下一篇文章
+                var nextArticle = await db.Article.Where(a => a.CreateDate > data.CreateDate)
+                    .OrderBy(a => a.CreateDate)
+                    .Take(1)
+                    .Select(a => new BlogPagination()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle
+                    }).FirstOrDefaultAsync();
+                // 找到上一篇文章
+                var prevArticle = await db.Article.Where(a => a.CreateDate < data.CreateDate)
+                    .OrderByDescending(a => a.CreateDate)
+                    .Take(1)
+                    .Select(a => new BlogPagination()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle
+                    }).FirstOrDefaultAsync();
 
-                    data.NextArticle = nextArticle;
-                    data.PrevArticle = prevArticle;
+                data.NextArticle = nextArticle;
+                data.PrevArticle = prevArticle;
 
-                    return data;
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
+                return data;
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
 
         public async Task<GetArticleResponse> GetListAsync(int? page, string? keyword)
         {
-            using (var db = new RonWebDbContext())
-            {
-                var query = db.Article.Include(a => a.ArticleCategory)
+            var query = db.Article.Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
                     .Select(a => new ArticleItem()
@@ -97,171 +99,74 @@ namespace RonWeb.API.Helper
                             .ToList()
                     })
                     ;
-                if (keyword != null) 
+            if (keyword != null)
+            {
+                keyword = keyword.Trim();
+                if (!string.IsNullOrEmpty(keyword))
                 {
-                    keyword = keyword.Trim();
-                    if (!string.IsNullOrEmpty(keyword)) 
-                    {
-                        query = query.Where(a => a.ArticleTitle.Contains(keyword) ||
-                            a.PreviewContent.Contains(keyword) ||
-                            a.CategoryName.Contains(keyword)
-                        );
-                    }
+                    query = query.Where(a => a.ArticleTitle.Contains(keyword) ||
+                        a.PreviewContent.Contains(keyword) ||
+                        a.CategoryName.Contains(keyword)
+                    );
                 }
-                query = query.OrderByDescending(a => a.CreateDate);
-                var curPage = page.GetValueOrDefault(1);
-                var pageSize = 10;
-                var skip = (curPage - 1) * pageSize;
-                var total = query.Count();
-                List<ArticleItem> list;
-                if (skip == 0)
-                {
-                    list = await query.Take(pageSize).ToListAsync();
-                }
-                else
-                {
-                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
-                }
-
-                return new GetArticleResponse()
-                {
-                    Total = total,
-                    Articles = list
-                };
             }
-            
+            query = query.OrderByDescending(a => a.CreateDate);
+            var curPage = page.GetValueOrDefault(1);
+            var pageSize = 10;
+            var skip = (curPage - 1) * pageSize;
+            var total = query.Count();
+            List<ArticleItem> list;
+            if (skip == 0)
+            {
+                list = await query.Take(pageSize).ToListAsync();
+            }
+            else
+            {
+                list = await query.Skip(skip).Take(pageSize).ToListAsync();
+            }
+
+            return new GetArticleResponse()
+            {
+                Total = total,
+                Articles = list
+            };
+
         }
 
         public async Task UpdateAsync(long id, UpdateArticleRequest data)
         {
-            using (var db = new RonWebDbContext())
-            {
-                var sanitizer = new HtmlSanitizer();
-                // 自定義規則
-                sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持
-                sanitizer.AllowedAttributes.Add("class");
-                sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
-                var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
-                if (article != null)
-                {
-                    var executionStrategy = db.Database.CreateExecutionStrategy();
-                    await executionStrategy.ExecuteAsync(async () =>
-                    {
-                        using (var tc = await db.Database.BeginTransactionAsync())
-                        {
-                            try
-                            {
-                                article.ArticleTitle = data.ArticleTitle;
-                                article.Content = sanitizer.Sanitize(data.Content);
-                                article.PreviewContent = sanitizer.Sanitize(data.PreviewContent);
-                                article.CategoryId = data.CategoryId;
-                                article.UpdateBy = data.UserId;
-                                article.UpdateDate = DateTime.Now;
-                                var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
-                                db.ArticleLabelMapping.RemoveRange(mapping);
-                                var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
-                                {
-                                    LabelId = a.LabelId,
-                                    ArticleId = article.ArticleId,
-                                    CreateDate = DateTime.Now,
-                                    CreateBy = data.UserId
-                                }).ToList();
-                                await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
-                                await db.SaveChangesAsync();
-                                await tc.CommitAsync();
-                            }
-                            catch
-                            {
-                                await tc.RollbackAsync();
-                                throw;
-                            }
-                        }
-                    });
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
-            }
-        }
-
-        public async Task DeleteAsync(long id)
-        {
-            using (var db = new RonWebDbContext())
-            {
-                var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
-                if (article != null)
-                {
-                    var executionStrategy = db.Database.CreateExecutionStrategy();
-                    await executionStrategy.ExecuteAsync(async () =>
-                    {
-                        using (var tc = await db.Database.BeginTransactionAsync())
-                        {
-                            try
-                            {
-                                db.Article.Remove(article);
-                                var list = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
-                                db.ArticleLabelMapping.RemoveRange(list);
-                                await db.SaveChangesAsync();
-                                await tc.CommitAsync();
-                            }
-                            catch
-                            {
-                                await tc.RollbackAsync();
-                                throw;
-                            }
-                        }
-                    });   
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
-            }
-        }
-
-        public async Task CreateAsync(CreateArticleRequest data)
-        {
-            using (var db = new RonWebDbContext())
+            var sanitizer = new HtmlSanitizer();
+            // 自定義規則
+            sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持
+            sanitizer.AllowedAttributes.Add("class");
+            sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
+            var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+            if (article != null)
             {
                 var executionStrategy = db.Database.CreateExecutionStrategy();
-
                 await executionStrategy.ExecuteAsync(async () =>
                 {
                     using (var tc = await db.Database.BeginTransactionAsync())
                     {
                         try
                         {
-                            var sanitizer = new HtmlSanitizer();
-                            sanitizer.AllowedSchemes.Add("mailto");
-                            sanitizer.AllowedAttributes.Add("class");
-                            sanitizer.AllowedAttributes.Add("alt");
-
-                            var article = new Article()
+                            article.ArticleTitle = data.ArticleTitle;
+                            article.Content = sanitizer.Sanitize(data.Content);
+                            article.PreviewContent = sanitizer.Sanitize(data.PreviewContent);
+                            article.CategoryId = data.CategoryId;
+                            article.UpdateBy = data.UserId;
+                            article.UpdateDate = DateTime.Now;
+                            var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
+                            db.ArticleLabelMapping.RemoveRange(mapping);
+                            var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
                             {
-                                ArticleTitle = data.ArticleTitle,
-                                Content = sanitizer.Sanitize(data.Content),
-                                PreviewContent = sanitizer.Sanitize(data.PreviewContent),
-                                CategoryId = data.CategoryId,
-                                ViewCount = 0,
+                                LabelId = a.LabelId,
+                                ArticleId = article.ArticleId,
                                 CreateDate = DateTime.Now,
                                 CreateBy = data.UserId
-                            };
-
-                            db.Article.Add(article);
+                            }).ToList();
+                            await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
                             await db.SaveChangesAsync();
-
-                            var mappings = data.Labels.Select(a => new ArticleLabelMapping()
-                            {
-                                ArticleId = article.ArticleId,
-                                LabelId = a.LabelId,
-                                CreateBy = data.UserId,
-                                CreateDate = DateTime.Now
-                            });
-
-                            db.ArticleLabelMapping.AddRange(mappings);
-                            await db.SaveChangesAsync();
-
                             await tc.CommitAsync();
                         }
                         catch
@@ -272,22 +177,106 @@ namespace RonWeb.API.Helper
                     }
                 });
             }
+            else
+            {
+                throw new NotFoundException();
+            }
+        }
+
+        public async Task DeleteAsync(long id)
+        {
+            var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+            if (article != null)
+            {
+                var executionStrategy = db.Database.CreateExecutionStrategy();
+                await executionStrategy.ExecuteAsync(async () =>
+                {
+                    using (var tc = await db.Database.BeginTransactionAsync())
+                    {
+                        try
+                        {
+                            db.Article.Remove(article);
+                            var list = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
+                            db.ArticleLabelMapping.RemoveRange(list);
+                            await db.SaveChangesAsync();
+                            await tc.CommitAsync();
+                        }
+                        catch
+                        {
+                            await tc.RollbackAsync();
+                            throw;
+                        }
+                    }
+                });
+            }
+            else
+            {
+                throw new NotFoundException();
+            }
+        }
+
+        public async Task CreateAsync(CreateArticleRequest data)
+        {
+            var executionStrategy = db.Database.CreateExecutionStrategy();
+
+            await executionStrategy.ExecuteAsync(async () =>
+            {
+                using (var tc = await db.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        var sanitizer = new HtmlSanitizer();
+                        sanitizer.AllowedSchemes.Add("mailto");
+                        sanitizer.AllowedAttributes.Add("class");
+                        sanitizer.AllowedAttributes.Add("alt");
+
+                        var article = new Article()
+                        {
+                            ArticleTitle = data.ArticleTitle,
+                            Content = sanitizer.Sanitize(data.Content),
+                            PreviewContent = sanitizer.Sanitize(data.PreviewContent),
+                            CategoryId = data.CategoryId,
+                            ViewCount = 0,
+                            CreateDate = DateTime.Now,
+                            CreateBy = data.UserId
+                        };
+
+                        db.Article.Add(article);
+                        await db.SaveChangesAsync();
+
+                        var mappings = data.Labels.Select(a => new ArticleLabelMapping()
+                        {
+                            ArticleId = article.ArticleId,
+                            LabelId = a.LabelId,
+                            CreateBy = data.UserId,
+                            CreateDate = DateTime.Now
+                        });
+
+                        db.ArticleLabelMapping.AddRange(mappings);
+                        await db.SaveChangesAsync();
+
+                        await tc.CommitAsync();
+                    }
+                    catch
+                    {
+                        await tc.RollbackAsync();
+                        throw;
+                    }
+                }
+            });
         }
 
         public async Task UpdateArticleViews(long id)
         {
-            using (var db = new RonWebDbContext())
+            var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+            if (article != null)
             {
-                var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
-                if (article != null)
-                {
-                    article.ViewCount = article.ViewCount + 1;
-                    await db.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
+                article.ViewCount = article.ViewCount + 1;
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
     }
