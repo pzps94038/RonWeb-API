@@ -42,3 +42,12 @@ jobs:
         name: RonWeb.API
         path: dist
         retention-days: 1
+    - name: Docker Build
+      if: github.ref == 'refs/heads/main'
+      run: |
+          docker build -t ron-web-api:$(date +%s) . --no-cache
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PWD }}
+    - name: Docker Push
+      if: github.ref == 'refs/heads/main'
+      run: |
+          docker push ron-web-api
