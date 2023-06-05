@@ -54,4 +54,7 @@ jobs:
     - name: SSH into server and deploy
       if: github.ref == 'refs/heads/main'
       run: |
-        sshpass -p ${{ secrets.SCP_PWD }} ssh ${{ secrets.SCP_USER }}@${{ secrets.SCP_HOST }} 'docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d${{ secrets.DOCKER_USER }}/ron-web-api:latest'
+        ssh-keyscan -H "${{ secrets.SCP_HOST }}" >> ~/.ssh/known_hosts
+        ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.SCP_PWD }}") "${{ secrets.SCP_USER }}"@"${{ secrets.SCP_HOST }}" 
+        'docker pull "${{ secrets.DOCKER_USER }}/ron-web-api:latest" && docker run -d "${{ secrets.DOCKER_USER }}/ron-web-api:latest"'
+
