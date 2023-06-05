@@ -53,8 +53,10 @@ jobs:
           docker push ${{ secrets.DOCKER_USER }}/ron-web-api
     - name: SSH into server and deploy
       if: github.ref == 'refs/heads/main'
-      run: |
-        ssh-keyscan -H "${{ secrets.SCP_HOST }}" >> ~/.ssh/known_hosts
-        ssh -o StrictHostKeyChecking=no -i <(echo "${{ secrets.SCP_PWD }}") "${{ secrets.SCP_USER }}"@"${{ secrets.SCP_HOST }}" 
-        'docker pull "${{ secrets.DOCKER_USER }}/ron-web-api:latest" && docker run -d "${{ secrets.DOCKER_USER }}/ron-web-api:latest"'
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SCP_HOST }}
+        username: ${{  secrets.SCP_USER }}
+        password: ${{ secrets.SCP_PWD }}
+        script: docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d ${{ secrets.DOCKER_USER }}/ron-web-api:latest
 
