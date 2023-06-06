@@ -78,5 +78,6 @@ jobs:
             -e RON_WEB_MONGO_DB_CONSTR="${{ secrets.RON_WEB_MONGO_DB_CONSTR }}" \
             -e RON_WEB_MYSQL_DB_CONSTR="${{ secrets.RON_WEB_MYSQL_DB_CONSTR }}" \
             -e STORAGE_BUCKET="${{ secrets.STORAGE_BUCKET }}" \
+            -e RON_WEB_REDIS_DB_CONSTR="${{ secrets.RON_WEB_REDIS_DB_CONSTR }}" \
             -e PORT=80 \
             ${{ secrets.DOCKER_USER }}/ron-web-api:latest
