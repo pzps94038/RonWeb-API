@@ -73,7 +73,7 @@ jobs:
             -e GMAIL_SENDER_EMAIL="${{ secrets.GMAIL_SENDER_EMAIL }}" \
             -e ISSUER="${{ secrets.ISSUER }}" \
             -e JWTKEY="${{ secrets.JWTKEY }}" \
-            -e ORIGINS="$ORIGINS" \
+            -e ORIGINS=$ORIGINS \
             -e RE_CAPTCHA_SERVER_TOKEN="${{ secrets.RE_CAPTCHA_SERVER_TOKEN }}" \
             -e RON_WEB_MONGO_DB_CONSTR="${{ secrets.RON_WEB_MONGO_DB_CONSTR }}" \
             -e RON_WEB_MYSQL_DB_CONSTR="${{ secrets.RON_WEB_MYSQL_DB_CONSTR }}" \
