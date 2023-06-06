@@ -58,7 +58,7 @@ jobs:
         host: ${{ secrets.SCP_HOST }}
         username: ${{  secrets.SCP_USER }}
         password: ${{ secrets.SCP_PWD }}
-        script: docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d -p 8081:80 ${{ secrets.DOCKER_USER }}/ron-web-api:latest \
+        script: docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d -p 8081:80 \
           -e AESIV=${{ secrets.AESIV }} \
           -e AESKEY=${{ secrets.AESKEY }} \
           -e AUDIENCE=${{ secrets.AUDIENCE }} \
@@ -74,4 +74,5 @@ jobs:
           -e RON_WEB_MONGO_DB_CONSTR=${{ secrets.RON_WEB_MONGO_DB_CONSTR }} \
           -e RON_WEB_MYSQL_DB_CONSTR=${{ secrets.RON_WEB_MYSQL_DB_CONSTR }} \
           -e STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }} \
-          -e PORT=80
+          -e PORT=80 \
+          ${{ secrets.DOCKER_USER }}/ron-web-api:latest
