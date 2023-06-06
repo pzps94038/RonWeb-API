@@ -58,5 +58,20 @@ jobs:
         host: ${{ secrets.SCP_HOST }}
         username: ${{  secrets.SCP_USER }}
         password: ${{ secrets.SCP_PWD }}
-        script: docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d ${{ secrets.DOCKER_USER }}/ron-web-api:latest
-
+        script: docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d -p 8081:80 ${{ secrets.DOCKER_USER }}/ron-web-api:latest \
+          -e AESIV=${{ secrets.AESIV }} \
+          -e AESKEY=${{ secrets.AESKEY }} \
+          -e AUDIENCE=${{ secrets.AUDIENCE }} \
+          -e ERROR_LOG_EMAIL_ADDRESS=${{ secrets.ERROR_LOG_EMAIL_ADDRESS }} \
+          -e GMAIL_ADDRESS=${{ secrets.GMAIL_ADDRESS }} \
+          -e GMAIL_DISPLAY_NAME=${{ secrets.GMAIL_DISPLAY_NAME }} \
+          -e GMAIL_PWD=${{ secrets.GMAIL_PWD }} \
+          -e GMAIL_SENDER_EMAIL=${{ secrets.GMAIL_SENDER_EMAIL }} \
+          -e ISSUER=${{ secrets.ISSUER }} \
+          -e JWTKEY=${{ secrets.JWTKEY }} \
+          -e ORIGINS=${{ secrets.ORIGINS }} \
+          -e RE_CAPTCHA_SERVER_TOKEN=${{ secrets.RE_CAPTCHA_SERVER_TOKEN }} \
+          -e RON_WEB_MONGO_DB_CONSTR=${{ secrets.RON_WEB_MONGO_DB_CONSTR }} \
+          -e RON_WEB_MYSQL_DB_CONSTR=${{ secrets.RON_WEB_MYSQL_DB_CONSTR }} \
+          -e STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }} \
+          -e PORT=80
