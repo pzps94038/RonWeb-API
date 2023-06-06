@@ -58,21 +58,23 @@ jobs:
         host: ${{ secrets.SCP_HOST }}
         username: ${{  secrets.SCP_USER }}
         password: ${{ secrets.SCP_PWD }}
-        script: docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && docker run -d -p 8081:80 \
-          --env AESIV=${{ secrets.AESIV }} \
-          --env AESKEY=${{ secrets.AESKEY }} \
-          --env AUDIENCE=${{ secrets.AUDIENCE }} \
-          --env ERROR_LOG_EMAIL_ADDRESS=${{ secrets.ERROR_LOG_EMAIL_ADDRESS }} \
-          --env GMAIL_ADDRESS=${{ secrets.GMAIL_ADDRESS }} \
-          --env GMAIL_DISPLAY_NAME=${{ secrets.GMAIL_DISPLAY_NAME }} \
-          --env GMAIL_PWD=${{ secrets.GMAIL_PWD }} \
-          --env GMAIL_SENDER_EMAIL=${{ secrets.GMAIL_SENDER_EMAIL }} \
-          --env ISSUER=${{ secrets.ISSUER }} \
-          --env JWTKEY=${{ secrets.JWTKEY }} \
-          --env ORIGINS=${{ secrets.ORIGINS }} \
-          --env RE_CAPTCHA_SERVER_TOKEN=${{ secrets.RE_CAPTCHA_SERVER_TOKEN }} \
-          --env RON_WEB_MONGO_DB_CONSTR=${{ secrets.RON_WEB_MONGO_DB_CONSTR }} \
-          --env RON_WEB_MYSQL_DB_CONSTR=${{ secrets.RON_WEB_MYSQL_DB_CONSTR }} \
-          --env STORAGE_BUCKET=${{ secrets.STORAGE_BUCKET }} \
-          --env PORT=80 \
-          ${{ secrets.DOCKER_USER }}/ron-web-api:latest
+        script: |
+          docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest
+          docker run -d -p 8081:80 \
+            -e AESIV="${{ secrets.AESIV }}" \
+            -e AESKEY="${{ secrets.AESKEY }}" \
+            -e AUDIENCE="${{ secrets.AUDIENCE }}" \
+            -e ERROR_LOG_EMAIL_ADDRESS="${{ secrets.ERROR_LOG_EMAIL_ADDRESS }}" \
+            -e GMAIL_ADDRESS="${{ secrets.GMAIL_ADDRESS }}" \
+            -e GMAIL_DISPLAY_NAME="${{ secrets.GMAIL_DISPLAY_NAME }}" \
+            -e GMAIL_PWD="${{ secrets.GMAIL_PWD }}" \
+            -e GMAIL_SENDER_EMAIL="${{ secrets.GMAIL_SENDER_EMAIL }}" \
+            -e ISSUER="${{ secrets.ISSUER }}" \
+            -e JWTKEY="${{ secrets.JWTKEY }}" \
+            -e ORIGINS="${{ secrets.ORIGINS }}" \
+            -e RE_CAPTCHA_SERVER_TOKEN="${{ secrets.RE_CAPTCHA_SERVER_TOKEN }}" \
+            -e RON_WEB_MONGO_DB_CONSTR="${{ secrets.RON_WEB_MONGO_DB_CONSTR }}" \
+            -e RON_WEB_MYSQL_DB_CONSTR="${{ secrets.RON_WEB_MYSQL_DB_CONSTR }}" \
+            -e STORAGE_BUCKET="${{ secrets.STORAGE_BUCKET }}" \
+            -e PORT=80 \
+            ${{ secrets.DOCKER_USER }}/ron-web-api:latest
