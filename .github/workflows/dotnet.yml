@@ -59,9 +59,10 @@ jobs:
         username: ${{  secrets.SCP_USER }}
         password: ${{ secrets.SCP_PWD }}
         script: |
-          docker stop ron-web-api || true &&
-          docker rm ron-web-api || true &&
-          docker run -d -p 8081:80 --name ron-web-api --restart=always --pull \
+          docker stop ron-web-api || true && \
+          docker rm ron-web-api || true && \
+          docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && \
+          docker run -d -p 8081:80 --name ron-web-api --restart=always \
             -e AESIV="${{ secrets.AESIV }}" \
             -e AESKEY="${{ secrets.AESKEY }}" \
             -e AUDIENCE="${{ secrets.AUDIENCE }}" \
