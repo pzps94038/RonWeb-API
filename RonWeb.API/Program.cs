@@ -66,7 +66,8 @@ builder.Services.Configure<ClientRateLimitPolicies>(builder.Configuration.GetSec
 
 //注入計數器和規則儲存
 builder.Services.AddSingleton<IClientPolicyStore, MemoryCacheClientPolicyStore>();
-//builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
 builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
 //配置（解析器、計數器金鑰生成器）
 builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
@@ -85,13 +86,14 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<RonWebDbContext>();
 var app = builder.Build();
 
-// Swagger UI Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    
 }
-
+// Swagger UI
+app.UseSwagger();
+app.UseSwaggerUI();
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseCors("CorsPolicy");
