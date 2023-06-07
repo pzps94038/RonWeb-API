@@ -13,34 +13,38 @@ using Microsoft.EntityFrameworkCore;
 
 namespace RonWeb.API.Helper.Register
 {
-    public class RegisterHelper : IRegisterHelper
+    public class RegisterHelper: IRegisterHelper
     {
+        public readonly RonWebDbContext db;
+
+        public RegisterHelper(RonWebDbContext dbContext)
+        {
+            this.db = dbContext;
+        }
+
         public async Task RegisterUser(RegisterRequest data)
         {
-            using (var db = new RonWebDbContext())
+            var user = await db.UserMain.SingleOrDefaultAsync(a => a.Account == data.Account);
+            if (user != null)
             {
-                var user = await db.UserMain.SingleOrDefaultAsync(a => a.Account == data.Account);
-                if (user != null)
+                throw new UniqueException();
+            }
+            else
+            {
+                string iv = Environment.GetEnvironmentVariable(EnvVarEnum.AESIV.Description())!;
+                string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
+                var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
+                var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
+                user = new RonWeb.Database.MySql.RonWeb.Table.UserMain
                 {
-                    throw new UniqueException();
-                }
-                else
-                {
-                    string iv = Environment.GetEnvironmentVariable(EnvVarEnum.AESIV.Description())!;
-                    string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
-                    var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
-                    var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
-                    user = new RonWeb.Database.MySql.RonWeb.Table.UserMain
-                    {
-                        Account = data.Account,
-                        Password = encryptPassword,
-                        UserName = data.UserName,
-                        Email = data.Email,
-                        CreateDate = DateTime.Now
-                    };
-                    await db.UserMain.AddAsync(user);
-                    await db.SaveChangesAsync();
-                }
+                    Account = data.Account,
+                    Password = encryptPassword,
+                    UserName = data.UserName,
+                    Email = data.Email,
+                    CreateDate = DateTime.Now
+                };
+                await db.UserMain.AddAsync(user);
+                await db.SaveChangesAsync();
             }
         }
     }

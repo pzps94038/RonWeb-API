@@ -12,10 +12,11 @@ using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.Database.Models;
+using RonWeb.Database.MySql.RonWeb.DataBase;
 
 namespace RonWeb.API.Helper.ContactUs
 {
-    public class ContactUsHelper : IContactUsHelper
+    public class ContactUsHelper: IContactUsHelper
     {
         public async Task SendContactUsMail(ContactUsRequest data)
         {

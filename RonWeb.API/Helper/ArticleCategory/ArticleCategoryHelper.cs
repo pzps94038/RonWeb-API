@@ -9,136 +9,128 @@ using RonWeb.Database.MySql.RonWeb.DataBase;
 
 namespace RonWeb.API.Helper.ArticleCategory
 {
-    public class ArticleCategoryHelper : IArticleCategoryHelper
+    public class ArticleCategoryHelper: IArticleCategoryHelper
     {
+        public readonly RonWebDbContext db;
+
+        public ArticleCategoryHelper(RonWebDbContext dbContext)
+        {
+            this.db = dbContext;
+        }
+
         public async Task CreateAsync(CreateArticleCategoryRequest data)
         {
-            using (var db = new RonWebDbContext())
+            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryName == data.CategoryName);
+            if (category != null)
             {
-                var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryName == data.CategoryName);
-                if (category != null)
+                throw new UniqueException();
+            }
+            else
+            {
+                category = new RonWeb.Database.MySql.RonWeb.Table.ArticleCategory()
                 {
-                    throw new UniqueException();
-                }
-                else
-                {
-                    category = new RonWeb.Database.MySql.RonWeb.Table.ArticleCategory()
-                    {
-                        CategoryName = data.CategoryName,
-                        CreateDate = DateTime.Now,
-                        CreateBy = data.UserId
-                    };
-                    await db.AddAsync(category);
-                    await db.SaveChangesAsync();
-                }
+                    CategoryName = data.CategoryName,
+                    CreateDate = DateTime.Now,
+                    CreateBy = data.UserId
+                };
+                await db.AddAsync(category);
+                await db.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(long id)
         {
-            using (var db = new RonWebDbContext())
+            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+            if (category != null)
             {
-                var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
-                if (category != null)
+                var executionStrategy = db.Database.CreateExecutionStrategy();
+                await executionStrategy.ExecuteAsync(async () =>
                 {
-                    var executionStrategy = db.Database.CreateExecutionStrategy();
-                    await executionStrategy.ExecuteAsync(async () =>
+                    using (var tc = await db.Database.BeginTransactionAsync())
                     {
-                        using (var tc = await db.Database.BeginTransactionAsync())
+                        try
                         {
-                            try
-                            {
-                                var articles = await db.Article.Where(a => a.CategoryId == id).ToListAsync();
-                                db.Article.RemoveRange(articles);
-                                db.ArticleCategory.Remove(category);
-                                await db.SaveChangesAsync();
-                                await tc.CommitAsync();
-                            }
-                            catch
-                            {
-                                await tc.RollbackAsync();
-                                throw;
-                            }
+                            var articles = await db.Article.Where(a => a.CategoryId == id).ToListAsync();
+                            db.Article.RemoveRange(articles);
+                            db.ArticleCategory.Remove(category);
+                            await db.SaveChangesAsync();
+                            await tc.CommitAsync();
                         }
-                    });
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
+                        catch
+                        {
+                            await tc.RollbackAsync();
+                            throw;
+                        }
+                    }
+                });
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
 
         public async Task<Category> GetAsync(long id)
         {
-            using (var db = new RonWebDbContext())
+            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+            if (category != null)
             {
-                var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
-                if (category != null)
+                return new Category()
                 {
-                    return new Category()
-                    {
-                        CategoryId = category.CategoryId,
-                        CategoryName = category.CategoryName,
-                        CreateDate = category.CreateDate
-                    };
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
+                    CategoryId = category.CategoryId,
+                    CategoryName = category.CategoryName,
+                    CreateDate = category.CreateDate
+                };
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
 
         public async Task<GetArticleCategoryResponse> GetListAsync(int? page)
         {
-            using (var db = new RonWebDbContext())
+            var query = db.ArticleCategory.AsQueryable();
+            var total = query.Count();
+            if (page != null)
             {
-                var query = db.ArticleCategory.AsQueryable();
-                var total = query.Count();
-                if (page != null)
+                var pageSize = 10;
+                int skip = (int)((page - 1) * pageSize);
+                if (skip == 0)
                 {
-                    var pageSize = 10;
-                    int skip = (int)((page - 1) * pageSize);
-                    if (skip == 0)
-                    {
-                        query = query.Take(pageSize);
-                    }
-                    else
-                    {
-                        query = query.Skip(skip).Take(pageSize);
-                    }
+                    query = query.Take(pageSize);
                 }
-                var categorys = await query.Select(a => new Category()
+                else
                 {
-                    CategoryId = a.CategoryId,
-                    CategoryName = a.CategoryName,
-                    CreateDate = a.CreateDate
-                }).ToListAsync();
-                return new GetArticleCategoryResponse()
-                {
-                    Total = total,
-                    Categorys = categorys
-                };
+                    query = query.Skip(skip).Take(pageSize);
+                }
             }
+            var categorys = await query.Select(a => new Category()
+            {
+                CategoryId = a.CategoryId,
+                CategoryName = a.CategoryName,
+                CreateDate = a.CreateDate
+            }).ToListAsync();
+            return new GetArticleCategoryResponse()
+            {
+                Total = total,
+                Categorys = categorys
+            };
         }
 
         public async Task UpdateAsync(long id, UpdateArticleCategoryRequest data)
         {
-            using (var db = new RonWebDbContext())
+            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+            if (category != null)
             {
-                var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
-                if (category != null)
-                {
-                    category.CategoryName = data.CategoryName;
-                    category.UpdateBy = data.UserId;
-                    category.UpdateDate = DateTime.Now;
-                    await db.SaveChangesAsync();
-                }
-                else
-                {
-                    throw new NotFoundException();
-                }
+                category.CategoryName = data.CategoryName;
+                category.UpdateBy = data.UserId;
+                category.UpdateDate = DateTime.Now;
+                await db.SaveChangesAsync();
+            }
+            else
+            {
+                throw new NotFoundException();
             }
         }
     }
