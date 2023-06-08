@@ -12,7 +12,7 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
         {
             string connectionString = Environment.GetEnvironmentVariable(MySqlDbEnum.RON_WEB_MYSQL_DB_CONSTR.Description())!;
             optionsBuilder.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33)),
-            options => options.EnableRetryOnFailure());
+            options => options.EnableRetryOnFailure(1));
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Helper.Shared;
-using RonWeb.API.Interface.ArticleCategory;
 using RonWeb.API.Interface.ArticleLabel;
-using RonWeb.API.Models.ArticleCategory;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleLabel;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
@@ -19,9 +13,11 @@ namespace RonWeb.API.Controllers
     public class ArticleLabelController : Controller
     {
         private readonly IArticleLabelHelper _helper;
-        public ArticleLabelController(IArticleLabelHelper helper)
+        private readonly ILogHelper _logger;
+        public ArticleLabelController(IArticleLabelHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -29,7 +25,7 @@ namespace RonWeb.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<GetArticleLabelResponse>> Get(int? page)
+        public async Task<BaseResponse<GetArticleLabelResponse>> GetArticleLabel(int? page)
         {
             var result = new BaseResponse<GetArticleLabelResponse>();
             try
@@ -43,7 +39,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -55,7 +51,7 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<Label>> Get(long id)
+        public async Task<BaseResponse<Label>> GetArticleLabelById(long id)
         {
             var result = new BaseResponse<Label>();
             try
@@ -74,7 +70,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -86,7 +82,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<BaseResponse> Post([FromBody] CreateArticleLabelRequest data)
+        public async Task<BaseResponse> CreateArticleLabel([FromBody] CreateArticleLabelRequest data)
         {
             var result = new BaseResponse();
             try
@@ -109,7 +105,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.CreateFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -122,7 +118,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Patch(long id, [FromBody] UpdateArticleLabelRequest data)
+        public async Task<BaseResponse> UpdateArticleLabel(long id, [FromBody] UpdateArticleLabelRequest data)
         {
             var result = new BaseResponse();
             try
@@ -140,7 +136,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -152,7 +148,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Delete(long id)
+        public async Task<BaseResponse> DeleteArticleLabel(long id)
         {
             var result = new BaseResponse();
             try
@@ -170,7 +166,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.DeleteFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }

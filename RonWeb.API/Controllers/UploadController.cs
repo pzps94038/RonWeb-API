@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
-using RonWeb.API.Helper.Shared;
-using RonWeb.API.Interface.Search;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Interface.Upload;
 using RonWeb.API.Models.Shared;
 using RonWeb.API.Models.Upload;
 using RonWeb.Core;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RonWeb.API.Controllers
 {
@@ -25,9 +16,11 @@ namespace RonWeb.API.Controllers
     public class UploadController : Controller
     {
         private readonly IUploadHelper _helper;
-        public UploadController(IUploadHelper helper)
+        private readonly ILogHelper _logger;
+        public UploadController(IUploadHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -61,7 +54,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.UploadFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;

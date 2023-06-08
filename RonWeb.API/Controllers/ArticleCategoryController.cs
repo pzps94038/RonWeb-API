@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.ArticleCategory;
-using RonWeb.API.Models.Article;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
@@ -17,9 +16,11 @@ namespace RonWeb.API.Controllers
     public class ArticleCategoryController : Controller
     {
         private readonly IArticleCategoryHelper _helper;
-        public ArticleCategoryController(IArticleCategoryHelper helper) 
+        private readonly ILogHelper _logger;
+        public ArticleCategoryController(IArticleCategoryHelper helper, ILogHelper logger) 
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace RonWeb.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<GetArticleCategoryResponse>> Get(int? page)
+        public async Task<BaseResponse<GetArticleCategoryResponse>> GetArticleCategory(int? page)
         {
             var result = new BaseResponse<GetArticleCategoryResponse>();
             try
@@ -41,7 +42,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -53,7 +54,7 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<Category>> Get(long id)
+        public async Task<BaseResponse<Category>> GetArticleCategoryById(long id)
         {
             var result = new BaseResponse<Category>();
             try
@@ -72,7 +73,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -84,7 +85,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<BaseResponse> Post([FromBody]CreateArticleCategoryRequest data)
+        public async Task<BaseResponse> CreateArticleCategory([FromBody]CreateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
             try
@@ -107,7 +108,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.CreateFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -120,7 +121,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Patch(long id, [FromBody]UpdateArticleCategoryRequest data)
+        public async Task<BaseResponse> UpdateArticleCategory(long id, [FromBody]UpdateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
             try
@@ -138,7 +139,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -150,7 +151,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Delete(long id)
+        public async Task<BaseResponse> DeleteArticleCategory(long id)
         {
             var result = new BaseResponse();
             try
@@ -168,7 +169,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.DeleteFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }

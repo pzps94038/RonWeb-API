@@ -1,19 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using RonWeb.API.Helper.Shared;
-using RonWeb.API.Interface.Article;
+﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.Search;
 using RonWeb.API.Models.Search;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+using RonWeb.API.Interface.Shared;
 
 namespace RonWeb.API.Controllers
 {
@@ -24,9 +15,11 @@ namespace RonWeb.API.Controllers
     public class SearchController : Controller
     {
         private readonly ISearchHelper _helper;
-        public SearchController(ISearchHelper helper)
+        private readonly ILogHelper _logger;
+        public SearchController(ISearchHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -56,7 +49,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -89,7 +82,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
