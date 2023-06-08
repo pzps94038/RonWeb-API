@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Helper.Shared;
-using RonWeb.API.Interface.Login;
+﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.RefreshToken;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.RefreshToken;
 using RonWeb.API.Models.Shared;
@@ -20,9 +15,11 @@ namespace RonWeb.API.Controllers
     public class RefreshTokenController : Controller
     {
         private readonly IRefreshTokenHelper _helper;
-        public RefreshTokenController(IRefreshTokenHelper helper)
+        private readonly ILogHelper _logger;
+        public RefreshTokenController(IRefreshTokenHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -31,7 +28,7 @@ namespace RonWeb.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse<Token>> Post([FromBody]RefreshTokenRequest req)
+        public async Task<BaseResponse<Token>> RefreshToken([FromBody]RefreshTokenRequest req)
         {
             var result = new BaseResponse<Token>();
             try
@@ -55,7 +52,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.SystemFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }

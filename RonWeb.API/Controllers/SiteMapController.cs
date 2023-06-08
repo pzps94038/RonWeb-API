@@ -1,18 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using RonWeb.API.Helper.Shared;
+﻿using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Interface.SiteMap;
-using RonWeb.API.Interface.Upload;
-using RonWeb.API.Models.Search;
 using RonWeb.API.Models.Shared;
 using RonWeb.API.Models.SiteMap;
 using RonWeb.Core;
-
-// For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace RonWeb.API.Controllers
 {
@@ -20,9 +11,11 @@ namespace RonWeb.API.Controllers
     public class SiteMapController : Controller
     {
         private readonly ISiteMapHelper _helper;
-        public SiteMapController(ISiteMapHelper helper)
+        private readonly ILogHelper _logger;
+        public SiteMapController(ISiteMapHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         [HttpGet]
@@ -40,7 +33,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -61,7 +54,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -82,7 +75,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;

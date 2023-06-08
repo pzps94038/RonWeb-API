@@ -1,5 +1,8 @@
 ﻿using System;
+using Microsoft.IdentityModel.Logging;
+using RonWeb.API.Controllers;
 using RonWeb.API.Enum;
+using RonWeb.API.Interface.ArticleCategory;
 using RonWeb.API.Interface.Shared;
 using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
@@ -15,58 +18,31 @@ namespace RonWeb.API.Helper.Shared
 		Error,
 	}
 
-	public static class LogHelper
+	public class LogHelper: ILogHelper
     {
-		public static async void Info(string msg)
-		{
-            using (var db = new RonWebDbContext())
-            {
-                var data = new ExceptionLog()
-                {
-                    Message = msg,
-                    Level = Level.Info.Description(),
-                    CreateDate = DateTime.Now
-                };
-                await db.ExceptionLog.AddAsync(data);
-                await db.SaveChangesAsync();
-            }
-        }
-
-        public static async void Warn(string msg)
+        private readonly ILogger<LogHelper> _logger;
+        public LogHelper(ILogger<LogHelper> logger)
         {
-            using (var db = new RonWebDbContext())
-            {
-                var data = new ExceptionLog()
-                {
-                    Message = msg,
-                    Level = Level.Warn.Description(),
-                    CreateDate = DateTime.Now
-                };
-                await db.ExceptionLog.AddAsync(data);
-                await db.SaveChangesAsync();
-            }
+            this._logger = logger;
         }
 
-        public static async void Warn(Exception ex)
-        {
-            using (var db = new RonWebDbContext())
-            {
-                var data = new ExceptionLog()
-                {
-                    StackTrace = ex.StackTrace,
-                    Message = ex.Message,
-                    Level = Level.Warn.Description(),
-                    CreateDate = DateTime.Now
-                };
-                await db.ExceptionLog.AddAsync(data);
-                await db.SaveChangesAsync();
-            }
-        }
-
-        public static async void Error(Exception ex, bool record = true)
+        public void Warn(string msg)
         {
             try
             {
+                _logger.LogWarning(msg);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+
+        public async void Error(Exception ex)
+        {
+            try
+            {
+                _logger.LogError(ex, "發生例外: {Message}", ex.Message);
                 var tool = new GmailTool();
                 var gmailAddress = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_ADDRESS.Description())!;
                 var gmailDisplayName = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_DISPLAY_NAME.Description())!;
@@ -83,21 +59,6 @@ namespace RonWeb.API.Helper.Shared
                         ";
                 mail.Priority = System.Net.Mail.MailPriority.High;
                 await tool.SendMail(mail);
-                if (record)
-                {
-                    using (var db = new RonWebDbContext())
-                    {
-                        var data = new ExceptionLog()
-                        {
-                            StackTrace = ex.StackTrace,
-                            Message = ex.Message,
-                            Level = Level.Error.Description(),
-                            CreateDate = DateTime.Now
-                        };
-                        await db.ExceptionLog.AddAsync(data);
-                        await db.SaveChangesAsync();
-                    }
-                }
             }
             catch (Exception e)
             {

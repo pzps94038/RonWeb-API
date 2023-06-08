@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -13,8 +13,16 @@
   <NoWarn>$(NoWarn);1591</NoWarn>
 </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Logs\**" />
+    <Content Remove="Logs\**" />
+    <EmbeddedResource Remove="Logs\**" />
+    <None Remove="Logs\**" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="7.0.5" />
+    <PackageReference Include="Serilog.AspNetCore" Version="7.0.0" />
+    <PackageReference Include="Serilog.Formatting.Compact" Version="1.1.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
     <PackageReference Include="Scrutor" Version="4.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="7.0.5" />
@@ -63,7 +71,6 @@
     <None Remove="Helper\SiteMap\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Interface\Shared\" />
     <Folder Include="Interface\Article\" />
     <Folder Include="Models\Article\" />
     <Folder Include="Helper\Article\" />

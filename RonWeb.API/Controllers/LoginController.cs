@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Login;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Login;
 using RonWeb.API.Models.Shared;
@@ -15,9 +16,11 @@ namespace RonWeb.API.Controllers
     public class LoginController : Controller
     {
         private readonly ILoginHelper _helper;
-        public LoginController(ILoginHelper helper)
+        private readonly ILogHelper _logger;
+        public LoginController(ILoginHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -26,7 +29,7 @@ namespace RonWeb.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse<LoginResponse>> Post([FromBody]LoginRequest req)
+        public async Task<BaseResponse<LoginResponse>> Login([FromBody]LoginRequest req)
         {
             var result = new BaseResponse<LoginResponse>();
             try
@@ -45,7 +48,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.SystemFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }

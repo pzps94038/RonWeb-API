@@ -1,13 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authorization;
-using System.Data;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Enum;
-using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Article;
 using RonWeb.API.Models.Article;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
+using RonWeb.API.Interface.Shared;
 
 namespace RonWeb.API.Controllers
 {
@@ -15,9 +13,11 @@ namespace RonWeb.API.Controllers
     public class ArticleController : Controller
     {
         private readonly IArticleHelper _helper;
-        public ArticleController(IArticleHelper helper)
+        private readonly ILogHelper _logger;
+        public ArticleController(IArticleHelper helper, ILogHelper logger)
         {
             this._helper = helper;
+            this._logger = logger;
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace RonWeb.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<GetArticleResponse>> Get(int? page, string? keyword)
+        public async Task<BaseResponse<GetArticleResponse>> GetArticle(int? page, string? keyword)
         {
             var result = new BaseResponse<GetArticleResponse> ();
             try
@@ -39,7 +39,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -51,7 +51,7 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<GetByIdArticleResponse>> Get(long id)
+        public async Task<BaseResponse<GetByIdArticleResponse>> GetArticleById(long id)
         {
             var result = new BaseResponse<GetByIdArticleResponse>();
             try
@@ -70,7 +70,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.Fail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
             return result;
         }
@@ -83,7 +83,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [Authorize]
-        public async Task<BaseResponse> Post([FromBody] CreateArticleRequest data)
+        public async Task<BaseResponse> CreateArticle([FromBody] CreateArticleRequest data)
         {
             var result = new BaseResponse();
 
@@ -102,7 +102,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.CreateFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -134,7 +134,7 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -148,7 +148,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPatch("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Patch(long id, [FromBody] UpdateArticleRequest data)
+        public async Task<BaseResponse> UpdateArticle(long id, [FromBody] UpdateArticleRequest data)
         {
             var result = new BaseResponse();
 
@@ -162,13 +162,12 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
-                LogHelper.Error(ex);
             }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
@@ -181,7 +180,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpDelete("{id}")]
         [Authorize]
-        public async Task<BaseResponse> Delete(long id)
+        public async Task<BaseResponse> DeleteArticle(long id)
         {
             var result = new BaseResponse();
 
@@ -195,13 +194,12 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
-                LogHelper.Error(ex);
             }
             catch (Exception ex)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.DeleteFail.Description();
-                LogHelper.Error(ex);
+                _logger.Error(ex);
             }
 
             return result;
