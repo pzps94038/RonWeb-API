@@ -63,6 +63,7 @@ jobs:
           docker rm ron-web-api || true && \
           docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && \
           docker run -d -p 8081:80 --name ron-web-api --restart=always \
+            -v /Logs/Ron-Web-API:/app/Logs \
             -e AESIV="${{ secrets.AESIV }}" \
             -e AESKEY="${{ secrets.AESKEY }}" \
             -e AUDIENCE="${{ secrets.AUDIENCE }}" \
