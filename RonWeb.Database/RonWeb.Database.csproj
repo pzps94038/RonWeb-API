@@ -14,6 +14,7 @@
     <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.6.111" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,6 +25,7 @@
     <None Remove="MySql\" />
     <None Remove="MySql\RonWeb\" />
     <None Remove="MySql\RonWeb\Table\" />
+    <None Remove="Redis\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Mongo\" />
@@ -33,6 +35,7 @@
     <Folder Include="MySql\" />
     <Folder Include="MySql\RonWeb\" />
     <Folder Include="MySql\RonWeb\Table\" />
+    <Folder Include="Redis\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\RonWeb.Core\RonWeb.Core.csproj" />
