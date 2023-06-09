@@ -17,7 +17,8 @@ namespace RonWeb.API.Enum
         GMAIL_SENDER_EMAIL,
         GMAIL_PWD,
         RE_CAPTCHA_SERVER_TOKEN,
-        STORAGE_BUCKET
+        STORAGE_BUCKET,
+        RON_WEB_REDIS_DB_CONSTR
     }
 }
 

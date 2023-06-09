@@ -17,6 +17,13 @@
     <Content Remove="Logs\**" />
     <EmbeddedResource Remove="Logs\**" />
     <None Remove="Logs\**" />
+    <None Remove="Helper\AdminArticle\" />
+    <None Remove="Interface\AdminArticleHelper\" />
+    <None Remove="Helper\ArticleCategory\" />
+    <None Remove="Helper\AdminArticleCategory\" />
+    <None Remove="Interface\AdminArticleCategory\" />
+    <None Remove="Helper\AdminArticleLabel\" />
+    <None Remove="Interface\AdminArticleLabel\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlSanitizer" Version="8.0.645" />
@@ -99,5 +106,12 @@
     <Folder Include="Models\SiteMap\" />
     <Folder Include="Interface\SiteMap\" />
     <Folder Include="Helper\SiteMap\" />
+    <Folder Include="Helper\AdminArticle\" />
+    <Folder Include="Interface\AdminArticleHelper\" />
+    <Folder Include="Helper\ArticleCategory\" />
+    <Folder Include="Helper\AdminArticleCategory\" />
+    <Folder Include="Interface\AdminArticleCategory\" />
+    <Folder Include="Helper\AdminArticleLabel\" />
+    <Folder Include="Interface\AdminArticleLabel\" />
   </ItemGroup>
 </Project>

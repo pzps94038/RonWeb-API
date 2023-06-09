@@ -6,15 +6,17 @@ using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.API.Interface.Shared;
+using RonWeb.API.Interface.AdminArticleHelper;
 
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
-    public class ArticleController : Controller
+    [Authorize]
+    public class AdminArticleController : Controller
     {
-        private readonly IArticleHelper _helper;
+        private readonly IAdminArticleHelper _helper;
         private readonly ILogHelper _logger;
-        public ArticleController(IArticleHelper helper, ILogHelper logger)
+        public AdminArticleController(IAdminArticleHelper helper, ILogHelper logger)
         {
             this._helper = helper;
             this._logger = logger;
@@ -27,7 +29,7 @@ namespace RonWeb.API.Controllers
         [HttpGet]
         public async Task<BaseResponse<GetArticleResponse>> GetArticle(int? page, string? keyword)
         {
-            var result = new BaseResponse<GetArticleResponse> ();
+            var result = new BaseResponse<GetArticleResponse>();
             try
             {
                 var data = await this._helper.GetListAsync(page, keyword);
@@ -76,19 +78,51 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
-        /// 更新文章瀏覽次數
+        /// 新增文章
         /// </summary>
         /// <param name="id"></param>
+        /// <param name="data"></param>
         /// <returns></returns>
-        [Route("[action]/{id}")]
-        [HttpPatch]
-
-        public async Task<BaseResponse> UpdateArticleViews(long id)
+        [HttpPost]
+        public async Task<BaseResponse> CreateArticle([FromBody] CreateArticleRequest data)
         {
             var result = new BaseResponse();
+
             try
             {
-                await this._helper.UpdateArticleViews(id);
+                await this._helper.CreateAsync(data);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.CreateFail.Description();
+                _logger.Error(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 修改文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="data"></param>
+        /// <returns></returns>
+        [HttpPatch("{id}")]
+        public async Task<BaseResponse> UpdateArticle(long id, [FromBody] UpdateArticleRequest data)
+        {
+            var result = new BaseResponse();
+
+            try
+            {
+                await this._helper.UpdateAsync(id, data);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
             }
@@ -101,6 +135,37 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.ModifyFail.Description();
+                _logger.Error(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 刪除文章
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpDelete("{id}")]
+        public async Task<BaseResponse> DeleteArticle(long id)
+        {
+            var result = new BaseResponse();
+
+            try
+            {
+                await this._helper.DeleteAsync(id);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
+            }
+            catch (NotFoundException ex)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.DeleteFail.Description();
                 _logger.Error(ex);
             }
 

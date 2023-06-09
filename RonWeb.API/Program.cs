@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
 using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Redis;
 using Serilog;
 using System.Reflection;
 using System.Text;
@@ -88,6 +89,10 @@ try
 
     // db
     builder.Services.AddDbContext<RonWebDbContext>();
+    // redis
+    builder.Host.UseSerilog(); // <-- 加入這一行
+    builder.Services.AddSingleton(async a => await RedisConnection.InitializeAsync(Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_REDIS_DB_CONSTR.Description())!));
+    // log
     builder.Host.UseSerilog(); // <-- 加入這一行
     var app = builder.Build();
 

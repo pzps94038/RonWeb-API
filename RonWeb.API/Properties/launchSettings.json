@@ -30,7 +30,8 @@
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": "",
         "RE_CAPTCHA_SERVER_TOKEN": "",
-        "STORAGE_BUCKET": ""
+        "STORAGE_BUCKET": "",
+        "RON_WEB_REDIS_DB_CONSTR": "localhost,abortConnect=false,ssl=false,allowAdmin=false"
       },
       "dotnetRunMessages": true
     },
@@ -55,7 +56,8 @@
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": "",
         "RE_CAPTCHA_SERVER_TOKEN": "",
-        "STORAGE_BUCKET": ""
+        "STORAGE_BUCKET": "",
+        "RON_WEB_REDIS_DB_CONSTR": "localhost,abortConnect=false,ssl=false,allowAdmin=false"
       },
       "dotnetRunMessages": true
     },
@@ -79,7 +81,8 @@
         "GMAIL_PWD": "",
         "ERROR_LOG_EMAIL_ADDRESS": "",
         "RE_CAPTCHA_SERVER_TOKEN": "",
-        "STORAGE_BUCKET": ""
+        "STORAGE_BUCKET": "",
+        "RON_WEB_REDIS_DB_CONSTR": "localhost,abortConnect=false,ssl=false,allowAdmin=false"
       }
     }
   }
