@@ -39,7 +39,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
             }
-            catch (UniqueException ex)
+            catch (UniqueException)
             {
                 result.ReturnCode = ReturnCode.Unique.Description();
                 result.ReturnMessage = ReturnMessage.Unique.Description();

@@ -30,6 +30,39 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpGet]
         [Route("[action]/{id}")]
+        public async Task<BaseResponse<KeywordeResponse>> Article(long id, int? page)
+        {
+            var result = new BaseResponse<KeywordeResponse>();
+            try
+            {
+                var data = await this._helper.Category(id, page);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.Success.Description();
+                result.Data = data;
+            }
+            catch (NotFoundException)
+            {
+                result.ReturnCode = ReturnCode.NotFound.Description();
+                result.ReturnMessage = ReturnMessage.NotFound.Description();
+            }
+            catch (Exception ex)
+            {
+                result.ReturnCode = ReturnCode.Fail.Description();
+                result.ReturnMessage = ReturnMessage.Fail.Description();
+                _logger.Error(ex);
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 分類查詢
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="page"></param>
+        /// <returns></returns>
+        [HttpGet]
+        [Route("[action]/{id}")]
         public async Task<BaseResponse<KeywordeResponse>> Category(long id, int? page)
         {
             var result = new BaseResponse<KeywordeResponse>();
@@ -40,7 +73,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
             }
-            catch(NotFoundException ex)
+            catch(NotFoundException)
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
@@ -73,7 +106,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
             }
-            catch (NotFoundException ex)
+            catch (NotFoundException)
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();

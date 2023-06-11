@@ -18,6 +18,10 @@ namespace RonWeb.API.Controllers
             this._logger = logger;
         }
 
+        /// <summary>
+        /// SiteMap 文章ID列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Article()
         {
@@ -39,6 +43,10 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+        /// <summary>
+        /// SiteMap 分類ID列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Category()
         {
@@ -60,6 +68,11 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
+
+        /// <summary>
+        /// SiteMap 標籤ID列表
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Label()
         {

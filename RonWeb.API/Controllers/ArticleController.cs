@@ -61,7 +61,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
             }
-            catch (NotFoundException ex)
+            catch (NotFoundException)
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
@@ -92,7 +92,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
             }
-            catch (NotFoundException ex)
+            catch (NotFoundException)
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
