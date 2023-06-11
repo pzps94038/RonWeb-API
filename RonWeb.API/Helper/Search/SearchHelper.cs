@@ -15,123 +15,154 @@ using MongoDB.Bson;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
+using RonWeb.Database.Redis;
+using RonWeb.API.Models.Article;
+using Newtonsoft.Json;
 
 namespace RonWeb.API.Helper.Search
 {
-    public class SearchHelper: ISearchHelper
+    public class SearchHelper : ISearchHelper
     {
         public readonly RonWebDbContext db;
+        private readonly Task<RedisConnection> _redisConnectionFactory;
+        private readonly TimeSpan _cacheSpan = TimeSpan.FromHours(1);
 
-        public SearchHelper(RonWebDbContext dbContext)
+        public SearchHelper(RonWebDbContext dbContext, Task<RedisConnection> redisConnectionFactory)
         {
             this.db = dbContext;
+            this._redisConnectionFactory = redisConnectionFactory;
         }
 
         public async Task<KeywordeResponse> Category(long id, int? page)
         {
-            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
-            if (category == null)
+            var curPage = page.GetValueOrDefault(1);
+            var redisConection = await this._redisConnectionFactory;
+            var key = $@"{RedisKeys.SearchCategoryPrefix}{id}:{curPage}";
+            var cache = await redisConection.BasicRetryAsync(async (db) => await db.StringGetAsync(key));
+            if (cache.HasValue)
             {
-                throw new NotFoundException();
+                return JsonConvert.DeserializeObject<KeywordeResponse>(cache.ToString())!;
             }
             else
             {
-                var query = db.Article.Include(a => a.ArticleCategory)
-                .Include(a => a.ArticleLabelMapping)
-                .ThenInclude(a => a.ArticleLabel)
-                .Select(a => new ArticleItem()
+                var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+                if (category == null)
                 {
-                    ArticleId = a.ArticleId,
-                    ArticleTitle = a.ArticleTitle,
-                    PreviewContent = a.PreviewContent,
-                    CategoryId = a.CategoryId,
-                    CategoryName = a.ArticleCategory.CategoryName,
-                    ViewCount = a.ViewCount,
-                    CreateDate = a.CreateDate,
-                    Labels = a.ArticleLabelMapping
-                        .Select(mapping => new Label
-                        {
-                            LabelId = mapping.ArticleLabel.LabelId,
-                            LabelName = mapping.ArticleLabel.LabelName
-                        })
-                        .ToList()
-                })
-                .Where(a => a.CategoryId == id)
-                .OrderByDescending(a => a.CreateDate);
-                var curPage = page.GetValueOrDefault(1);
-                var pageSize = 10;
-                var skip = (curPage - 1) * pageSize;
-                var total = query.Count();
-                List<ArticleItem> list;
-                if (skip == 0)
-                {
-                    list = await query.Take(pageSize).ToListAsync();
+                    throw new NotFoundException();
                 }
                 else
                 {
-                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
-                }
+                    var query = db.Article.Include(a => a.ArticleCategory)
+                    .Include(a => a.ArticleLabelMapping)
+                    .ThenInclude(a => a.ArticleLabel)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle,
+                        PreviewContent = a.PreviewContent,
+                        CategoryId = a.CategoryId,
+                        CategoryName = a.ArticleCategory.CategoryName,
+                        ViewCount = a.ViewCount,
+                        CreateDate = a.CreateDate,
+                        Labels = a.ArticleLabelMapping
+                            .Select(mapping => new Label
+                            {
+                                LabelId = mapping.ArticleLabel.LabelId,
+                                LabelName = mapping.ArticleLabel.LabelName
+                            })
+                            .ToList()
+                    })
+                    .Where(a => a.CategoryId == id)
+                    .OrderByDescending(a => a.CreateDate);
 
-                return new KeywordeResponse()
-                {
-                    Total = total,
-                    Articles = list,
-                    Keyword = category.CategoryName
-                };
+                    var pageSize = 10;
+                    var skip = (curPage - 1) * pageSize;
+                    var total = query.Count();
+                    List<ArticleItem> list;
+                    if (skip == 0)
+                    {
+                        list = await query.Take(pageSize).ToListAsync();
+                    }
+                    else
+                    {
+                        list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                    }
+                    var data = new KeywordeResponse()
+                    {
+                        Total = total,
+                        Articles = list,
+                        Keyword = category.CategoryName
+                    };
+                    var json = JsonConvert.SerializeObject(data);
+                    await redisConection.BasicRetryAsync(async (db) => await db.StringSetAsync(key, json, _cacheSpan));
+                    return data;
+                }
             }
         }
 
         public async Task<KeywordeResponse> Label(long id, int? page)
         {
-            var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
-            if (label == null)
+            var curPage = page.GetValueOrDefault(1);
+            var redisConection = await this._redisConnectionFactory;
+            var key = $@"{RedisKeys.SearchLabelPrefix}{id}:{curPage}";
+            var cache = await redisConection.BasicRetryAsync(async (db) => await db.StringGetAsync(key));
+            if (cache.HasValue)
             {
-                throw new NotFoundException();
+                return JsonConvert.DeserializeObject<KeywordeResponse>(cache.ToString())!;
             }
             else
             {
-                var query = db.Article.Include(a => a.ArticleCategory)
-                .Include(a => a.ArticleLabelMapping)
-                .ThenInclude(a => a.ArticleLabel)
-                .Select(a => new ArticleItem()
+                var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
+                if (label == null)
                 {
-                    ArticleId = a.ArticleId,
-                    ArticleTitle = a.ArticleTitle,
-                    PreviewContent = a.PreviewContent,
-                    CategoryId = a.CategoryId,
-                    CategoryName = a.ArticleCategory.CategoryName,
-                    ViewCount = a.ViewCount,
-                    CreateDate = a.CreateDate,
-                    Labels = a.ArticleLabelMapping
-                        .Select(mapping => new Label
-                        {
-                            LabelId = mapping.ArticleLabel.LabelId,
-                            LabelName = mapping.ArticleLabel.LabelName
-                        })
-                        .ToList()
-                })
-                .Where(a => a.Labels.Any(b => b.LabelId == id))
-                .OrderByDescending(a => a.CreateDate);
-                var curPage = page.GetValueOrDefault(1);
-                var pageSize = 10;
-                var skip = (curPage - 1) * pageSize;
-                var total = query.Count();
-                List<ArticleItem> list;
-                if (skip == 0)
-                {
-                    list = await query.Take(pageSize).ToListAsync();
+                    throw new NotFoundException();
                 }
                 else
                 {
-                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                    var query = db.Article.Include(a => a.ArticleCategory)
+                    .Include(a => a.ArticleLabelMapping)
+                    .ThenInclude(a => a.ArticleLabel)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.ArticleId,
+                        ArticleTitle = a.ArticleTitle,
+                        PreviewContent = a.PreviewContent,
+                        CategoryId = a.CategoryId,
+                        CategoryName = a.ArticleCategory.CategoryName,
+                        ViewCount = a.ViewCount,
+                        CreateDate = a.CreateDate,
+                        Labels = a.ArticleLabelMapping
+                            .Select(mapping => new Label
+                            {
+                                LabelId = mapping.ArticleLabel.LabelId,
+                                LabelName = mapping.ArticleLabel.LabelName
+                            })
+                            .ToList()
+                    })
+                    .Where(a => a.Labels.Any(b => b.LabelId == id))
+                    .OrderByDescending(a => a.CreateDate);
+                    var pageSize = 10;
+                    var skip = (curPage - 1) * pageSize;
+                    var total = query.Count();
+                    List<ArticleItem> list;
+                    if (skip == 0)
+                    {
+                        list = await query.Take(pageSize).ToListAsync();
+                    }
+                    else
+                    {
+                        list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                    }
+                    var data = new KeywordeResponse()
+                    {
+                        Total = total,
+                        Articles = list,
+                        Keyword = label.LabelName
+                    };
+                    var json = JsonConvert.SerializeObject(data);
+                    await redisConection.BasicRetryAsync(async (db) => await db.StringSetAsync(key, json, _cacheSpan));
+                    return data;
                 }
-
-                return new KeywordeResponse()
-                {
-                    Total = total,
-                    Articles = list,
-                    Keyword = label.LabelName
-                };
             }
         }
     }

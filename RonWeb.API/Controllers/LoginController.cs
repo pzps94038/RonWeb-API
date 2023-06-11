@@ -39,7 +39,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.LoginSuccess.Description();
                 result.Data = data;
             }
-            catch (NotFoundException ex)
+            catch (NotFoundException)
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.LoginFail.Description();

@@ -6,7 +6,7 @@ using RonWeb.Database.MySql.RonWeb.DataBase;
 
 namespace RonWeb.API.Helper.SiteMap
 {
-	public class SiteMapHelper: ISiteMapHelper
+	public class SiteMapHelper : ISiteMapHelper
 	{
         public readonly RonWebDbContext db;
 
