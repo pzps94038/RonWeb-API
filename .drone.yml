@@ -6,32 +6,32 @@ workspace:
   path: ron_web_api
 
 steps:
-  # - name: install-package
-  #   image: mcr.microsoft.com/dotnet/sdk:7.0
-  #   commands:
-  #     - dotnet restore "RonWeb.API/RonWeb.API.csproj"
-  #     - dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
-  #     - dotnet restore "RonWeb.Core/RonWeb.Core.csproj"
-  # - name: build
-  #   image: mcr.microsoft.com/dotnet/sdk:7.0
-  #   commands:
-  #     - dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --no-restore
-  # - name: docker build && push
-  #   image: plugins/docker
-  #   settings:
-  #     repo: pzps94038/ron-web-api
-  #     username: pzps94038
-  #     password:
-  #       from_secret: DOCKER_PWD
-  #     no_cache: true
-  #     tags:
-  #       - latest
-  #       - main
-  #   when:
-  #     branch:
-  #       - main
-  #     event:
-  #       - push
+  - name: install-package
+    image: mcr.microsoft.com/dotnet/sdk:7.0
+    commands:
+      - dotnet restore "RonWeb.API/RonWeb.API.csproj"
+      - dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
+      - dotnet restore "RonWeb.Core/RonWeb.Core.csproj"
+  - name: build
+    image: mcr.microsoft.com/dotnet/sdk:7.0
+    commands:
+      - dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --no-restore
+  - name: docker build && push
+    image: plugins/docker
+    settings:
+      repo: pzps94038/ron-web-api
+      username: pzps94038
+      password:
+        from_secret: DOCKER_PWD
+      no_cache: true
+      tags:
+        - latest
+        - main
+    when:
+      branch:
+        - main
+      event:
+        - push
   - name: deploy
     image: appleboy/drone-ssh
     environment:
