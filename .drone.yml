@@ -96,8 +96,27 @@ steps:
       script:
         - docker stop ron-web-api || true &&
             docker rm ron-web-api || true &&
-            docker pull pzps94038/ron-web-api:latest && 
-            docker run -d -p 8081:80 --name ron-web-api --restart=always -v /Logs/Ron-Web-API:/app/Logs -e AESIV=$AESIV -e AESKEY=$AESKEY -e AUDIENCE=$AUDIENCE -e ERROR_LOG_EMAIL_ADDRESS=$ERROR_LOG_EMAIL_ADDRESS -e GMAIL_ADDRESS=$GMAIL_ADDRESS -e GMAIL_DISPLAY_NAME=$GMAIL_DISPLAY_NAME -e GMAIL_PWD=$GMAIL_PWD -e GMAIL_SENDER_EMAIL=$GMAIL_SENDER_EMAIL -e ISSUER=$ISSUER -e JWTKEY=$JWTKEY -e ORIGINS=$ORIGINS -e RE_CAPTCHA_SERVER_TOKEN=$RE_CAPTCHA_SERVER_TOKEN -e RON_WEB_MONGO_DB_CONSTR=$RON_WEB_MONGO_DB_CONSTR -e RON_WEB_MYSQL_DB_CONSTR=$RON_WEB_MYSQL_DB_CONSTR -e STORAGE_BUCKET=$STORAGE_BUCKET -e RON_WEB_REDIS_DB_CONSTR=RON_WEB_REDIS_DB_CONSTR -e PORT=80 pzps94038/ron-web-api:latest
+            docker pull pzps94038/ron-web-api:latest &&
+            docker run -d -p 8081:80 --name ron-web-api --restart=always
+            -v /Logs/Ron-Web-API:/app/Logs
+            -e AESIV="$AESIV"
+            -e AESKEY="$AESKEY"
+            -e AUDIENCE="$AUDIENCE"
+            -e ERROR_LOG_EMAIL_ADDRESS="$ERROR_LOG_EMAIL_ADDRESS"
+            -e GMAIL_ADDRESS="$GMAIL_ADDRESS"
+            -e GMAIL_DISPLAY_NAME="$GMAIL_DISPLAY_NAME"
+            -e GMAIL_PWD="$GMAIL_PWD"
+            -e GMAIL_SENDER_EMAIL="$GMAIL_SENDER_EMAIL"
+            -e ISSUER="$ISSUER"
+            -e JWTKEY="$JWTKEY"
+            -e ORIGINS="$ORIGINS"
+            -e RE_CAPTCHA_SERVER_TOKEN="$RE_CAPTCHA_SERVER_TOKEN"
+            -e RON_WEB_MONGO_DB_CONSTR="$RON_WEB_MONGO_DB_CONSTR"
+            -e RON_WEB_MYSQL_DB_CONSTR="$RON_WEB_MYSQL_DB_CONSTR"
+            -e STORAGE_BUCKET="$STORAGE_BUCKET"
+            -e RON_WEB_REDIS_DB_CONSTR="$RON_WEB_REDIS_DB_CONSTR"
+            -e PORT=80 
+            pzps94038/ron-web-api:latest
 
     when:
       branch:
