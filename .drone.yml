@@ -103,9 +103,9 @@ steps:
             -e AESKEY=$AESKEY
             -e AUDIENCE=$AUDIENCE
             -e ERROR_LOG_EMAIL_ADDRESS=$ERROR_LOG_EMAIL_ADDRESS
-            -e GMAIL_ADDRESS=${GMAIL_ADDRESS}
-            -e GMAIL_DISPLAY_NAME=${GMAIL_DISPLAY_NAME}
-            -e GMAIL_PWD=${GMAIL_PWD}
+            -e GMAIL_ADDRESS=$GMAIL_ADDRESS
+            -e GMAIL_DISPLAY_NAME=$GMAIL_DISPLAY_NAME
+            -e GMAIL_PWD=$GMAIL_PWD
             -e GMAIL_SENDER_EMAIL=${GMAIL_SENDER_EMAIL}
             -e ISSUER=${ISSUER}
             -e JWTKEY=${JWTKEY}
