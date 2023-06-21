@@ -1,84 +1,84 @@
 # This workflow will build a .NET project
 # For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
 
-# name: .NET
+name: .NET
 
-# on:
-#   push:
-#     branches: ["main", "develop"]
-#   pull_request:
-#     branches: ["main", "develop"]
+on:
+  push:
+    branches: ["main", "develop"]
+  pull_request:
+    branches: ["main", "develop"]
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-latest
-#     strategy:
-#       matrix:
-#           node-version: [16.x]
-#     steps:
-#     - uses: actions/checkout@v3
-#     - name: Setup .NET
-#       uses: actions/setup-dotnet@v3
-#       with:
-#         dotnet-version: 7.0.x
-#     - name: Restore RonWeb.API
-#       run: dotnet restore "RonWeb.API/RonWeb.API.csproj"
-#     - name: Restore RonWeb.Database
-#       run: dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
-#     - name: Restore RonWeb.Core
-#       run: dotnet restore "RonWeb.Core/RonWeb.Core.csproj"
-#     - name: Build
-#       run: dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --no-restore
-#     - name: Create directory
-#       if: github.ref == 'refs/heads/main'
-#       run: mkdir dist
-#     - name: Publish
-#       if: github.ref == 'refs/heads/main'
-#       run: dotnet publish "RonWeb.API/RonWeb.API.csproj" -c Release -o dist
-#     - name: Upload build artifact
-#       if: github.ref == 'refs/heads/main'
-#       uses: actions/upload-artifact@v2
-#       with:
-#         name: RonWeb.API
-#         path: dist
-#         retention-days: 1
-#     - name: Docker Build
-#       if: github.ref == 'refs/heads/main'
-#       run: |
-#           docker build -t ${{ secrets.DOCKER_USER }}/ron-web-api . --no-cache
-#           docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PWD }}
-#     - name: Docker Push
-#       if: github.ref == 'refs/heads/main'
-#       run: |
-#           docker push ${{ secrets.DOCKER_USER }}/ron-web-api
-#     - name: SSH into server and deploy
-#       if: github.ref == 'refs/heads/main'
-#       uses: appleboy/ssh-action@v0.1.10
-#       with:
-#         host: ${{ secrets.SCP_HOST }}
-#         username: ${{  secrets.SCP_USER }}
-#         password: ${{ secrets.SCP_PWD }}
-#         script: |
-#           docker stop ron-web-api || true && \
-#           docker rm ron-web-api || true && \
-#           docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && \
-#           docker run -d -p 8081:80 --name ron-web-api --restart=always \
-#             -v /Logs/Ron-Web-API:/app/Logs \
-#             -e AESIV="${{ secrets.AESIV }}" \
-#             -e AESKEY="${{ secrets.AESKEY }}" \
-#             -e AUDIENCE="${{ secrets.AUDIENCE }}" \
-#             -e ERROR_LOG_EMAIL_ADDRESS="${{ secrets.ERROR_LOG_EMAIL_ADDRESS }}" \
-#             -e GMAIL_ADDRESS="${{ secrets.GMAIL_ADDRESS }}" \
-#             -e GMAIL_DISPLAY_NAME="${{ secrets.GMAIL_DISPLAY_NAME }}" \
-#             -e GMAIL_PWD="${{ secrets.GMAIL_PWD }}" \
-#             -e GMAIL_SENDER_EMAIL="${{ secrets.GMAIL_SENDER_EMAIL }}" \
-#             -e ISSUER="${{ secrets.ISSUER }}" \
-#             -e JWTKEY="${{ secrets.JWTKEY }}" \
-#             -e ORIGINS="${{ secrets.ORIGINS }}" \
-#             -e RE_CAPTCHA_SERVER_TOKEN="${{ secrets.RE_CAPTCHA_SERVER_TOKEN }}" \
-#             -e RON_WEB_MONGO_DB_CONSTR="${{ secrets.RON_WEB_MONGO_DB_CONSTR }}" \
-#             -e RON_WEB_MYSQL_DB_CONSTR="${{ secrets.RON_WEB_MYSQL_DB_CONSTR }}" \
-#             -e STORAGE_BUCKET="${{ secrets.STORAGE_BUCKET }}" \
-#             -e RON_WEB_REDIS_DB_CONSTR="${{ secrets.RON_WEB_REDIS_DB_CONSTR }}" \
-#             -e PORT=80 \
-#             ${{ secrets.DOCKER_USER }}/ron-web-api:latest
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+          node-version: [16.x]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+    - name: Restore RonWeb.API
+      run: dotnet restore "RonWeb.API/RonWeb.API.csproj"
+    - name: Restore RonWeb.Database
+      run: dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
+    - name: Restore RonWeb.Core
+      run: dotnet restore "RonWeb.Core/RonWeb.Core.csproj"
+    - name: Build
+      run: dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --no-restore
+    - name: Create directory
+      if: github.ref == 'refs/heads/main'
+      run: mkdir dist
+    - name: Publish
+      if: github.ref == 'refs/heads/main'
+      run: dotnet publish "RonWeb.API/RonWeb.API.csproj" -c Release -o dist
+    - name: Upload build artifact
+      if: github.ref == 'refs/heads/main'
+      uses: actions/upload-artifact@v2
+      with:
+        name: RonWeb.API
+        path: dist
+        retention-days: 1
+    - name: Docker Build
+      if: github.ref == 'refs/heads/main'
+      run: |
+          docker build -t ${{ secrets.DOCKER_USER }}/ron-web-api . --no-cache
+          docker login -u ${{ secrets.DOCKER_USER }} -p ${{ secrets.DOCKER_PWD }}
+    - name: Docker Push
+      if: github.ref == 'refs/heads/main'
+      run: |
+          docker push ${{ secrets.DOCKER_USER }}/ron-web-api
+    - name: SSH into server and deploy
+      if: github.ref == 'refs/heads/main'
+      uses: appleboy/ssh-action@v0.1.10
+      with:
+        host: ${{ secrets.SCP_HOST }}
+        username: ${{  secrets.SCP_USER }}
+        password: ${{ secrets.SCP_PWD }}
+        script: |
+          docker stop ron-web-api || true && \
+          docker rm ron-web-api || true && \
+          docker pull ${{ secrets.DOCKER_USER }}/ron-web-api:latest && \
+          docker run -d -p 8081:80 --name ron-web-api --restart=always \
+            -v /Logs/Ron-Web-API:/app/Logs \
+            -e AESIV="${{ secrets.AESIV }}" \
+            -e AESKEY="${{ secrets.AESKEY }}" \
+            -e AUDIENCE="${{ secrets.AUDIENCE }}" \
+            -e ERROR_LOG_EMAIL_ADDRESS="${{ secrets.ERROR_LOG_EMAIL_ADDRESS }}" \
+            -e GMAIL_ADDRESS="${{ secrets.GMAIL_ADDRESS }}" \
+            -e GMAIL_DISPLAY_NAME="${{ secrets.GMAIL_DISPLAY_NAME }}" \
+            -e GMAIL_PWD="${{ secrets.GMAIL_PWD }}" \
+            -e GMAIL_SENDER_EMAIL="${{ secrets.GMAIL_SENDER_EMAIL }}" \
+            -e ISSUER="${{ secrets.ISSUER }}" \
+            -e JWTKEY="${{ secrets.JWTKEY }}" \
+            -e ORIGINS="${{ secrets.ORIGINS }}" \
+            -e RE_CAPTCHA_SERVER_TOKEN="${{ secrets.RE_CAPTCHA_SERVER_TOKEN }}" \
+            -e RON_WEB_MONGO_DB_CONSTR="${{ secrets.RON_WEB_MONGO_DB_CONSTR }}" \
+            -e RON_WEB_MYSQL_DB_CONSTR="${{ secrets.RON_WEB_MYSQL_DB_CONSTR }}" \
+            -e STORAGE_BUCKET="${{ secrets.STORAGE_BUCKET }}" \
+            -e RON_WEB_REDIS_DB_CONSTR="${{ secrets.RON_WEB_REDIS_DB_CONSTR }}" \
+            -e PORT=80 \
+            ${{ secrets.DOCKER_USER }}/ron-web-api:latest
