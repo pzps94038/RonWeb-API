@@ -35,7 +35,7 @@ steps:
   - name: deploy
     image: appleboy/drone-ssh
     commands: 
-      - echo $host
+      - echo $AESIV
     settings:
       host:
         from_secret: SCP_HOST
