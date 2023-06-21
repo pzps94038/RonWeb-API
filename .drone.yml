@@ -67,8 +67,10 @@ steps:
         from_secret: STORAGE_BUCKET
       RON_WEB_REDIS_DB_CONSTR:
         from_secret: RON_WEB_REDIS_DB_CONSTR
-    commands: 
-      - echo $AESIV
+    commands:
+      - echo "You can call the secrets like this examples below."
+      - echo $RON_WEB_MYSQL_DB_CONSTR
+      - echo $JWTKEY
     settings:
       host:
         from_secret: SCP_HOST
