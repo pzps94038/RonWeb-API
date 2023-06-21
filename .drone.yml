@@ -106,17 +106,16 @@ steps:
             -e GMAIL_ADDRESS=$GMAIL_ADDRESS
             -e GMAIL_DISPLAY_NAME=$GMAIL_DISPLAY_NAME
             -e GMAIL_PWD=$GMAIL_PWD
-            -e GMAIL_SENDER_EMAIL=${GMAIL_SENDER_EMAIL}
-            -e ISSUER=${ISSUER}
-            -e JWTKEY=${JWTKEY}
-            -e ORIGINS=${ORIGINS}
-            -e RE_CAPTCHA_SERVER_TOKEN=${RE_CAPTCHA_SERVER_TOKEN}
-            -e RON_WEB_MONGO_DB_CONSTR=${RON_WEB_MONGO_DB_CONSTR}
-            -e RON_WEB_MYSQL_DB_CONSTR=${RON_WEB_MYSQL_DB_CONSTR}
-            -e STORAGE_BUCKET=${STORAGE_BUCKET}
-            -e RON_WEB_REDIS_DB_CONSTR=${RON_WEB_REDIS_DB_CONSTR}
-            -e PORT=80
-            pzps94038/ron-web-api:latest
+            -e GMAIL_SENDER_EMAIL=$GMAIL_SENDER_EMAIL
+            -e ISSUER=$ISSUER
+            -e JWTKEY=$JWTKEY
+            -e ORIGINS=$ORIGINS
+            -e RE_CAPTCHA_SERVER_TOKEN=$RE_CAPTCHA_SERVER_TOKEN
+            -e RON_WEB_MONGO_DB_CONSTR=$RON_WEB_MONGO_DB_CONSTR
+            -e RON_WEB_MYSQL_DB_CONSTR=$RON_WEB_MYSQL_DB_CONSTR
+            -e STORAGE_BUCKET=$STORAGE_BUCKET
+            -e RON_WEB_REDIS_DB_CONSTR=$RON_WEB_REDIS_DB_CONSTR
+            -e PORT=80 pzps94038/ron-web-api:latest
 
     when:
       branch:
