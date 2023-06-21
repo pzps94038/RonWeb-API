@@ -43,6 +43,39 @@ steps:
         from_secret: SCP_PWD
       port: 22
       command_timeout: 2m
+      environment:
+        AESIV:
+          from_secret: AESIV
+        AESKEY:
+          from_secret: AESKEY
+        AUDIENCE:
+          from_secret: AUDIENCE
+        ERROR_LOG_EMAIL_ADDRESS:
+          from_secret: ERROR_LOG_EMAIL_ADDRESS
+        GMAIL_ADDRESS:
+          from_secret: GMAIL_ADDRESS
+        GMAIL_DISPLAY_NAME:
+          from_secret: GMAIL_DISPLAY_NAME
+        GMAIL_PWD:
+          from_secret: GMAIL_PWD
+        GMAIL_SENDER_EMAIL:
+          from_secret: GMAIL_SENDER_EMAIL
+        ISSUER:
+          from_secret: ISSUER
+        JWTKEY:
+          from_secret: JWTKEY
+        ORIGINS:
+          from_secret: ORIGINS
+        RE_CAPTCHA_SERVER_TOKEN:
+          from_secret: RE_CAPTCHA_SERVER_TOKEN
+        RON_WEB_MONGO_DB_CONSTR:
+          from_secret: RON_WEB_MONGO_DB_CONSTR
+        RON_WEB_MYSQL_DB_CONSTR:
+          from_secret: RON_WEB_MYSQL_DB_CONSTR
+        STORAGE_BUCKET:
+          from_secret: STORAGE_BUCKET
+        RON_WEB_REDIS_DB_CONSTR:
+          from_secret: RON_WEB_REDIS_DB_CONSTR
       script:
         - docker stop ron-web-api || true &&
           docker rm ron-web-api || true &&
