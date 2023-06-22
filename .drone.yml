@@ -15,7 +15,50 @@ steps:
   - name: build
     image: mcr.microsoft.com/dotnet/sdk:7.0
     commands:
-      - dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --no-restore
+      - mkdir RonWeb-API
+      - dotnet build "RonWeb.API/RonWeb.API.csproj" -c Release -o --RonWeb-API
+  - name: zip
+    image: lunagod/drone-zip
+    settings:
+      input:
+        - RonWeb-API
+      output: RonWeb-API.zip
+    when:
+      branch:
+        - main
+      event:
+        - push
+  - name: artifact
+    image: appleboy/drone-scp
+    settings:
+      host:
+        from_secret: SCP_HOST
+      username:
+        from_secret: SCP_USER
+      password:
+        from_secret: SCP_PWD
+      port: 22
+      overwrite: true
+      rm: true
+      target: /file-server/RonWeb-API
+      source: RonWeb-API.zip
+    when:
+      branch:
+        - main
+      event:
+        - push
+  - name: artifact upload finish
+    image: node:16
+    commands:
+      - echo -e "\n
+        ====================================================================\n
+        ✅ fileUpload artifact in https://file-server.ronwebs.com/RonWeb-API\n
+        ===================================================================="
+    when:
+      branch:
+        - main
+      event:
+        - push
   - name: docker build && push
     image: plugins/docker
     settings:
@@ -95,34 +138,55 @@ steps:
         - RON_WEB_REDIS_DB_CONSTR
       script:
         - docker stop ron-web-api || true &&
-            docker rm ron-web-api || true &&
-            docker pull pzps94038/ron-web-api:latest &&
-            docker run -d -p 8081:80 --name ron-web-api --restart=always
-            -v /Logs/Ron-Web-API:/app/Logs
-            -e AESIV="$AESIV"
-            -e AESKEY="$AESKEY"
-            -e AUDIENCE="$AUDIENCE"
-            -e ERROR_LOG_EMAIL_ADDRESS="$ERROR_LOG_EMAIL_ADDRESS"
-            -e GMAIL_ADDRESS="$GMAIL_ADDRESS"
-            -e GMAIL_DISPLAY_NAME="$GMAIL_DISPLAY_NAME"
-            -e GMAIL_PWD="$GMAIL_PWD"
-            -e GMAIL_SENDER_EMAIL="$GMAIL_SENDER_EMAIL"
-            -e ISSUER="$ISSUER"
-            -e JWTKEY="$JWTKEY"
-            -e ORIGINS="$ORIGINS"
-            -e RE_CAPTCHA_SERVER_TOKEN="$RE_CAPTCHA_SERVER_TOKEN"
-            -e RON_WEB_MONGO_DB_CONSTR="$RON_WEB_MONGO_DB_CONSTR"
-            -e RON_WEB_MYSQL_DB_CONSTR="$RON_WEB_MYSQL_DB_CONSTR"
-            -e STORAGE_BUCKET="$STORAGE_BUCKET"
-            -e RON_WEB_REDIS_DB_CONSTR="$RON_WEB_REDIS_DB_CONSTR"
-            -e PORT=80 
-            pzps94038/ron-web-api:latest
+          docker rm ron-web-api || true &&
+          docker pull pzps94038/ron-web-api:latest &&
+          docker run -d -p 8081:80 --name ron-web-api --restart=always
+          -v /Logs/Ron-Web-API:/app/Logs
+          -e AESIV="$AESIV"
+          -e AESKEY="$AESKEY"
+          -e AUDIENCE="$AUDIENCE"
+          -e ERROR_LOG_EMAIL_ADDRESS="$ERROR_LOG_EMAIL_ADDRESS"
+          -e GMAIL_ADDRESS="$GMAIL_ADDRESS"
+          -e GMAIL_DISPLAY_NAME="$GMAIL_DISPLAY_NAME"
+          -e GMAIL_PWD="$GMAIL_PWD"
+          -e GMAIL_SENDER_EMAIL="$GMAIL_SENDER_EMAIL"
+          -e ISSUER="$ISSUER"
+          -e JWTKEY="$JWTKEY"
+          -e ORIGINS="$ORIGINS"
+          -e RE_CAPTCHA_SERVER_TOKEN="$RE_CAPTCHA_SERVER_TOKEN"
+          -e RON_WEB_MONGO_DB_CONSTR="$RON_WEB_MONGO_DB_CONSTR"
+          -e RON_WEB_MYSQL_DB_CONSTR="$RON_WEB_MYSQL_DB_CONSTR"
+          -e STORAGE_BUCKET="$STORAGE_BUCKET"
+          -e RON_WEB_REDIS_DB_CONSTR="$RON_WEB_REDIS_DB_CONSTR"
+          -e PORT=80
+          pzps94038/ron-web-api:latest
 
     when:
       branch:
         - main
       event:
         - push
+  - name: notify
+    image: drillster/drone-email
+    settings:
+      host: smtp.gmail.com
+      username:
+        from_secret: GMAIL_SENDER_EMAIL
+      password:
+        from_secret: GMAIL_PWD
+      from:
+        from_secret: GMAIL_SENDER_EMAIL
+      recipients_only: true
+      recipients:
+        - pzps94038@yahoo.com.tw
+    when:
+      branch:
+        - main
+      event:
+        - push
+      status:
+        - success
+        - failure
 
 trigger:
   branch:
