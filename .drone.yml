@@ -1,4 +1,5 @@
 kind: pipeline
+type: docker
 name: default
 
 workspace:
@@ -159,12 +160,29 @@ steps:
           -e RON_WEB_REDIS_DB_CONSTR="$RON_WEB_REDIS_DB_CONSTR"
           -e PORT=80
           pzps94038/ron-web-api:latest
-
     when:
       branch:
         - main
       event:
         - push
+
+trigger:
+  branch:
+    - main
+    - develop
+  event:
+    - push
+    - pull_request
+    - tag
+---
+kind: pipeline
+type: docker
+name: notify
+
+clone:
+  disable: true
+
+steps:
   - name: notify
     image: drillster/drone-email
     settings:
@@ -178,20 +196,15 @@ steps:
       recipients_only: true
       recipients:
         - pzps94038@yahoo.com.tw
-    when:
-      branch:
-        - main
-      event:
-        - push
-      status:
-        - success
-        - failure
+
+depends_on:
+  - default
 
 trigger:
+  status:
+    - success
+    - failure
   branch:
     - main
-    - develop
   event:
     - push
-    - pull_request
-    - tag
