@@ -49,6 +49,7 @@ namespace RonWeb.API.Helper
                         CategoryName = a.ArticleCategory.CategoryName,
                         ViewCount = a.ViewCount,
                         CreateDate = a.CreateDate,
+                        Flag = a.Flag,
                         Labels = a.ArticleLabelMapping
                             .Select(mapping => new Label
                             {
@@ -56,7 +57,7 @@ namespace RonWeb.API.Helper
                                 LabelName = mapping.ArticleLabel.LabelName
                             })
                             .ToList()
-                    }).SingleOrDefaultAsync(a => a.ArticleId == id);
+                    }).SingleOrDefaultAsync(a => a.ArticleId == id && a.Flag == "Y");
 
                 if (data != null)
                 {
@@ -115,6 +116,7 @@ namespace RonWeb.API.Helper
                 var query = db.Article.Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
+                    .Where(a=> a.Flag == "Y")
                     .Select(a => new ArticleItem()
                     {
                         ArticleId = a.ArticleId,
@@ -122,6 +124,7 @@ namespace RonWeb.API.Helper
                         PreviewContent = a.PreviewContent,
                         CategoryId = a.CategoryId,
                         CategoryName = a.ArticleCategory.CategoryName,
+                        Flag = a.Flag,
                         ViewCount = a.ViewCount,
                         CreateDate = a.CreateDate,
                         Labels = a.ArticleLabelMapping

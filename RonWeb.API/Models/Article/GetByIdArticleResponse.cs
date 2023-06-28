@@ -41,6 +41,11 @@ namespace RonWeb.API.Models.Article
         public int ViewCount { get; set; } = 0;
 
         /// <summary>
+        /// 是否啟用
+        /// </summary>
+        public string Flag { get; set; } = "Y";
+
+        /// <summary>
         /// 標籤列表
         /// </summary>
         public List<Label> Labels { get; set; } = new List<Label>();

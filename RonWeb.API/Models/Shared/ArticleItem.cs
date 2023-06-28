@@ -41,6 +41,11 @@ namespace RonWeb.API.Models.Shared
         public int ViewCount { get; set; } = 0;
 
         /// <summary>
+        /// 是否啟用
+        /// </summary>
+        public string Flag { get; set; } = "Y";
+
+        /// <summary>
         /// 創建時間
         /// </summary>
         public DateTime CreateDate { get; set; }

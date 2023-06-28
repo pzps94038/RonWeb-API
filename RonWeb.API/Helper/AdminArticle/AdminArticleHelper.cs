@@ -31,6 +31,7 @@ namespace RonWeb.API.Helper.AdminArticle
                         Content = a.Content,
                         CategoryId = a.CategoryId,
                         CategoryName = a.ArticleCategory.CategoryName,
+                        Flag = a.Flag,
                         ViewCount = a.ViewCount,
                         CreateDate = a.CreateDate,
                         Labels = a.ArticleLabelMapping
@@ -87,6 +88,7 @@ namespace RonWeb.API.Helper.AdminArticle
                         CategoryId = a.CategoryId,
                         CategoryName = a.ArticleCategory.CategoryName,
                         ViewCount = a.ViewCount,
+                        Flag = a.Flag,
                         CreateDate = a.CreateDate,
                         Labels = a.ArticleLabelMapping
                             .Select(mapping => new Label
@@ -149,6 +151,7 @@ namespace RonWeb.API.Helper.AdminArticle
                             article.Content = sanitizer.Sanitize(data.Content);
                             article.PreviewContent = sanitizer.Sanitize(data.PreviewContent);
                             article.CategoryId = data.CategoryId;
+                            article.Flag = data.Flag;
                             article.UpdateBy = data.UserId;
                             article.UpdateDate = DateTime.Now;
                             var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
@@ -231,6 +234,7 @@ namespace RonWeb.API.Helper.AdminArticle
                             Content = sanitizer.Sanitize(data.Content),
                             PreviewContent = sanitizer.Sanitize(data.PreviewContent),
                             CategoryId = data.CategoryId,
+                            Flag = data.Flag,
                             ViewCount = 0,
                             CreateDate = DateTime.Now,
                             CreateBy = data.UserId
