@@ -35,6 +35,11 @@ namespace RonWeb.API.Models.Article
         public long UserId { get; set; }
 
         /// <summary>
+        /// 是否啟用
+        /// </summary>
+        public string Flag { get; set; } = "Y";
+
+        /// <summary>
         /// 預覽上傳圖
         /// </summary>
         public List<UploadFile> PrevFiles { get; set; } = new List<UploadFile>();

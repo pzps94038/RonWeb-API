@@ -50,6 +50,13 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         public int ViewCount { get; set; } = 0;
 
         /// <summary>
+        /// 是否啟用
+        /// </summary>
+        [Required]
+        [StringLength(1)]
+        public string Flag { get; set; } = "Y";
+
+        /// <summary>
         /// 建立日期
         /// </summary>
         [Required]

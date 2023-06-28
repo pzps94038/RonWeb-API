@@ -20,6 +20,11 @@ namespace RonWeb.API.Models.Article
         public string Content { get; set; } = string.Empty;
 
         /// <summary>
+        /// 是否啟用
+        /// </summary>
+        public string Flag { get; set; } = "Y";
+
+        /// <summary>
         /// 分類ID
         /// </summary>
         public long CategoryId { get; set; }
