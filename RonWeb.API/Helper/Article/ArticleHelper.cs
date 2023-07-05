@@ -62,7 +62,7 @@ namespace RonWeb.API.Helper
                 if (data != null)
                 {
                     // 找到下一篇文章
-                    var nextArticle = await db.Article.Where(a => a.CreateDate > data.CreateDate)
+                    var nextArticle = await db.Article.Where(a => a.CreateDate > data.CreateDate && a.Flag == "Y")
                         .OrderBy(a => a.CreateDate)
                         .Take(1)
                         .Select(a => new BlogPagination()
@@ -71,7 +71,7 @@ namespace RonWeb.API.Helper
                             ArticleTitle = a.ArticleTitle
                         }).FirstOrDefaultAsync();
                     // 找到上一篇文章
-                    var prevArticle = await db.Article.Where(a => a.CreateDate < data.CreateDate)
+                    var prevArticle = await db.Article.Where(a => a.CreateDate < data.CreateDate && a.Flag == "Y")
                         .OrderByDescending(a => a.CreateDate)
                         .Take(1)
                         .Select(a => new BlogPagination()
