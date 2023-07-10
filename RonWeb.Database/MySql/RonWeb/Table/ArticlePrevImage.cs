@@ -27,7 +27,7 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         /// <summary>
         /// 檔名
         /// </summary>
-        [StringLength(30)]
+        [StringLength(50)]
         public string FileName { get; set; } = string.Empty;
 
         /// <summary>
