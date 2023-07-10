@@ -180,7 +180,7 @@ namespace RonWeb.API.Helper.AdminArticle
 
                             db.ArticlePrevImage.AddRange(prevFiles);
 
-                            var files = data.PrevFiles.Select(a => new ArticleImage()
+                            var files = data.ContentFiles.Select(a => new ArticleImage()
                             {
                                 ArticleId = article.ArticleId,
                                 FileName = a.FileName,
