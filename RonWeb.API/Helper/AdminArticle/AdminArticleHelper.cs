@@ -1,9 +1,12 @@
-﻿using Ganss.Xss;
+﻿using System.IO;
+using Ganss.Xss;
 using Microsoft.EntityFrameworkCore;
+using RonWeb.API.Enum;
 using RonWeb.API.Interface.AdminArticleHelper;
 using RonWeb.API.Models.Article;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
+using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using RonWeb.Database.MySql.RonWeb.Table;
 
@@ -164,6 +167,31 @@ namespace RonWeb.API.Helper.AdminArticle
                                 CreateBy = data.UserId
                             }).ToList();
                             await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
+
+                            var prevFiles = data.PrevFiles.Select(a => new ArticlePrevImage()
+                            {
+                                ArticleId = article.ArticleId,
+                                FileName = a.FileName,
+                                Path = a.Path,
+                                Url = a.Url,
+                                CreateDate = DateTime.Now,
+                                CreateBy = data.UserId
+                            }).ToList();
+
+                            db.ArticlePrevImage.AddRange(prevFiles);
+
+                            var files = data.PrevFiles.Select(a => new ArticleImage()
+                            {
+                                ArticleId = article.ArticleId,
+                                FileName = a.FileName,
+                                Path = a.Path,
+                                Url = a.Url,
+                                CreateDate = DateTime.Now,
+                                CreateBy = data.UserId
+                            }).ToList();
+
+                            db.ArticleImage.AddRange(files);
+
                             await db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
@@ -194,8 +222,26 @@ namespace RonWeb.API.Helper.AdminArticle
                         try
                         {
                             db.Article.Remove(article);
-                            var list = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(list);
+                            var labels = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
+                            db.ArticleLabelMapping.RemoveRange(labels);
+
+                            var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
+                            var storageTool = new FireBaseStorageTool(storageBucket);
+
+                            var prevImages = await db.ArticlePrevImage.Where(a => a.ArticleId == id).ToListAsync();
+                            db.ArticlePrevImage.RemoveRange(prevImages);
+                            var prevImgTasks = prevImages.Select(a => Task.Run(async () => {
+                                await storageTool.Delete(a.Path);
+                            })).ToArray();
+                            Task.WaitAll(prevImgTasks);
+
+                            var images = await db.ArticleImage.Where(a => a.ArticleId == id).ToListAsync();
+                            db.ArticleImage.RemoveRange(images);
+                            var imgTasks = images.Select(a => Task.Run(async () => {
+                                await storageTool.Delete(a.Path);
+                            })).ToArray();
+                            Task.WaitAll(imgTasks);
+
                             await db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
@@ -252,6 +298,31 @@ namespace RonWeb.API.Helper.AdminArticle
                         });
 
                         db.ArticleLabelMapping.AddRange(mappings);
+
+                        var prevFiles = data.PrevFiles.Select(a => new ArticlePrevImage()
+                        {
+                            ArticleId = article.ArticleId,
+                            FileName = a.FileName,
+                            Path = a.Path,
+                            Url = a.Url,
+                            CreateDate = DateTime.Now,
+                            CreateBy = data.UserId
+                        }).ToList();
+
+                        db.ArticlePrevImage.AddRange(prevFiles);
+
+                        var files = data.PrevFiles.Select(a => new ArticleImage()
+                        {
+                            ArticleId = article.ArticleId,
+                            FileName = a.FileName,
+                            Path = a.Path,
+                            Url = a.Url,
+                            CreateDate = DateTime.Now,
+                            CreateBy = data.UserId
+                        }).ToList();
+
+                        db.ArticleImage.AddRange(files);
+
                         await db.SaveChangesAsync();
 
                         await tc.CommitAsync();
