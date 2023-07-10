@@ -1,22 +1,12 @@
-﻿using System;
-using RonWeb.API.Enum;
-using RonWeb.API.Interface.Search;
+﻿using RonWeb.API.Interface.Search;
 using RonWeb.API.Models.Search;
 using RonWeb.API.Models.Shared;
-using RonWeb.Core;
-using RonWeb.Database.Models;
-using RonWeb.Database.Mongo;
-using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
 using MongoDB.Driver;
-using static Microsoft.Extensions.Logging.EventSource.LoggingEventSource;
 using RonWeb.API.Models.CustomizeException;
-using MongoDB.Bson;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
 using RonWeb.Database.Redis;
-using RonWeb.API.Models.Article;
 using Newtonsoft.Json;
 
 namespace RonWeb.API.Helper.Search
@@ -72,7 +62,7 @@ namespace RonWeb.API.Helper.Search
                             })
                             .ToList()
                     })
-                    .Where(a => a.CategoryId == id)
+                    .Where(a => a.CategoryId == id && a.Flag == "Y")
                     .OrderByDescending(a => a.CreateDate);
 
                     var pageSize = 10;
@@ -139,7 +129,7 @@ namespace RonWeb.API.Helper.Search
                             })
                             .ToList()
                     })
-                    .Where(a => a.Labels.Any(b => b.LabelId == id))
+                    .Where(a => a.Labels.Any(b => b.LabelId == id) && a.Flag == "Y")
                     .OrderByDescending(a => a.CreateDate);
                     var pageSize = 10;
                     var skip = (curPage - 1) * pageSize;
