@@ -26,7 +26,7 @@ namespace RonWeb.API.Helper.Upload
                     {
                         var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
                         string fileName = Guid.NewGuid().ToString();
-                        string path = @$"{DateTime.Now.ToString("yyyy-MM-dd")}/Artticle/{fileName}{fileExtension}";
+                        string path = @$"{DateTime.Now.ToString("yyyy-MM-dd")}/Article/{fileName}{fileExtension}";
                         var res = await new FireBaseStorageTool(storageBucket).Upload(stream, path);
                         return new UploadFileResponse()
                         {
