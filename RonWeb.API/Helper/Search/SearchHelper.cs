@@ -42,7 +42,8 @@ namespace RonWeb.API.Helper.Search
                 }
                 else
                 {
-                    var query = db.Article.Include(a => a.ArticleCategory)
+                    var query = db.Article.Where(a=> a.Flag == "Y" && a.CategoryId == id)
+                    .Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
                     .Select(a => new ArticleItem()
@@ -62,7 +63,6 @@ namespace RonWeb.API.Helper.Search
                             })
                             .ToList()
                     })
-                    .Where(a => a.CategoryId == id && a.Flag == "Y")
                     .OrderByDescending(a => a.CreateDate);
 
                     var pageSize = 10;
@@ -109,7 +109,8 @@ namespace RonWeb.API.Helper.Search
                 }
                 else
                 {
-                    var query = db.Article.Include(a => a.ArticleCategory)
+                    var query = db.Article.Where(a => a.Flag == "Y" && a.CategoryId == id)
+                    .Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
                     .Select(a => new ArticleItem()
@@ -129,7 +130,6 @@ namespace RonWeb.API.Helper.Search
                             })
                             .ToList()
                     })
-                    .Where(a => a.Labels.Any(b => b.LabelId == id) && a.Flag == "Y")
                     .OrderByDescending(a => a.CreateDate);
                     var pageSize = 10;
                     var skip = (curPage - 1) * pageSize;
