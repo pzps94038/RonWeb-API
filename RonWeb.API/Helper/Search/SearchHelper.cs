@@ -109,10 +109,11 @@ namespace RonWeb.API.Helper.Search
                 }
                 else
                 {
-                    var query = db.Article.Where(a => a.Flag == "Y" && a.CategoryId == id)
+                    var query = db.Article.Where(a => a.Flag == "Y")
                     .Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
+                    .Where(a=> a.ArticleLabelMapping.Any(a=> a.LabelId == id))
                     .Select(a => new ArticleItem()
                     {
                         ArticleId = a.ArticleId,
