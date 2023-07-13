@@ -17,10 +17,11 @@ namespace RonWeb.API.Helper.SiteMap
 
         public async Task<List<SiteMapResponse<long>>> Article()
         {
-            var result = await db.Article.Select(a => new SiteMapResponse<long>()
-            {
-                ID = a.ArticleId
-            }).ToListAsync();
+            var result = await db.Article.Where(a=> a.Flag == "Y")
+                .Select(a => new SiteMapResponse<long>()
+                {
+                    ID = a.ArticleId
+                }).ToListAsync();
             return result;
         }
 
