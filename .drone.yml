@@ -164,6 +164,7 @@ steps:
         - main
       event:
         - push
+        - cron
 
 trigger:
   branch:
@@ -173,6 +174,7 @@ trigger:
     - push
     - pull_request
     - tag
+    - cron
 ---
 kind: pipeline
 type: docker
@@ -207,3 +209,4 @@ trigger:
     - main
   event:
     - push
+    - cron
