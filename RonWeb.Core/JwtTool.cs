@@ -16,8 +16,8 @@ namespace RonWeb.Core
         public List<Claim> Claims { get; set; } = new List<Claim>();
     }
 
-	public class JwtTool
-	{
+    public class JwtTool
+    {
         /// <summary>
         /// 產生Token
         /// </summary>

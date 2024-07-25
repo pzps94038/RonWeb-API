@@ -34,30 +34,30 @@ namespace RonWeb.API.Enum
         /// 加密Key
         /// </summary>
         AESKEY,
-        /// <summary>
-        /// 系統接收人地址
-        /// </summary>
-        ERROR_LOG_EMAIL_ADDRESS,
-        /// <summary>
-        /// Gamil地址
-        /// </summary>
-        GMAIL_ADDRESS,
-        /// <summary>
-        /// Gamil顯示名稱
-        /// </summary>
-        GMAIL_DISPLAY_NAME,
-        /// <summary>
-        /// Gmail 發送人
-        /// </summary>
-        GMAIL_SENDER_EMAIL,
-        /// <summary>
-        /// Gmail 應用程式密碼
-        /// </summary>
-        GMAIL_PWD,
-        /// <summary>
-        /// reCAPTCHA v3 Token
-        /// </summary>
-        RE_CAPTCHA_SERVER_TOKEN,
+        ///// <summary>
+        ///// 系統接收人地址
+        ///// </summary>
+        //ERROR_LOG_EMAIL_ADDRESS,
+        ///// <summary>
+        ///// Gamil地址
+        ///// </summary>
+        //GMAIL_ADDRESS,
+        ///// <summary>
+        ///// Gamil顯示名稱
+        ///// </summary>
+        //GMAIL_DISPLAY_NAME,
+        ///// <summary>
+        ///// Gmail 發送人
+        ///// </summary>
+        //GMAIL_SENDER_EMAIL,
+        ///// <summary>
+        ///// Gmail 應用程式密碼
+        ///// </summary>
+        //GMAIL_PWD,
+        ///// <summary>
+        ///// reCAPTCHA v3 Token
+        ///// </summary>
+        //RE_CAPTCHA_SERVER_TOKEN,
         /// <summary>
         /// FireBaseStorage
         /// </summary>
