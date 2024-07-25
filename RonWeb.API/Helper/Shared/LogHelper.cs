@@ -21,6 +21,7 @@ namespace RonWeb.API.Helper.Shared
              RonWebDbContext db
         )
         {
+            this._db = db;
             this._logger = logger;
         }
 
