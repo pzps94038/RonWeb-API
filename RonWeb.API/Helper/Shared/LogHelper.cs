@@ -48,8 +48,19 @@ namespace RonWeb.API.Helper.Shared
             try
             {
                 var log = new ExceptionLog();
-                Console.WriteLine(ex.Message);
-                Console.WriteLine(ex.StackTrace);
+                Console.WriteLine("======================================================================");
+                Console.WriteLine("錯誤訊息:" + ex.Message);
+                Console.WriteLine("======================================================================");
+                Console.WriteLine("錯誤Stack:" + ex.StackTrace);
+                Console.WriteLine("======================================================================");
+                if (ex.InnerException != null) 
+                {
+                    Console.WriteLine("======================================================================");
+                    Console.WriteLine("InnerException錯誤訊息:" + ex.InnerException.Message);
+                    Console.WriteLine("======================================================================");
+                    Console.WriteLine("InnerException錯誤Stack:" + ex.InnerException.StackTrace);
+                    Console.WriteLine("======================================================================");
+                }
                 log.Message = ex.Message;
                 log.StackTrace = ex.StackTrace;
                 log.Level = Level.Error.Description();
