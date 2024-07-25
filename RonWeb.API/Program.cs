@@ -19,7 +19,8 @@ try
     Log.Information("Program Start:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
     // Add services to the container.
     builder.Services.AddControllers();
-    builder.Services.AddCors(options => {
+    builder.Services.AddCors(options =>
+    {
         options.AddPolicy("CorsPolicy", builder => builder
             .WithOrigins(Environment.GetEnvironmentVariable(EnvVarEnum.ORIGINS.Description())!.Split(','))
             .AllowAnyMethod()
@@ -87,11 +88,11 @@ try
         c.IncludeXmlComments(xmlPath);
     });
 
-    // db
+    // _db
     builder.Services.AddDbContext<RonWebDbContext>();
     // redis
     builder.Host.UseSerilog(); // <-- 加入這一行
-    builder.Services.AddSingleton(async a => await RedisConnection.InitializeAsync(Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_REDIS_DB_CONSTR.Description())!));
+    //builder.Services.AddSingleton(async a => await RedisConnection.InitializeAsync(Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_REDIS_DB_CONSTR.Description())!));
     // log
     builder.Host.UseSerilog(); // <-- 加入這一行
     var app = builder.Build();
@@ -118,7 +119,7 @@ catch (Exception ex)
 {
     Log.Fatal(ex, "Program Fail:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 }
-finally 
+finally
 {
     Log.CloseAndFlush();
 }

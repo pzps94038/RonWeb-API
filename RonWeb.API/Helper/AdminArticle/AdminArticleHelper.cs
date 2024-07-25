@@ -14,16 +14,16 @@ namespace RonWeb.API.Helper.AdminArticle
 {
     public class AdminArticleHelper : IAdminArticleHelper
     {
-        private readonly RonWebDbContext db;
+        private readonly RonWebDbContext _db;
 
         public AdminArticleHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task<GetByIdArticleResponse> GetAsync(long id)
         {
-            var data = await db.Article.Include(a => a.ArticleCategory)
+            var data = await _db.Article.Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
                     .Select(a => new GetByIdArticleResponse()
@@ -49,7 +49,7 @@ namespace RonWeb.API.Helper.AdminArticle
             if (data != null)
             {
                 // 找到下一篇文章
-                var nextArticle = await db.Article.Where(a => a.CreateDate > data.CreateDate)
+                var nextArticle = await _db.Article.Where(a => a.CreateDate > data.CreateDate)
                     .OrderBy(a => a.CreateDate)
                     .Take(1)
                     .Select(a => new BlogPagination()
@@ -58,7 +58,7 @@ namespace RonWeb.API.Helper.AdminArticle
                         ArticleTitle = a.ArticleTitle
                     }).FirstOrDefaultAsync();
                 // 找到上一篇文章
-                var prevArticle = await db.Article.Where(a => a.CreateDate < data.CreateDate)
+                var prevArticle = await _db.Article.Where(a => a.CreateDate < data.CreateDate)
                     .OrderByDescending(a => a.CreateDate)
                     .Take(1)
                     .Select(a => new BlogPagination()
@@ -80,7 +80,7 @@ namespace RonWeb.API.Helper.AdminArticle
         public async Task<GetArticleResponse> GetListAsync(int? page, string? keyword)
         {
             var curPage = page.GetValueOrDefault(1);
-            var query = db.Article.Include(a => a.ArticleCategory)
+            var query = _db.Article.Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
                     .Select(a => new ArticleItem()
@@ -140,13 +140,13 @@ namespace RonWeb.API.Helper.AdminArticle
             sanitizer.AllowedSchemes.Add("mailto"); // 添加對 連結 屬性的支持
             sanitizer.AllowedAttributes.Add("class");
             sanitizer.AllowedAttributes.Add("alt"); // 添加對 alt 屬性的支持
-            var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+            var article = await _db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
             if (article != null)
             {
-                var executionStrategy = db.Database.CreateExecutionStrategy();
+                var executionStrategy = _db.Database.CreateExecutionStrategy();
                 await executionStrategy.ExecuteAsync(async () =>
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    using (var tc = await _db.Database.BeginTransactionAsync())
                     {
                         try
                         {
@@ -157,8 +157,8 @@ namespace RonWeb.API.Helper.AdminArticle
                             article.Flag = data.Flag;
                             article.UpdateBy = data.UserId;
                             article.UpdateDate = DateTime.Now;
-                            var mapping = await db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(mapping);
+                            var mapping = await _db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
+                            _db.ArticleLabelMapping.RemoveRange(mapping);
                             var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
                             {
                                 LabelId = a.LabelId,
@@ -166,7 +166,7 @@ namespace RonWeb.API.Helper.AdminArticle
                                 CreateDate = DateTime.Now,
                                 CreateBy = data.UserId
                             }).ToList();
-                            await db.ArticleLabelMapping.AddRangeAsync(labelMapping);
+                            await _db.ArticleLabelMapping.AddRangeAsync(labelMapping);
 
                             var prevFiles = data.PrevFiles.Select(a => new ArticlePrevImage()
                             {
@@ -178,7 +178,7 @@ namespace RonWeb.API.Helper.AdminArticle
                                 CreateBy = data.UserId
                             }).ToList();
 
-                            db.ArticlePrevImage.AddRange(prevFiles);
+                            _db.ArticlePrevImage.AddRange(prevFiles);
 
                             var files = data.ContentFiles.Select(a => new ArticleImage()
                             {
@@ -190,9 +190,9 @@ namespace RonWeb.API.Helper.AdminArticle
                                 CreateBy = data.UserId
                             }).ToList();
 
-                            db.ArticleImage.AddRange(files);
+                            _db.ArticleImage.AddRange(files);
 
-                            await db.SaveChangesAsync();
+                            await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
                         catch
@@ -211,38 +211,40 @@ namespace RonWeb.API.Helper.AdminArticle
 
         public async Task DeleteAsync(long id)
         {
-            var article = await db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
+            var article = await _db.Article.SingleOrDefaultAsync(a => a.ArticleId == id);
             if (article != null)
             {
-                var executionStrategy = db.Database.CreateExecutionStrategy();
+                var executionStrategy = _db.Database.CreateExecutionStrategy();
                 await executionStrategy.ExecuteAsync(async () =>
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    using (var tc = await _db.Database.BeginTransactionAsync())
                     {
                         try
                         {
-                            db.Article.Remove(article);
-                            var labels = await db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(labels);
+                            _db.Article.Remove(article);
+                            var labels = await _db.ArticleLabelMapping.Where(a => a.ArticleId == id).ToListAsync();
+                            _db.ArticleLabelMapping.RemoveRange(labels);
 
                             var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
                             var storageTool = new FireBaseStorageTool(storageBucket);
 
-                            var prevImages = await db.ArticlePrevImage.Where(a => a.ArticleId == id).ToListAsync();
-                            db.ArticlePrevImage.RemoveRange(prevImages);
-                            var prevImgTasks = prevImages.Select(a => Task.Run(async () => {
+                            var prevImages = await _db.ArticlePrevImage.Where(a => a.ArticleId == id).ToListAsync();
+                            _db.ArticlePrevImage.RemoveRange(prevImages);
+                            var prevImgTasks = prevImages.Select(a => Task.Run(async () =>
+                            {
                                 await storageTool.Delete(a.Path);
                             })).ToArray();
                             Task.WaitAll(prevImgTasks);
 
-                            var images = await db.ArticleImage.Where(a => a.ArticleId == id).ToListAsync();
-                            db.ArticleImage.RemoveRange(images);
-                            var imgTasks = images.Select(a => Task.Run(async () => {
+                            var images = await _db.ArticleImage.Where(a => a.ArticleId == id).ToListAsync();
+                            _db.ArticleImage.RemoveRange(images);
+                            var imgTasks = images.Select(a => Task.Run(async () =>
+                            {
                                 await storageTool.Delete(a.Path);
                             })).ToArray();
                             Task.WaitAll(imgTasks);
 
-                            await db.SaveChangesAsync();
+                            await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
                         catch
@@ -261,11 +263,11 @@ namespace RonWeb.API.Helper.AdminArticle
 
         public async Task CreateAsync(CreateArticleRequest data)
         {
-            var executionStrategy = db.Database.CreateExecutionStrategy();
+            var executionStrategy = _db.Database.CreateExecutionStrategy();
 
             await executionStrategy.ExecuteAsync(async () =>
             {
-                using (var tc = await db.Database.BeginTransactionAsync())
+                using (var tc = await _db.Database.BeginTransactionAsync())
                 {
                     try
                     {
@@ -286,8 +288,8 @@ namespace RonWeb.API.Helper.AdminArticle
                             CreateBy = data.UserId
                         };
 
-                        db.Article.Add(article);
-                        await db.SaveChangesAsync();
+                        _db.Article.Add(article);
+                        await _db.SaveChangesAsync();
 
                         var mappings = data.Labels.Select(a => new ArticleLabelMapping()
                         {
@@ -297,7 +299,7 @@ namespace RonWeb.API.Helper.AdminArticle
                             CreateDate = DateTime.Now
                         });
 
-                        db.ArticleLabelMapping.AddRange(mappings);
+                        _db.ArticleLabelMapping.AddRange(mappings);
 
                         var prevFiles = data.PrevFiles.Select(a => new ArticlePrevImage()
                         {
@@ -309,7 +311,7 @@ namespace RonWeb.API.Helper.AdminArticle
                             CreateBy = data.UserId
                         }).ToList();
 
-                        db.ArticlePrevImage.AddRange(prevFiles);
+                        _db.ArticlePrevImage.AddRange(prevFiles);
 
                         var files = data.PrevFiles.Select(a => new ArticleImage()
                         {
@@ -321,9 +323,9 @@ namespace RonWeb.API.Helper.AdminArticle
                             CreateBy = data.UserId
                         }).ToList();
 
-                        db.ArticleImage.AddRange(files);
+                        _db.ArticleImage.AddRange(files);
 
-                        await db.SaveChangesAsync();
+                        await _db.SaveChangesAsync();
 
                         await tc.CommitAsync();
                     }

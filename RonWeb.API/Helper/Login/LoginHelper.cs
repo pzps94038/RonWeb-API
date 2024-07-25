@@ -12,13 +12,13 @@ using RonWeb.Database.MySql.RonWeb.DataBase;
 
 namespace RonWeb.API.Helper.Login
 {
-    public class LoginHelper: ILoginHelper
+    public class LoginHelper : ILoginHelper
     {
-        public readonly RonWebDbContext db;
+        private readonly RonWebDbContext _db;
 
         public LoginHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task<LoginResponse> Login(LoginRequest data)
@@ -27,7 +27,7 @@ namespace RonWeb.API.Helper.Login
             string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
             var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
             var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
-            var user = await db.UserMain
+            var user = await _db.UserMain
                 .Where(a => a.Account == data.Account)
                 .Where(a => a.Password == encryptPassword)
                 .SingleOrDefaultAsync();
@@ -60,8 +60,8 @@ namespace RonWeb.API.Helper.Login
                     ExpirationDate = refreshTokenExpTime,
                     CreateDate = DateTime.Now
                 };
-                await db.AddAsync(log);
-                await db.SaveChangesAsync();
+                await _db.AddAsync(log);
+                await _db.SaveChangesAsync();
                 return new LoginResponse()
                 {
                     Token = new Token(token, refreshToken),

@@ -9,16 +9,16 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 {
     public class AdminArticleLabelHelper : IAdminArticleLabelHelper
     {
-        public readonly RonWebDbContext db;
+        private readonly RonWebDbContext _db;
 
         public AdminArticleLabelHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task CreateAsync(CreateArticleLabelRequest data)
         {
-            var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelName == data.LabelName);
+            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelName == data.LabelName);
             if (label != null)
             {
                 throw new UniqueException();
@@ -32,27 +32,27 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                     CreateBy = data.UserId
                 };
 
-                await db.AddAsync(label);
-                await db.SaveChangesAsync();
+                await _db.AddAsync(label);
+                await _db.SaveChangesAsync();
             }
         }
 
         public async Task DeleteAsync(long id)
         {
-            var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
+            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
             if (label != null)
             {
-                var executionStrategy = db.Database.CreateExecutionStrategy();
+                var executionStrategy = _db.Database.CreateExecutionStrategy();
                 await executionStrategy.ExecuteAsync(async () =>
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    using (var tc = await _db.Database.BeginTransactionAsync())
                     {
                         try
                         {
-                            var mapping = await db.ArticleLabelMapping.Where(a => a.LabelId == id).ToListAsync();
-                            db.ArticleLabelMapping.RemoveRange(mapping);
-                            db.ArticleLabel.Remove(label);
-                            await db.SaveChangesAsync();
+                            var mapping = await _db.ArticleLabelMapping.Where(a => a.LabelId == id).ToListAsync();
+                            _db.ArticleLabelMapping.RemoveRange(mapping);
+                            _db.ArticleLabel.Remove(label);
+                            await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
                         catch
@@ -71,7 +71,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task<Label> GetAsync(long id)
         {
-            var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
+            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
             if (label != null)
             {
                 return new Label()
@@ -89,7 +89,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task<GetArticleLabelResponse> GetListAsync(int? page)
         {
-            var query = db.ArticleLabel.AsQueryable();
+            var query = _db.ArticleLabel.AsQueryable();
             var total = query.Count();
             if (page != null)
             {
@@ -119,13 +119,13 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task UpdateAsync(long id, UpdateArticleLabelRequest data)
         {
-            var label = await db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
+            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
             if (label != null)
             {
                 label.LabelName = data.LabelName;
                 label.UpdateBy = data.UserId;
                 label.UpdateDate = DateTime.Now;
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             else
             {
