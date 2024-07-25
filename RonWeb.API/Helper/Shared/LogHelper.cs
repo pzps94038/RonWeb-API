@@ -2,6 +2,7 @@
 using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using RonWeb.Database.MySql.RonWeb.Table;
+using Newtonsoft.Json;
 
 namespace RonWeb.API.Helper.Shared
 {
@@ -47,6 +48,8 @@ namespace RonWeb.API.Helper.Shared
             try
             {
                 var log = new ExceptionLog();
+                Console.WriteLine(ex.Message);
+                Console.WriteLine(ex.StackTrace);
                 log.Message = ex.Message;
                 log.StackTrace = ex.StackTrace;
                 log.Level = Level.Error.Description();
