@@ -22,34 +22,34 @@ namespace RonWeb.API.Controllers
             this._logger = logger;
         }
 
-        /// <summary>
-        /// 聯絡資訊新增
-        /// </summary>
-        /// <param name="req"></param>
-        /// <returns></returns>
-        [HttpPost]
-        public async Task<BaseResponse> ContactUs([FromBody] ContactUsRequest req)
-        {
-            var result = new BaseResponse();
-            try
-            {
-                await this._helper.SendContactUsMail(req);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.SendMailSuccess.Description();
-            }
-            catch (AuthFailException)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.AuthFail.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.SendMailFail.Description();
-                _logger.Error(ex);
-            }
-            return result;
-        }
+        ///// <summary>
+        ///// 聯絡資訊新增
+        ///// </summary>
+        ///// <param name="req"></param>
+        ///// <returns></returns>
+        //[HttpPost]
+        //public async Task<BaseResponse> ContactUs([FromBody] ContactUsRequest req)
+        //{
+        //    var result = new BaseResponse();
+        //    try
+        //    {
+        //        await this._helper.SendContactUsMail(req);
+        //        result.ReturnCode = ReturnCode.Success.Description();
+        //        result.ReturnMessage = ReturnMessage.SendMailSuccess.Description();
+        //    }
+        //    catch (AuthFailException)
+        //    {
+        //        result.ReturnCode = ReturnCode.Fail.Description();
+        //        result.ReturnMessage = ReturnMessage.AuthFail.Description();
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        result.ReturnCode = ReturnCode.Fail.Description();
+        //        result.ReturnMessage = ReturnMessage.SendMailFail.Description();
+        //        _logger.Error(ex);
+        //    }
+        //    return result;
+        //}
     }
 }
 

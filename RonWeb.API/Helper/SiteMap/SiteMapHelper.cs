@@ -1,23 +1,22 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using RonWeb.API.Interface.SiteMap;
 using RonWeb.API.Models.SiteMap;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 
 namespace RonWeb.API.Helper.SiteMap
 {
-	public class SiteMapHelper : ISiteMapHelper
-	{
-        public readonly RonWebDbContext db;
+    public class SiteMapHelper : ISiteMapHelper
+    {
+        private readonly RonWebDbContext _db;
 
         public SiteMapHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task<List<SiteMapResponse<long>>> Article()
         {
-            var result = await db.Article.Where(a=> a.Flag == "Y")
+            var result = await _db.Article.Where(a => a.Flag == "Y")
                 .Select(a => new SiteMapResponse<long>()
                 {
                     ID = a.ArticleId
@@ -27,7 +26,7 @@ namespace RonWeb.API.Helper.SiteMap
 
         public async Task<List<SiteMapResponse<long>>> Category()
         {
-            var result = await db.ArticleCategory.Select(a => new SiteMapResponse<long>()
+            var result = await _db.ArticleCategory.Select(a => new SiteMapResponse<long>()
             {
                 ID = a.CategoryId
             }).ToListAsync();
@@ -36,7 +35,7 @@ namespace RonWeb.API.Helper.SiteMap
 
         public async Task<List<SiteMapResponse<long>>> Label()
         {
-            var result = await db.ArticleLabel.Select(a => new SiteMapResponse<long>()
+            var result = await _db.ArticleLabel.Select(a => new SiteMapResponse<long>()
             {
                 ID = a.LabelId
             }).ToListAsync();

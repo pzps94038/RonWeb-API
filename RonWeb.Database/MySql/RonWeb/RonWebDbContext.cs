@@ -1,11 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RonWeb.Core;
-using RonWeb.Database.MySql.Enum;
+using RonWeb.Database.Enum;
 using RonWeb.Database.MySql.RonWeb.Table;
 
 namespace RonWeb.Database.MySql.RonWeb.DataBase
 {
-    public class RonWebDbContext: DbContext
+    public class RonWebDbContext : DbContext
     {
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -32,7 +32,7 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
         public DbSet<UserMain> UserMain { get; set; }
         public DbSet<RefreshTokenLog> RefreshTokenLog { get; set; }
         public DbSet<ExceptionLog> ExceptionLog { get; set; }
-        
+
     }
 }
 

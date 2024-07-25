@@ -5,26 +5,24 @@ using RonWeb.API.Interface.Register;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Register;
 using RonWeb.Core;
-using RonWeb.Database.Mongo;
-using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
 
 namespace RonWeb.API.Helper.Register
 {
-    public class RegisterHelper: IRegisterHelper
+    public class RegisterHelper : IRegisterHelper
     {
-        public readonly RonWebDbContext db;
+        private readonly RonWebDbContext _db;
 
         public RegisterHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task RegisterUser(RegisterRequest data)
         {
-            var user = await db.UserMain.SingleOrDefaultAsync(a => a.Account == data.Account);
+            var user = await _db.UserMain.SingleOrDefaultAsync(a => a.Account == data.Account);
             if (user != null)
             {
                 throw new UniqueException();
@@ -43,8 +41,8 @@ namespace RonWeb.API.Helper.Register
                     Email = data.Email,
                     CreateDate = DateTime.Now
                 };
-                await db.UserMain.AddAsync(user);
-                await db.SaveChangesAsync();
+                await _db.UserMain.AddAsync(user);
+                await _db.SaveChangesAsync();
             }
         }
     }

@@ -11,16 +11,16 @@ namespace RonWeb.API.Helper.AdminArticleCategory
 {
     public class AdminArticleCategoryHelper : IAdminArticleCategoryHelper
     {
-        public readonly RonWebDbContext db;
+        private readonly RonWebDbContext _db;
 
         public AdminArticleCategoryHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task<Category> GetAsync(long id)
         {
-            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+            var category = await _db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
             if (category != null)
             {
                 return new Category()
@@ -38,7 +38,7 @@ namespace RonWeb.API.Helper.AdminArticleCategory
 
         public async Task CreateAsync(CreateArticleCategoryRequest data)
         {
-            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryName == data.CategoryName);
+            var category = await _db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryName == data.CategoryName);
             if (category != null)
             {
                 throw new UniqueException();
@@ -51,20 +51,20 @@ namespace RonWeb.API.Helper.AdminArticleCategory
                     CreateDate = DateTime.Now,
                     CreateBy = data.UserId
                 };
-                await db.AddAsync(category);
-                await db.SaveChangesAsync();
+                await _db.AddAsync(category);
+                await _db.SaveChangesAsync();
             }
         }
 
         public async Task UpdateAsync(long id, UpdateArticleCategoryRequest data)
         {
-            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+            var category = await _db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
             if (category != null)
             {
                 category.CategoryName = data.CategoryName;
                 category.UpdateBy = data.UserId;
                 category.UpdateDate = DateTime.Now;
-                await db.SaveChangesAsync();
+                await _db.SaveChangesAsync();
             }
             else
             {
@@ -74,20 +74,20 @@ namespace RonWeb.API.Helper.AdminArticleCategory
 
         public async Task DeleteAsync(long id)
         {
-            var category = await db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
+            var category = await _db.ArticleCategory.SingleOrDefaultAsync(a => a.CategoryId == id);
             if (category != null)
             {
-                var executionStrategy = db.Database.CreateExecutionStrategy();
+                var executionStrategy = _db.Database.CreateExecutionStrategy();
                 await executionStrategy.ExecuteAsync(async () =>
                 {
-                    using (var tc = await db.Database.BeginTransactionAsync())
+                    using (var tc = await _db.Database.BeginTransactionAsync())
                     {
                         try
                         {
-                            var articles = await db.Article.Where(a => a.CategoryId == id).ToListAsync();
-                            db.Article.RemoveRange(articles);
-                            db.ArticleCategory.Remove(category);
-                            await db.SaveChangesAsync();
+                            var articles = await _db.Article.Where(a => a.CategoryId == id).ToListAsync();
+                            _db.Article.RemoveRange(articles);
+                            _db.ArticleCategory.Remove(category);
+                            await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
                         catch
@@ -106,7 +106,7 @@ namespace RonWeb.API.Helper.AdminArticleCategory
 
         public async Task<GetArticleCategoryResponse> GetListAsync(int? page)
         {
-            var query = db.ArticleCategory.AsQueryable();
+            var query = _db.ArticleCategory.AsQueryable();
             var total = query.Count();
             if (page != null)
             {

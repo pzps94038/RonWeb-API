@@ -3,29 +3,25 @@ using RonWeb.API.Interface.RefreshToken;
 using RonWeb.API.Models.RefreshToken;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using RonWeb.Database.Mongo;
-using RonWeb.Database.Service;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
-using RonWeb.Database.Models;
-using MongoDB.Bson;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
 
 namespace RonWeb.API.Helper.RefreshToken
 {
-    public class RefreshTokenHelper: IRefreshTokenHelper
+    public class RefreshTokenHelper : IRefreshTokenHelper
     {
-        public readonly RonWebDbContext db;
+        private readonly RonWebDbContext _db;
 
         public RefreshTokenHelper(RonWebDbContext dbContext)
         {
-            this.db = dbContext;
+            this._db = dbContext;
         }
 
         public async Task<Token> Refresh(RefreshTokenRequest data)
         {
-            var log = await db.RefreshTokenLog
+            var log = await _db.RefreshTokenLog
                     .Where(a => a.UserId == data.UserId)
                     .Where(a => a.RefreshToken == data.RefreshToken)
                     .Include(a => a.UserMain)
@@ -63,8 +59,8 @@ namespace RonWeb.API.Helper.RefreshToken
                     ExpirationDate = refreshTokenExpTime,
                     CreateDate = DateTime.Now
                 };
-                await db.AddAsync(tokenLog);
-                await db.SaveChangesAsync();
+                await _db.AddAsync(tokenLog);
+                await _db.SaveChangesAsync();
                 return new Token(token, refreshToken);
             }
         }
