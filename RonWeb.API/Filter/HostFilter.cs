@@ -22,10 +22,7 @@ namespace RonWeb.API.Filter
             var validHostEnv = Environment.GetEnvironmentVariable(EnvVarEnum.ValidHosts.Description()) ?? "";
             var validHosts = validHostEnv.Split(';');
             var requestHost = context.HttpContext.Request.Host.Host;
-            Console.WriteLine("Host:" + context.HttpContext.Request.Host.Value);
-            Console.WriteLine("Header IP:" + context.HttpContext.Request.Headers.Host);
-
-            Console.WriteLine("httpContextAccessor host", _httpContextAccessor?.HttpContext?.Request.Host);
+            Console.WriteLine("Host:", _httpContextAccessor?.HttpContext?.Request.Host.Host);
 
             if (!validHosts.Contains(requestHost))
             {
