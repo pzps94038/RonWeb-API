@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Interface.SiteMap;
 using RonWeb.API.Models.Shared;
@@ -9,7 +8,6 @@ using RonWeb.Core;
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]/[action]")]
-    [ServiceFilter(typeof(HostFilter))]
     public class SiteMapController : Controller
     {
         private readonly ISiteMapHelper _helper;

@@ -4,10 +4,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
-using RonWeb.API.Filter;
 using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
-using RonWeb.Database.Redis;
 using Serilog;
 using System.Reflection;
 using System.Text;
@@ -41,8 +39,7 @@ try
             .WithScopedLifetime()
     );
 
-    // Filter
-    builder.Services.AddScoped<HostFilter>();
+    // HttpContextAccessor
     builder.Services.AddHttpContextAccessor();
 
     // JWT Token

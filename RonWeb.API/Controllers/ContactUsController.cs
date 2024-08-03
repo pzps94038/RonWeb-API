@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
 using RonWeb.API.Interface.ContactUs;
 using RonWeb.API.Interface.Shared;
-using RonWeb.API.Models.ContactUs;
-using RonWeb.API.Models.CustomizeException;
-using RonWeb.API.Models.Shared;
-using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
@@ -13,7 +8,6 @@ namespace RonWeb.API.Controllers
     /// 聯絡我們
     /// </summary>
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(HostFilter))]
     public class ContactUsController : Controller
     {
         private readonly IContactUsHelper _helper;

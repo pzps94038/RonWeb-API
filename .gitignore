@@ -109,3 +109,5 @@ UpgradeLog*.XML
 .vs/
 
 RonWeb.API/Logs/*.*
+RonWeb.API/Logs/*.*
+RonWeb.API/Properties

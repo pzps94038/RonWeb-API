@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
-using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Login;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.CustomizeException;
@@ -14,7 +12,6 @@ namespace RonWeb.API.Controllers
     /// 登入
     /// </summary>
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(HostFilter))]
     public class LoginController : Controller
     {
         private readonly ILoginHelper _helper;

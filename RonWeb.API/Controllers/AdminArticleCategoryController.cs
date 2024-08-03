@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
 using RonWeb.API.Interface.AdminArticleCategory;
-using RonWeb.API.Interface.ArticleCategory;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.CustomizeException;
@@ -15,7 +13,6 @@ namespace RonWeb.API.Controllers
     /// 文章分類
     /// </summary>
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(HostFilter))]
     [Authorize]
     public class AdminArticleCategoryController : Controller
     {

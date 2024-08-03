@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
 using RonWeb.API.Interface.RefreshToken;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.CustomizeException;
@@ -13,7 +12,6 @@ namespace RonWeb.API.Controllers
     /// 刷新接口
     /// </summary>
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(HostFilter))]
     public class RefreshTokenController : Controller
     {
         private readonly IRefreshTokenHelper _helper;

@@ -1,17 +1,13 @@
-﻿using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
+﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.ArticleLabel;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleLabel;
-using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(HostFilter))]
     public class ArticleLabelController : Controller
     {
         private readonly IArticleLabelHelper _helper;

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Filter;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Interface.Upload;
 using RonWeb.API.Models.Shared;
@@ -13,7 +12,6 @@ namespace RonWeb.API.Controllers
     /// 檔案上傳
     /// </summary>
     [Route("api/[controller]")]
-    [ServiceFilter(typeof(HostFilter))]
     [Authorize]
     public class UploadController : Controller
     {
@@ -50,7 +48,7 @@ namespace RonWeb.API.Controllers
                     result.ReturnCode = ReturnCode.Fail.Description();
                     result.ReturnMessage = ReturnMessage.UploadFail.Description();
                 }
-                
+
             }
             catch (Exception ex)
             {
