@@ -10,9 +10,11 @@ namespace RonWeb.API.Filter
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
+
             var validHostEnv = Environment.GetEnvironmentVariable(EnvVarEnum.ValidHosts.Description()) ?? "";
             var validHosts = validHostEnv.Split(';');
             var requestHost = context.HttpContext.Request.Host.Host;
+            Console.WriteLine("Host:" + context.HttpContext.Request.Host.Value);
 
             if (!validHosts.Contains(requestHost))
             {
