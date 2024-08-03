@@ -12,7 +12,9 @@ namespace RonWeb.API.Filter
         public HostFilter(
             IHttpContextAccessor httpContextAccessor
         )
-        { }
+        {
+            _httpContextAccessor = httpContextAccessor;
+        }
 
         public override void OnActionExecuting(ActionExecutingContext context)
         {
@@ -23,7 +25,7 @@ namespace RonWeb.API.Filter
             Console.WriteLine("Host:" + context.HttpContext.Request.Host.Value);
             Console.WriteLine("Header IP:" + context.HttpContext.Request.Headers.Host);
 
-            Console.WriteLine("httpContextAccessor host", _httpContextAccessor.HttpContext.Request.Host);
+            Console.WriteLine("httpContextAccessor host", _httpContextAccessor?.HttpContext?.Request.Host);
 
             if (!validHosts.Contains(requestHost))
             {
