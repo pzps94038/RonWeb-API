@@ -24,7 +24,7 @@ namespace RonWeb.API.Filter
             var validHosts = validHostEnv.Split(';');
             var requestHost = context.HttpContext.Request.Host.Host;
 
-            Console.WriteLine("IP", context.HttpContext.Connection.RemoteIpAddress);
+            Console.WriteLine("IP", context.HttpContext.Connection.RemoteIpAddress?.MapToIPv4());
             if (!validHosts.Contains(requestHost))
             {
                 context.Result = new ContentResult
