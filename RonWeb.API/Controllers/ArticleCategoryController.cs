@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Interface.ArticleCategory;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleCategory;
@@ -13,11 +14,12 @@ namespace RonWeb.API.Controllers
     /// 文章分類
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     public class ArticleCategoryController : Controller
     {
         private readonly IArticleCategoryHelper _helper;
         private readonly ILogHelper _logger;
-        public ArticleCategoryController(IArticleCategoryHelper helper, ILogHelper logger) 
+        public ArticleCategoryController(IArticleCategoryHelper helper, ILogHelper logger)
         {
             this._helper = helper;
             this._logger = logger;

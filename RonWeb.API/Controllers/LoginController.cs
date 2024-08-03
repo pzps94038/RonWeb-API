@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Login;
 using RonWeb.API.Interface.Shared;
@@ -13,6 +14,7 @@ namespace RonWeb.API.Controllers
     /// 登入
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     public class LoginController : Controller
     {
         private readonly ILoginHelper _helper;
@@ -29,7 +31,7 @@ namespace RonWeb.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse<LoginResponse>> Login([FromBody]LoginRequest req)
+        public async Task<BaseResponse<LoginResponse>> Login([FromBody] LoginRequest req)
         {
             var result = new BaseResponse<LoginResponse>();
             try

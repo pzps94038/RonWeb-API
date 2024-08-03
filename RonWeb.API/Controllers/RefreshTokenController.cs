@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Interface.RefreshToken;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.CustomizeException;
@@ -12,6 +13,7 @@ namespace RonWeb.API.Controllers
     /// 刷新接口
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     public class RefreshTokenController : Controller
     {
         private readonly IRefreshTokenHelper _helper;
@@ -28,7 +30,7 @@ namespace RonWeb.API.Controllers
         /// <param name="req"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse<Token>> RefreshToken([FromBody]RefreshTokenRequest req)
+        public async Task<BaseResponse<Token>> RefreshToken([FromBody] RefreshTokenRequest req)
         {
             var result = new BaseResponse<Token>();
             try
@@ -43,7 +45,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
             }
-            catch (AuthExpiredException) 
+            catch (AuthExpiredException)
             {
                 result.ReturnCode = ReturnCode.AuthExpired.Description();
                 result.ReturnMessage = ReturnMessage.AuthExpired.Description();

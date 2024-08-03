@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Interface.Register;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.CustomizeException;
@@ -13,6 +14,7 @@ namespace RonWeb.API.Controllers
     /// 註冊
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     [Authorize]
     public class RegisterController : Controller
     {
@@ -30,7 +32,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> Register([FromBody]RegisterRequest data)
+        public async Task<BaseResponse> Register([FromBody] RegisterRequest data)
         {
             var result = new BaseResponse();
             try
@@ -52,7 +54,7 @@ namespace RonWeb.API.Controllers
             }
             return result;
         }
-        
+
     }
 }
 

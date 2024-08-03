@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Interface.AdminArticleLabel;
 using RonWeb.API.Interface.ArticleLabel;
 using RonWeb.API.Interface.Shared;
@@ -11,6 +12,7 @@ using RonWeb.Core;
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     [Authorize]
     public class AdminArticleLabelController : Controller
     {

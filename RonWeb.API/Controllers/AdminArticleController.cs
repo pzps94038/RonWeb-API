@@ -7,10 +7,12 @@ using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Interface.AdminArticleHelper;
+using RonWeb.API.Filter;
 
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     [Authorize]
     public class AdminArticleController : Controller
     {

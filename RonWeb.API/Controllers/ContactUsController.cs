@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Interface.ContactUs;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ContactUs;
@@ -12,6 +13,7 @@ namespace RonWeb.API.Controllers
     /// 聯絡我們
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     public class ContactUsController : Controller
     {
         private readonly IContactUsHelper _helper;

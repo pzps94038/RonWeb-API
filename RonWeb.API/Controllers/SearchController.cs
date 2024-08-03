@@ -5,6 +5,7 @@ using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.API.Interface.Shared;
+using RonWeb.API.Filter;
 
 namespace RonWeb.API.Controllers
 {
@@ -12,6 +13,7 @@ namespace RonWeb.API.Controllers
     /// 搜尋相關
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     public class SearchController : Controller
     {
         private readonly ISearchHelper _helper;
@@ -73,7 +75,7 @@ namespace RonWeb.API.Controllers
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
             }
-            catch(NotFoundException)
+            catch (NotFoundException)
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();

@@ -6,10 +6,12 @@ using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.API.Interface.Shared;
+using RonWeb.API.Filter;
 
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     public class ArticleController : Controller
     {
         private readonly IArticleHelper _helper;
@@ -27,7 +29,7 @@ namespace RonWeb.API.Controllers
         [HttpGet]
         public async Task<BaseResponse<GetArticleResponse>> GetArticle(int? page, string? keyword)
         {
-            var result = new BaseResponse<GetArticleResponse> ();
+            var result = new BaseResponse<GetArticleResponse>();
             try
             {
                 var data = await this._helper.GetListAsync(page, keyword);

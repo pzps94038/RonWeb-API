@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using RonWeb.API.Filter;
 using RonWeb.API.Interface.AdminArticleCategory;
 using RonWeb.API.Interface.ArticleCategory;
 using RonWeb.API.Interface.Shared;
@@ -14,12 +15,13 @@ namespace RonWeb.API.Controllers
     /// 文章分類
     /// </summary>
     [Route("api/[controller]")]
+    [ServiceFilter(typeof(HostFilter))]
     [Authorize]
     public class AdminArticleCategoryController : Controller
     {
         private readonly IAdminArticleCategoryHelper _helper;
         private readonly ILogHelper _logger;
-        public AdminArticleCategoryController(IAdminArticleCategoryHelper helper, ILogHelper logger) 
+        public AdminArticleCategoryController(IAdminArticleCategoryHelper helper, ILogHelper logger)
         {
             this._helper = helper;
             this._logger = logger;
@@ -86,7 +88,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> CreateArticleCategory([FromBody]CreateArticleCategoryRequest data)
+        public async Task<BaseResponse> CreateArticleCategory([FromBody] CreateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
             try
@@ -121,7 +123,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<BaseResponse> UpdateArticleCategory(long id, [FromBody]UpdateArticleCategoryRequest data)
+        public async Task<BaseResponse> UpdateArticleCategory(long id, [FromBody] UpdateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
             try
