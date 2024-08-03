@@ -1,5 +1,6 @@
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
@@ -117,6 +118,12 @@ try
     app.UseIpRateLimiting();
     //啟用客戶端限制
     app.UseClientRateLimiting();
+    //支援反向代理
+    app.UseForwardedHeaders(new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor |
+        ForwardedHeaders.XForwardedProto
+    });
     app.Run();
 }
 catch (Exception ex)
