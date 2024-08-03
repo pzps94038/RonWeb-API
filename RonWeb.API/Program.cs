@@ -43,6 +43,7 @@ try
 
     // Filter
     builder.Services.AddScoped<HostFilter>();
+    builder.Services.AddHttpContextAccessor();
 
     // JWT Token
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
