@@ -1,5 +1,4 @@
-﻿using System;
-namespace RonWeb.API.Enum
+﻿namespace RonWeb.API.Enum
 {
     /// <summary>
     /// 環境變數管理
@@ -66,6 +65,10 @@ namespace RonWeb.API.Enum
         ///// Redis連線字串
         ///// </summary>
         //RON_WEB_REDIS_DB_CONSTR
+        /// <summary>
+        /// 合法Host用;設定多個
+        /// </summary>
+        ValidHosts
     }
 }
 

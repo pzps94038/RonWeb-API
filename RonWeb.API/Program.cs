@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
+using RonWeb.API.Filter;
 using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using RonWeb.Database.Redis;
@@ -38,6 +39,9 @@ try
             .AsImplementedInterfaces()
             .WithScopedLifetime()
     );
+
+    // Filter
+    builder.Services.AddScoped<HostFilter>();
 
     // JWT Token
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
