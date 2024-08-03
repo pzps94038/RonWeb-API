@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Enum;
 using RonWeb.Core;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace RonWeb.API.Filter
 {
@@ -22,8 +23,8 @@ namespace RonWeb.API.Filter
             var validHostEnv = Environment.GetEnvironmentVariable(EnvVarEnum.ValidHosts.Description()) ?? "";
             var validHosts = validHostEnv.Split(';');
             var requestHost = context.HttpContext.Request.Host.Host;
-            Console.WriteLine("Host:", _httpContextAccessor?.HttpContext?.Request.Host.Host);
 
+            Console.WriteLine("IP", context.HttpContext.Connection.RemoteIpAddress);
             if (!validHosts.Contains(requestHost))
             {
                 context.Result = new ContentResult
