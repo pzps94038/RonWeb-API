@@ -2,6 +2,7 @@
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
+using System.Text.Json;
 
 namespace RonWeb.API.Middleware
 {
@@ -39,8 +40,12 @@ namespace RonWeb.API.Middleware
         private async Task HandleExceptionAsync(HttpContext context, Exception ex, ReturnCode returnCode, ReturnMessage returnMessage)
         {
             _logger.Error(ex);
-            context.Response.ContentType = "application/json";
-            var json = System.Text.Json.JsonSerializer.Serialize(new BaseResponse(returnCode.Description(), returnMessage.Description()));
+            context.Response.ContentType = "application/json; charset=utf-8";
+            var options = new JsonSerializerOptions
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            };
+            var json = JsonSerializer.Serialize(new BaseResponse(returnCode.Description(), returnMessage.Description()), options);
             await context.Response.WriteAsync(json);
 
         }
