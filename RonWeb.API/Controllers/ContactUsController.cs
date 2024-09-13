@@ -14,8 +14,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public ContactUsController(IContactUsHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         ///// <summary>
@@ -29,7 +29,7 @@ namespace RonWeb.API.Controllers
         //    var result = new BaseResponse();
         //    try
         //    {
-        //        await this._helper.SendContactUsMail(req);
+        //        await _helper.SendContactUsMail(req);
         //        result.ReturnCode = ReturnCode.Success.Description();
         //        result.ReturnMessage = ReturnMessage.SendMailSuccess.Description();
         //    }

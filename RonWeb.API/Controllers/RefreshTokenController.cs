@@ -18,8 +18,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public RefreshTokenController(IRefreshTokenHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -31,29 +31,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<Token>> RefreshToken([FromBody] RefreshTokenRequest req)
         {
             var result = new BaseResponse<Token>();
-            try
-            {
-                var data = await this._helper.Refresh(req);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.LoginSuccess.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (AuthExpiredException)
-            {
-                result.ReturnCode = ReturnCode.AuthExpired.Description();
-                result.ReturnMessage = ReturnMessage.AuthExpired.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.SystemFail.Description();
-                _logger.Error(ex);
-            }
+            var data = await _helper.Refresh(req);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.LoginSuccess.Description();
+            result.Data = data;
             return result;
         }
     }

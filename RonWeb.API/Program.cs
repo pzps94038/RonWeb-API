@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
+using RonWeb.API.Interface.Shared;
+using RonWeb.API.Middleware;
 using RonWeb.Core;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 using Serilog;
@@ -78,6 +80,8 @@ try
     builder.Services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
     builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
     builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+    // middleware
+    builder.Services.AddScoped<IExceptionHandlerMiddleware, ExceptionHandlerMiddleware>();
     //配置（解析器、計數器金鑰生成器）
     builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
@@ -93,9 +97,6 @@ try
 
     // _db
     builder.Services.AddDbContext<RonWebDbContext>();
-    // redis
-    builder.Host.UseSerilog(); // <-- 加入這一行
-    //builder.Services.AddSingleton(async a => await RedisConnection.InitializeAsync(Environment.GetEnvironmentVariable(EnvVarEnum.RON_WEB_REDIS_DB_CONSTR.Description())!));
     // log
     builder.Host.UseSerilog(); // <-- 加入這一行
     var app = builder.Build();
@@ -110,6 +111,7 @@ try
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseCors("CorsPolicy");
+    app.UseMiddleware<IExceptionHandlerMiddleware>();
     app.UseAuthorization();
     app.MapControllers();
     //啟用客戶端IP限制速率

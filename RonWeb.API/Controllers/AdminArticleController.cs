@@ -17,8 +17,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public AdminArticleController(IAdminArticleHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -29,20 +29,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<GetArticleResponse>> GetArticle(int? page, string? keyword)
         {
             var result = new BaseResponse<GetArticleResponse>();
-            try
-            {
-                var data = await this._helper.GetListAsync(page, keyword);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            var data = await _helper.GetListAsync(page, keyword);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -55,24 +45,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<GetByIdArticleResponse>> GetArticleById(long id)
         {
             var result = new BaseResponse<GetByIdArticleResponse>();
-            try
-            {
-                var data = await this._helper.GetAsync(id);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
+            var data = await _helper.GetAsync(id);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -86,25 +62,9 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse> CreateArticle([FromBody] CreateArticleRequest data)
         {
             var result = new BaseResponse();
-
-            try
-            {
-                await this._helper.CreateAsync(data);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.CreateFail.Description();
-                _logger.Error(ex);
-            }
-
+            await _helper.CreateAsync(data);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
             return result;
         }
 
@@ -118,25 +78,9 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse> UpdateArticle(long id, [FromBody] UpdateArticleRequest data)
         {
             var result = new BaseResponse();
-
-            try
-            {
-                await this._helper.UpdateAsync(id, data);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                _logger.Error(ex);
-            }
-
+            await _helper.UpdateAsync(id, data);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
             return result;
         }
 
@@ -149,25 +93,9 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse> DeleteArticle(long id)
         {
             var result = new BaseResponse();
-
-            try
-            {
-                await this._helper.DeleteAsync(id);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.DeleteFail.Description();
-                _logger.Error(ex);
-            }
-
+            await _helper.DeleteAsync(id);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
             return result;
         }
     }

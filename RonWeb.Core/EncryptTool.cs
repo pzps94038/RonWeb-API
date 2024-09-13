@@ -16,8 +16,8 @@ namespace RonWeb.Core
         public string PrivateKey { get; set; } = string.Empty;
         public RsaKey(string publicKey, string privateKey)
         {
-            this.PublicKey = publicKey;
-            this.PrivateKey = privateKey;
+            PublicKey = publicKey;
+            PrivateKey = privateKey;
         }
     }
 

@@ -17,7 +17,7 @@ namespace RonWeb.API.Helper.Register
 
         public RegisterHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task RegisterUser(RegisterRequest data)

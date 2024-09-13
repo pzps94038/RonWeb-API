@@ -22,8 +22,8 @@ namespace RonWeb.API.Helper.Shared
              RonWebDbContext db
         )
         {
-            this._db = db;
-            this._logger = logger;
+            _db = db;
+            _logger = logger;
         }
 
         public async void Warn(string msg)
@@ -84,7 +84,7 @@ namespace RonWeb.API.Helper.Shared
                 //mail.Priority = System.Net.Mail.MailPriority.High;
                 //await tool.SendMail(mail);
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }

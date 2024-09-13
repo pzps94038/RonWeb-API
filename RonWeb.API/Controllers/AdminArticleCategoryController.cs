@@ -20,8 +20,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public AdminArticleCategoryController(IAdminArticleCategoryHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -32,19 +32,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<GetArticleCategoryResponse>> GetArticleCategory(int? page)
         {
             var result = new BaseResponse<GetArticleCategoryResponse>();
-            try
-            {
-                var data = await this._helper.GetListAsync(page);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
+            var data = await _helper.GetListAsync(page);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -60,7 +51,7 @@ namespace RonWeb.API.Controllers
             var result = new BaseResponse<Category>();
             try
             {
-                var data = await this._helper.GetAsync(id);
+                var data = await _helper.GetAsync(id);
                 result.ReturnCode = ReturnCode.Success.Description();
                 result.ReturnMessage = ReturnMessage.Success.Description();
                 result.Data = data;
@@ -69,12 +60,6 @@ namespace RonWeb.API.Controllers
             {
                 result.ReturnCode = ReturnCode.NotFound.Description();
                 result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
             }
             return result;
         }
@@ -88,28 +73,9 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse> CreateArticleCategory([FromBody] CreateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
-            try
-            {
-                await this._helper.CreateAsync(data);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
-            }
-            catch (UniqueException)
-            {
-                result.ReturnCode = ReturnCode.Unique.Description();
-                result.ReturnMessage = ReturnMessage.Unique.Description();
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.CreateFail.Description();
-                _logger.Error(ex);
-            }
+            await _helper.CreateAsync(data);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.CreateSuccess.Description();
             return result;
         }
 
@@ -123,23 +89,9 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse> UpdateArticleCategory(long id, [FromBody] UpdateArticleCategoryRequest data)
         {
             var result = new BaseResponse();
-            try
-            {
-                await this._helper.UpdateAsync(id, data);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.ModifyFail.Description();
-                _logger.Error(ex);
-            }
+            await _helper.UpdateAsync(id, data);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.ModifySuccess.Description();
             return result;
         }
 
@@ -152,23 +104,9 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse> DeleteArticleCategory(long id)
         {
             var result = new BaseResponse();
-            try
-            {
-                await this._helper.DeleteAsync(id);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.DeleteFail.Description();
-                _logger.Error(ex);
-            }
+            await _helper.DeleteAsync(id);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.DeleteSuccess.Description();
             return result;
         }
     }

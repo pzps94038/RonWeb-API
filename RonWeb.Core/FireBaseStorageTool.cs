@@ -14,7 +14,7 @@ namespace RonWeb.Core
 		private FirebaseStorage _storage { get; set; }
 		public FireBaseStorageTool(string storageBucket)
 		{
-			this._storage = new FirebaseStorage(storageBucket);
+			_storage = new FirebaseStorage(storageBucket);
         }
 
 		
@@ -22,7 +22,7 @@ namespace RonWeb.Core
 		{
 			if (path != null)
 			{
-				var url = await this._storage.Child(path).PutAsync(stream);
+				var url = await _storage.Child(path).PutAsync(stream);
 				return new FireBaseStorageUrl
 				{
 					Path = path,
@@ -40,7 +40,7 @@ namespace RonWeb.Core
         {
             if (path != null)
             {
-				await this._storage.Child(path).DeleteAsync();
+				await _storage.Child(path).DeleteAsync();
             }
         }
     }

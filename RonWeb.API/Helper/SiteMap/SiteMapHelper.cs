@@ -11,7 +11,7 @@ namespace RonWeb.API.Helper.SiteMap
 
         public SiteMapHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<List<SiteMapResponse<long>>> Article()

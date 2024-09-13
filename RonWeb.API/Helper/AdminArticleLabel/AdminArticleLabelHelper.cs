@@ -13,7 +13,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public AdminArticleLabelHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task CreateAsync(CreateArticleLabelRequest data)

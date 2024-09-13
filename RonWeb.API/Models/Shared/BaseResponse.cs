@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
+﻿using RonWeb.Core;
+using System.ComponentModel;
 
 namespace RonWeb.API.Models.Shared
 {
-    public class BaseResponse<T>: BaseResponse
+    public class BaseResponse<T> : BaseResponse
     {
         public T Data { get; set; }
     }
@@ -18,6 +19,12 @@ namespace RonWeb.API.Models.Shared
         /// 回傳訊息
         /// </summary>
         public string ReturnMessage { get; set; } = string.Empty;
+        public BaseResponse() { }
+        public BaseResponse(string returnCode, string returnMessage)
+        {
+            ReturnCode = returnCode;
+            ReturnMessage = returnMessage;
+        }
     }
 
     public enum ReturnCode

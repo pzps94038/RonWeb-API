@@ -54,9 +54,9 @@ namespace RonWeb.Core
 
         public GMail(string address, string displayName, string senderEmail, string pwd)
         {
-            this.From = new MailAddress(address, displayName);
-            this.SenderEmail = senderEmail;
-            this.GmailSmtPwd = pwd;
+            From = new MailAddress(address, displayName);
+            SenderEmail = senderEmail;
+            GmailSmtPwd = pwd;
         }
     }
 

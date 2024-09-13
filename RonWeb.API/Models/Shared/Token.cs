@@ -14,8 +14,8 @@ namespace RonWeb.API.Models.Shared
         public Token() { }
         public Token(string accessToken, string refreshToken)
         {
-            this.AccessToken = accessToken;
-            this.RefreshToken = refreshToken;
+            AccessToken = accessToken;
+            RefreshToken = refreshToken;
         }
     }
 }

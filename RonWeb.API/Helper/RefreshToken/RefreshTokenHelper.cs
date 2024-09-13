@@ -16,7 +16,7 @@ namespace RonWeb.API.Helper.RefreshToken
 
         public RefreshTokenHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<Token> Refresh(RefreshTokenRequest data)

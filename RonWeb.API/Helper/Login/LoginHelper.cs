@@ -18,7 +18,7 @@ namespace RonWeb.API.Helper.Login
 
         public LoginHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<LoginResponse> Login(LoginRequest data)

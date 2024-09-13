@@ -15,7 +15,7 @@ namespace RonWeb.API.Helper.AdminArticleCategory
 
         public AdminArticleCategoryHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<Category> GetAsync(long id)

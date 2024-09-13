@@ -14,8 +14,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public SiteMapController(ISiteMapHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -26,20 +26,11 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Article()
         {
             var result = new BaseResponse<List<SiteMapResponse<long>>>();
-            try
-            {
-                var data = await this._helper.Article();
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            throw new Exception("測試");
+            var data = await _helper.Article();
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -51,20 +42,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Category()
         {
             var result = new BaseResponse<List<SiteMapResponse<long>>>();
-            try
-            {
-                var data = await this._helper.Category();
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            var data = await _helper.Category();
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -77,20 +58,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Label()
         {
             var result = new BaseResponse<List<SiteMapResponse<long>>>();
-            try
-            {
-                var data = await this._helper.Label();
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            var data = await _helper.Label();
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
     }

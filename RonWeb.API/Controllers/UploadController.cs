@@ -19,8 +19,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public UploadController(IUploadHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,30 +33,18 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<UploadFileResponse>> UploadFile(IFormFile file)
         {
             var result = new BaseResponse<UploadFileResponse>();
-
-            try
+            if (file != null)
             {
-                if (file != null)
-                {
-                    var data = await this._helper.UploadFile(file);
-                    result.ReturnCode = ReturnCode.Success.Description();
-                    result.ReturnMessage = ReturnMessage.UploadSuccess.Description();
-                    result.Data = data;
-                }
-                else
-                {
-                    result.ReturnCode = ReturnCode.Fail.Description();
-                    result.ReturnMessage = ReturnMessage.UploadFail.Description();
-                }
-
+                var data = await _helper.UploadFile(file);
+                result.ReturnCode = ReturnCode.Success.Description();
+                result.ReturnMessage = ReturnMessage.UploadSuccess.Description();
+                result.Data = data;
             }
-            catch (Exception ex)
+            else
             {
                 result.ReturnCode = ReturnCode.Fail.Description();
                 result.ReturnMessage = ReturnMessage.UploadFail.Description();
-                _logger.Error(ex);
             }
-
             return result;
         }
     }

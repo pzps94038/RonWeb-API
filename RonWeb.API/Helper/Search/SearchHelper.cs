@@ -17,7 +17,7 @@ namespace RonWeb.API.Helper.Search
 
         public SearchHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<KeywordeResponse> Category(long id, int? page)

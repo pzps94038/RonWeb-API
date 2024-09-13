@@ -18,8 +18,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public SearchController(ISearchHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -33,25 +33,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<KeywordeResponse>> Article(long id, int? page)
         {
             var result = new BaseResponse<KeywordeResponse>();
-            try
-            {
-                var data = await this._helper.Category(id, page);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            var data = await _helper.Category(id, page);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -66,25 +51,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<KeywordeResponse>> Category(long id, int? page)
         {
             var result = new BaseResponse<KeywordeResponse>();
-            try
-            {
-                var data = await this._helper.Category(id, page);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            var data = await _helper.Category(id, page);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
 
@@ -99,25 +69,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<KeywordeResponse>> Label(long id, int? page)
         {
             var result = new BaseResponse<KeywordeResponse>();
-            try
-            {
-                var data = await this._helper.Label(id, page);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.Success.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.NotFound.Description();
-                result.ReturnMessage = ReturnMessage.NotFound.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.Fail.Description();
-                _logger.Error(ex);
-            }
-
+            var data = await _helper.Label(id, page);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.Success.Description();
+            result.Data = data;
             return result;
         }
     }

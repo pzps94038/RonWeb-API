@@ -18,8 +18,8 @@ namespace RonWeb.API.Controllers
         private readonly ILogHelper _logger;
         public LoginController(ILoginHelper helper, ILogHelper logger)
         {
-            this._helper = helper;
-            this._logger = logger;
+            _helper = helper;
+            _logger = logger;
         }
 
         /// <summary>
@@ -31,24 +31,10 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<LoginResponse>> Login([FromBody] LoginRequest req)
         {
             var result = new BaseResponse<LoginResponse>();
-            try
-            {
-                var data = await this._helper.Login(req);
-                result.ReturnCode = ReturnCode.Success.Description();
-                result.ReturnMessage = ReturnMessage.LoginSuccess.Description();
-                result.Data = data;
-            }
-            catch (NotFoundException)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.LoginFail.Description();
-            }
-            catch (Exception ex)
-            {
-                result.ReturnCode = ReturnCode.Fail.Description();
-                result.ReturnMessage = ReturnMessage.SystemFail.Description();
-                _logger.Error(ex);
-            }
+            var data = await _helper.Login(req);
+            result.ReturnCode = ReturnCode.Success.Description();
+            result.ReturnMessage = ReturnMessage.LoginSuccess.Description();
+            result.Data = data;
             return result;
         }
     }

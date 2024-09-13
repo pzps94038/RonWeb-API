@@ -13,7 +13,7 @@ namespace RonWeb.API.Helper.ArticleLabel
 
         public ArticleLabelHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<GetArticleLabelResponse> GetListAsync(int? page)

@@ -15,7 +15,7 @@ namespace RonWeb.API.Helper.ArticleCategory
 
         public ArticleCategoryHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<GetArticleCategoryResponse> GetListAsync(int? page)

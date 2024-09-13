@@ -18,7 +18,7 @@ namespace RonWeb.API.Helper.AdminArticle
 
         public AdminArticleHelper(RonWebDbContext dbContext)
         {
-            this._db = dbContext;
+            _db = dbContext;
         }
 
         public async Task<GetByIdArticleResponse> GetAsync(long id)
