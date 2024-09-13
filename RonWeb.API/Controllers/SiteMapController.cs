@@ -26,7 +26,6 @@ namespace RonWeb.API.Controllers
         public async Task<BaseResponse<List<SiteMapResponse<long>>>> Article()
         {
             var result = new BaseResponse<List<SiteMapResponse<long>>>();
-            throw new Exception("測試");
             var data = await _helper.Article();
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
