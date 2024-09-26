@@ -1,26 +1,35 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace RonWeb.Database.MySql.RonWeb.Table
 {
-    /// <summary>
-    /// 文章標籤
-    /// </summary>
-    public class ArticleLabel
+    public class ArticleReferences
     {
         /// <summary>
-        /// 標籤 Id
+        /// 參考文章Id
         /// </summary>
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long LabelId { get; set; }
+        public long ArticleReferencesId { get; set; }
 
         /// <summary>
-        /// 標籤名稱
+        /// 文章Id
         /// </summary>
         [Required]
-        [StringLength(20)]
-        public string LabelName { get; set; } = string.Empty;
+        public long ArticleId { get; set; }
+
+        [ForeignKey("ArticleId")]
+        public virtual Article? Article { get; set; }
+
+        /// <summary>
+        /// Link
+        /// </summary>
+        public string Link { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立日期

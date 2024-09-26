@@ -20,7 +20,11 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
             modelBuilder.Entity<RefreshTokenLog>()
                 .HasKey(a => new { a.RefreshToken, a.UserId });
             modelBuilder.Entity<ArticleLabelMapping>()
-               .HasKey(a => new { a.ArticleId, a.LabelId });
+                .HasKey(a => new { a.ArticleId, a.LabelId });
+            modelBuilder.Entity<Article>()
+                .HasMany(a => a.ArticleReferences)
+                .WithOne(r => r.Article)
+                .HasForeignKey(r => r.ArticleId);
         }
 
         public DbSet<Article> Article { get; set; }
@@ -32,6 +36,7 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
         public DbSet<UserMain> UserMain { get; set; }
         public DbSet<RefreshTokenLog> RefreshTokenLog { get; set; }
         public DbSet<ExceptionLog> ExceptionLog { get; set; }
+        public DbSet<ArticleReferences> ArticleReferences { get; set; }
 
     }
 }

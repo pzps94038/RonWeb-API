@@ -53,5 +53,10 @@ namespace RonWeb.API.Models.Article
         /// 標籤列表
         /// </summary>
         public List<Label> Labels { get; set; } = new List<Label>();
+
+        /// <summary>
+        /// 參考文章
+        /// </summary>
+        public List<string> References { get; set; } = new List<string>();
     }
 }

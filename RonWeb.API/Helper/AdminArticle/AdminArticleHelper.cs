@@ -26,6 +26,7 @@ namespace RonWeb.API.Helper.AdminArticle
             var data = await _db.Article.Include(a => a.ArticleCategory)
                     .Include(a => a.ArticleLabelMapping)
                     .ThenInclude(a => a.ArticleLabel)
+                    .Include(a => a.ArticleReferences)
                     .Select(a => new GetByIdArticleResponse()
                     {
                         ArticleId = a.ArticleId,
@@ -43,7 +44,8 @@ namespace RonWeb.API.Helper.AdminArticle
                                 LabelId = mapping.ArticleLabel.LabelId,
                                 LabelName = mapping.ArticleLabel.LabelName
                             })
-                            .ToList()
+                            .ToList(),
+                        References = a.ArticleReferences.Select(a => a.Link).ToList()
                     }).SingleOrDefaultAsync(a => a.ArticleId == id);
 
             if (data != null)
@@ -191,7 +193,22 @@ namespace RonWeb.API.Helper.AdminArticle
                             }).ToList();
 
                             _db.ArticleImage.AddRange(files);
-
+                            var existReferences = await _db.ArticleReferences.Where(a => a.ArticleId == article.ArticleId).ToListAsync();
+                            if (existReferences.Any())
+                            {
+                                _db.ArticleReferences.RemoveRange(existReferences);
+                            }
+                            var references = data.References.Select(a => new ArticleReferences
+                            {
+                                ArticleId = article.ArticleId,
+                                Link = a,
+                                CreateDate = DateTime.Now,
+                                CreateBy = data.UserId
+                            }).ToList();
+                            if (references.Any())
+                            {
+                                _db.ArticleReferences.AddRange(references);
+                            }
                             await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
@@ -243,7 +260,11 @@ namespace RonWeb.API.Helper.AdminArticle
                                 await storageTool.Delete(a.Path);
                             })).ToArray();
                             Task.WaitAll(imgTasks);
-
+                            var existReferences = await _db.ArticleReferences.Where(a => a.ArticleId == id).ToListAsync();
+                            if (existReferences.Any())
+                            {
+                                _db.ArticleReferences.RemoveRange(existReferences);
+                            }
                             await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
@@ -322,11 +343,21 @@ namespace RonWeb.API.Helper.AdminArticle
                             CreateDate = DateTime.Now,
                             CreateBy = data.UserId
                         }).ToList();
-
                         _db.ArticleImage.AddRange(files);
 
-                        await _db.SaveChangesAsync();
+                        var references = data.References.Select(a => new ArticleReferences
+                        {
+                            ArticleId = article.ArticleId,
+                            Link = a,
+                            CreateDate = DateTime.Now,
+                            CreateBy = data.UserId
+                        }).ToList();
+                        if (references.Any())
+                        {
+                            _db.ArticleReferences.AddRange(references);
+                        }
 
+                        await _db.SaveChangesAsync();
                         await tc.CommitAsync();
                     }
                     catch

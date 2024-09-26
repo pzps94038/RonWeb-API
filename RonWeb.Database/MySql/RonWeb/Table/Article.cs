@@ -25,7 +25,6 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         /// 文章預覽內容
         /// </summary>
         [Required]
-        [StringLength(500)]
         public string PreviewContent { get; set; } = string.Empty;
 
         /// <summary>
@@ -79,8 +78,13 @@ namespace RonWeb.Database.MySql.RonWeb.Table
         public long? UpdateBy { get; set; }
 
         /// <summary>
-        /// 關連
+        /// 關連標籤
         /// </summary>
         public ICollection<ArticleLabelMapping> ArticleLabelMapping { get; set; }
+
+        /// <summary>
+        /// 關連參考文章
+        /// </summary>
+        public ICollection<ArticleReferences> ArticleReferences { get; set; }
     }
 }

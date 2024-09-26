@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 
@@ -10,9 +11,11 @@ using RonWeb.Database.MySql.RonWeb.DataBase;
 namespace RonWeb.Database.Migrations
 {
     [DbContext(typeof(RonWebDbContext))]
-    partial class RonWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240926073642_新增參考文章表格")]
+    partial class 新增參考文章表格
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -49,7 +52,8 @@ namespace RonWeb.Database.Migrations
 
                     b.Property<string>("PreviewContent")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(500)
+                        .HasColumnType("varchar(500)");
 
                     b.Property<long?>("UpdateBy")
                         .HasColumnType("bigint");
@@ -401,7 +405,7 @@ namespace RonWeb.Database.Migrations
             modelBuilder.Entity("RonWeb.Database.MySql.RonWeb.Table.ArticleReferences", b =>
                 {
                     b.HasOne("RonWeb.Database.MySql.RonWeb.Table.Article", "Article")
-                        .WithMany("ArticleReferences")
+                        .WithMany()
                         .HasForeignKey("ArticleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -423,8 +427,6 @@ namespace RonWeb.Database.Migrations
             modelBuilder.Entity("RonWeb.Database.MySql.RonWeb.Table.Article", b =>
                 {
                     b.Navigation("ArticleLabelMapping");
-
-                    b.Navigation("ArticleReferences");
                 });
 #pragma warning restore 612, 618
         }
