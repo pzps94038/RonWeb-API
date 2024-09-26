@@ -43,7 +43,8 @@ namespace RonWeb.API.Helper
                                 LabelId = mapping.ArticleLabel.LabelId,
                                 LabelName = mapping.ArticleLabel.LabelName
                             })
-                            .ToList()
+                            .ToList(),
+                        References = a.ArticleReferences.Select(a => a.Link).ToList()
                     }).SingleOrDefaultAsync(a => a.ArticleId == id && a.Flag == "Y");
 
             if (data != null)
