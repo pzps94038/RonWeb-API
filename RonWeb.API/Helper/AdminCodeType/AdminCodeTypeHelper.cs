@@ -106,6 +106,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             }
             var codeTypes = await query.Select(a => new CodeType()
             {
+                Id = a.Id,
                 CodeTypeId = a.CodeTypeId,
                 CodeTypeName = a.CodeTypeName,
                 CreateBy = a.CreateBy,
