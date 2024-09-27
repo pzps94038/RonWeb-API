@@ -4,6 +4,7 @@ namespace RonWeb.API.Models.ArticleCategory
 {
     public class UpdateArticleCategoryRequest
     {
+        /// <summary>
         /// 分類ID
         /// </summary>
         public long CategoryId { get; set; }

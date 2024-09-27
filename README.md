@@ -7,6 +7,5 @@ RonWeb 後端
   1. 確認有無安裝EF Core CLI
   2. command 打 dotnet ef 有安裝跳到第4步驟
   3. 安裝dotnet tool install --global dotnet-ef
-  4. dotnet ef migrations add "異動說明"
-  5. 根據需求替換$變數，$連線字串、$Port、$資料庫名稱、$帳號、$密碼
-  5. dotnet ef database update --connection "Server=$連線字串;Port=$Port;Database=$資料庫名稱;Uid=$帳號;Pwd=$密碼;"
+  4. 根據需求替換$變數，$連線字串、$模型位置、$Context名稱，執行以下command
+  5. dotnet ef dbcontext scaffold "$連線字串" Pomelo.EntityFrameworkCore.MySql -o $模型位置 -f -c $Context名稱 --no-onconfiguring --no-pluralize

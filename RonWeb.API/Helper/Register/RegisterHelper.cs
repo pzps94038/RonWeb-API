@@ -6,8 +6,8 @@ using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Register;
 using RonWeb.Core;
 using MongoDB.Driver.Linq;
-using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.Register
 {
@@ -33,7 +33,7 @@ namespace RonWeb.API.Helper.Register
                 string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
                 var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
                 var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
-                user = new RonWeb.Database.MySql.RonWeb.Table.UserMain
+                user = new UserMain
                 {
                     Account = data.Account,
                     Password = encryptPassword,

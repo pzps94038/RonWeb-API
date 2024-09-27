@@ -55,7 +55,6 @@ namespace RonWeb.API.Controllers
         /// <summary>
         /// 新增文章
         /// </summary>
-        /// <param name="id"></param>
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]

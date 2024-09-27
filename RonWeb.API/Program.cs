@@ -1,13 +1,16 @@
 using AspNetCoreRateLimit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Middleware;
 using RonWeb.Core;
-using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Entities;
+using RonWeb.Database.Enum;
 using Serilog;
 using System.Reflection;
 using System.Text;
@@ -95,8 +98,14 @@ try
         c.IncludeXmlComments(xmlPath);
     });
 
-    // _db
-    builder.Services.AddDbContext<RonWebDbContext>();
+    // db
+    builder.Services.AddDbContext<RonWebDbContext>(options =>
+    {
+        string connectionString = Environment.GetEnvironmentVariable(MySqlDbEnum.RON_WEB_MYSQL_DB_CONSTR.Description())!;
+        options.UseMySql(connectionString, new MySqlServerVersion(new Version(8, 0, 33)),
+        options => options.EnableRetryOnFailure(1));
+    });
+
     // log
     builder.Host.UseSerilog(); // <-- 加入這一行
     var app = builder.Build();

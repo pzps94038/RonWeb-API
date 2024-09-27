@@ -5,8 +5,8 @@ using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
-using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.RefreshToken
 {
@@ -21,10 +21,9 @@ namespace RonWeb.API.Helper.RefreshToken
 
         public async Task<Token> Refresh(RefreshTokenRequest data)
         {
-            var log = await _db.RefreshTokenLog
+            var log = await _db.VwRefreshTokenLog
                     .Where(a => a.UserId == data.UserId)
                     .Where(a => a.RefreshToken == data.RefreshToken)
-                    .Include(a => a.UserMain)
                     .SingleOrDefaultAsync();
             if (log == null)
             {
@@ -37,7 +36,7 @@ namespace RonWeb.API.Helper.RefreshToken
             else
             {
                 string refreshToken = JwtTool.CreateRefreshToken();
-                var claims = JwtTool.CreateClaims(log.UserMain.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
+                var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
                 string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
                 string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
                 string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
@@ -52,7 +51,7 @@ namespace RonWeb.API.Helper.RefreshToken
                     ExpirationTime = toeknExpTime
                 };
                 var token = JwtTool.GenerateToken(model);
-                var tokenLog = new RonWeb.Database.MySql.RonWeb.Table.RefreshTokenLog()
+                var tokenLog = new RefreshTokenLog()
                 {
                     RefreshToken = refreshToken,
                     UserId = log.UserId,

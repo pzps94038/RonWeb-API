@@ -1,36 +1,35 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="7.0.5">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
-    <PackageReference Include="MongoDB.Driver" Version="2.19.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.5" />
-    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="7.0.0" />
-    <PackageReference Include="StackExchange.Redis" Version="2.6.111" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.8">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.8">
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+		</PackageReference>
+		<PackageReference Include="MongoDB.Driver" Version="2.19.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.8" />
+		<PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.2" />
+		<PackageReference Include="StackExchange.Redis" Version="2.6.111" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <None Remove="Mongo\" />
-    <None Remove="MySql\" />
-    <None Remove="MySql\RonWeb\" />
-    <None Remove="MySql\RonWeb\Table\" />
-    <None Remove="Redis\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="MySql\" />
-    <Folder Include="MySql\RonWeb\" />
-    <Folder Include="MySql\RonWeb\Table\" />
-    <Folder Include="Redis\" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\RonWeb.Core\RonWeb.Core.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Remove="Mongo\" />
+		<None Remove="MySql\" />
+		<None Remove="Redis\" />
+	</ItemGroup>
+	<ItemGroup>
+		<Folder Include="Redis\" />
+	</ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\RonWeb.Core\RonWeb.Core.csproj" />
+	</ItemGroup>
 </Project>

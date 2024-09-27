@@ -154,7 +154,7 @@ namespace RonWeb.Database.Redis
                     }
                 }
 
-                Interlocked.Exchange(ref _connection, null);
+                Interlocked.Exchange(ref _connection!, null);
                 ConnectionMultiplexer newConnection = await ConnectionMultiplexer.ConnectAsync(_connectionString);
                 Interlocked.Exchange(ref _connection, newConnection);
 

@@ -5,7 +5,7 @@ using RonWeb.API.Interface.AdminArticleCategory;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
-using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.AdminArticleCategory
 {
@@ -45,7 +45,7 @@ namespace RonWeb.API.Helper.AdminArticleCategory
             }
             else
             {
-                category = new RonWeb.Database.MySql.RonWeb.Table.ArticleCategory()
+                category = new Database.Entities.ArticleCategory()
                 {
                     CategoryName = data.CategoryName,
                     CreateDate = DateTime.Now,

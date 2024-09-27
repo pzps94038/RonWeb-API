@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 using RonWeb.API.Interface.ArticleLabel;
 using RonWeb.API.Models.ArticleLabel;
 using RonWeb.API.Models.Shared;
-using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.ArticleLabel
 {

@@ -1,8 +1,6 @@
 ﻿using RonWeb.API.Interface.Shared;
 using RonWeb.Core;
-using RonWeb.Database.MySql.RonWeb.DataBase;
-using RonWeb.Database.MySql.RonWeb.Table;
-using Newtonsoft.Json;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.Shared
 {
@@ -37,7 +35,7 @@ namespace RonWeb.API.Helper.Shared
                 await _db.ExceptionLog.AddAsync(log);
                 await _db.SaveChangesAsync();
             }
-            catch (Exception e)
+            catch (Exception)
             {
 
             }
@@ -53,7 +51,7 @@ namespace RonWeb.API.Helper.Shared
                 Console.WriteLine("======================================================================");
                 Console.WriteLine("錯誤Stack:" + ex.StackTrace);
                 Console.WriteLine("======================================================================");
-                if (ex.InnerException != null) 
+                if (ex.InnerException != null)
                 {
                     Console.WriteLine("======================================================================");
                     Console.WriteLine("InnerException錯誤訊息:" + ex.InnerException.Message);

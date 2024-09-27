@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RonWeb.API.Interface.SiteMap;
 using RonWeb.API.Models.SiteMap;
-using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.SiteMap
 {

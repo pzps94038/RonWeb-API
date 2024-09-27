@@ -4,10 +4,10 @@ using RonWeb.API.Models.Shared;
 using MongoDB.Driver.Linq;
 using MongoDB.Driver;
 using RonWeb.API.Models.CustomizeException;
-using RonWeb.Database.MySql.RonWeb.DataBase;
 using Microsoft.EntityFrameworkCore;
 using RonWeb.Database.Redis;
 using Newtonsoft.Json;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.Search
 {
@@ -30,40 +30,48 @@ namespace RonWeb.API.Helper.Search
             }
             else
             {
-                var query = _db.Article.Where(a => a.Flag == "Y" && a.CategoryId == id)
-                .Include(a => a.ArticleCategory)
-                .Include(a => a.ArticleLabelMapping)
-                .ThenInclude(a => a.ArticleLabel)
-                .Select(a => new ArticleItem()
-                {
-                    ArticleId = a.ArticleId,
-                    ArticleTitle = a.ArticleTitle,
-                    PreviewContent = a.PreviewContent,
-                    CategoryId = a.CategoryId,
-                    CategoryName = a.ArticleCategory.CategoryName,
-                    ViewCount = a.ViewCount,
-                    CreateDate = a.CreateDate,
-                    Labels = a.ArticleLabelMapping
-                        .Select(mapping => new Label
-                        {
-                            LabelId = mapping.ArticleLabel.LabelId,
-                            LabelName = mapping.ArticleLabel.LabelName
-                        })
-                        .ToList()
-                })
-                .OrderByDescending(a => a.CreateDate);
-
+                var query = _db.VwArticle.Where(a => a.CategoryId == id && a.Flag == "Y");
+                query = query.OrderByDescending(a => a.ArticleCreateDate);
                 var pageSize = 10;
                 var skip = (curPage - 1) * pageSize;
-                var total = query.Count();
+                var group = query.GroupBy(a => a.ArticleId);
+                var total = group.Count();
                 List<ArticleItem> list;
                 if (skip == 0)
                 {
-                    list = await query.Take(pageSize).ToListAsync();
+                    list = await group.Take(pageSize)
+                   .Select(a => new ArticleItem()
+                   {
+                       ArticleId = a.Key,
+                       ArticleTitle = a.First().ArticleTitle,
+                       PreviewContent = a.First().PreviewContent,
+                       Content = a.First().Content,
+                       CategoryId = a.First().CategoryId,
+                       CategoryName = a.First().CategoryName ?? "",
+                       ViewCount = a.First().ViewCount,
+                       Flag = a.First().Flag,
+                       CreateDate = a.First().ArticleCreateDate,
+                       Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                   })
+                   .ToListAsync();
                 }
                 else
                 {
-                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                    list = await group.Skip(skip).Take(pageSize)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.Key,
+                        ArticleTitle = a.First().ArticleTitle,
+                        PreviewContent = a.First().PreviewContent,
+                        Content = a.First().Content,
+                        CategoryId = a.First().CategoryId,
+                        CategoryName = a.First().CategoryName ?? "",
+                        ViewCount = a.First().ViewCount,
+                        Flag = a.First().Flag,
+                        CreateDate = a.First().ArticleCreateDate,
+                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                    })
+                    .ToListAsync();
                 }
                 var data = new KeywordeResponse()
                 {
@@ -86,40 +94,48 @@ namespace RonWeb.API.Helper.Search
             }
             else
             {
-                var query = _db.Article.Where(a => a.Flag == "Y")
-                .Include(a => a.ArticleCategory)
-                .Include(a => a.ArticleLabelMapping)
-                .ThenInclude(a => a.ArticleLabel)
-                .Where(a => a.ArticleLabelMapping.Any(a => a.LabelId == id))
-                .Select(a => new ArticleItem()
-                {
-                    ArticleId = a.ArticleId,
-                    ArticleTitle = a.ArticleTitle,
-                    PreviewContent = a.PreviewContent,
-                    CategoryId = a.CategoryId,
-                    CategoryName = a.ArticleCategory.CategoryName,
-                    ViewCount = a.ViewCount,
-                    CreateDate = a.CreateDate,
-                    Labels = a.ArticleLabelMapping
-                        .Select(mapping => new Label
-                        {
-                            LabelId = mapping.ArticleLabel.LabelId,
-                            LabelName = mapping.ArticleLabel.LabelName
-                        })
-                        .ToList()
-                })
-                .OrderByDescending(a => a.CreateDate);
+                var query = _db.VwArticle.Where(a => a.LabelId == id && a.Flag == "Y");
+                query = query.OrderByDescending(a => a.ArticleCreateDate);
                 var pageSize = 10;
                 var skip = (curPage - 1) * pageSize;
-                var total = query.Count();
+                var group = query.GroupBy(a => a.ArticleId);
+                var total = group.Count();
                 List<ArticleItem> list;
                 if (skip == 0)
                 {
-                    list = await query.Take(pageSize).ToListAsync();
+                    list = await group.Take(pageSize)
+                   .Select(a => new ArticleItem()
+                   {
+                       ArticleId = a.Key,
+                       ArticleTitle = a.First().ArticleTitle,
+                       PreviewContent = a.First().PreviewContent,
+                       Content = a.First().Content,
+                       CategoryId = a.First().CategoryId,
+                       CategoryName = a.First().CategoryName ?? "",
+                       ViewCount = a.First().ViewCount,
+                       Flag = a.First().Flag,
+                       CreateDate = a.First().ArticleCreateDate,
+                       Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                   })
+                   .ToListAsync();
                 }
                 else
                 {
-                    list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                    list = await group.Skip(skip).Take(pageSize)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.Key,
+                        ArticleTitle = a.First().ArticleTitle,
+                        PreviewContent = a.First().PreviewContent,
+                        Content = a.First().Content,
+                        CategoryId = a.First().CategoryId,
+                        CategoryName = a.First().CategoryName ?? "",
+                        ViewCount = a.First().ViewCount,
+                        Flag = a.First().Flag,
+                        CreateDate = a.First().ArticleCreateDate,
+                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                    })
+                    .ToListAsync();
                 }
                 var data = new KeywordeResponse()
                 {

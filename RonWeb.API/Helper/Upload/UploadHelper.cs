@@ -10,7 +10,7 @@ using RonWeb.Core;
 
 namespace RonWeb.API.Helper.Upload
 {
-	public class UploadHelper: IUploadHelper
+    public class UploadHelper : IUploadHelper
     {
 
         public async Task<UploadFileResponse> UploadFile(IFormFile file)
@@ -30,7 +30,7 @@ namespace RonWeb.API.Helper.Upload
                         var res = await new FireBaseStorageTool(storageBucket).Upload(stream, path);
                         return new UploadFileResponse()
                         {
-                            Path = res.Path,
+                            Path = res!.Path,
                             Url = res.Url,
                             FileName = fileName
                         };
@@ -45,7 +45,7 @@ namespace RonWeb.API.Helper.Upload
             {
                 throw new ImgExtensionException();
             }
-            
+
         }
     }
 }

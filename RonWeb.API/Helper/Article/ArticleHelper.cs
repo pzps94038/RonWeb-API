@@ -5,8 +5,10 @@ using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using Microsoft.EntityFrameworkCore;
-using RonWeb.Database.MySql.RonWeb.DataBase;
 using Newtonsoft.Json;
+using RonWeb.Database.Entities;
+using System.Reflection.Emit;
+using System.Linq;
 
 namespace RonWeb.API.Helper
 {
@@ -23,36 +25,29 @@ namespace RonWeb.API.Helper
 
         public async Task<GetByIdArticleResponse> GetAsync(long id)
         {
-            var data = await _db.Article.Include(a => a.ArticleCategory)
-                    .Include(a => a.ArticleLabelMapping)
-                    .ThenInclude(a => a.ArticleLabel)
-                    .Select(a => new GetByIdArticleResponse()
-                    {
-                        ArticleId = a.ArticleId,
-                        ArticleTitle = a.ArticleTitle,
-                        PreviewContent = a.PreviewContent,
-                        Content = a.Content,
-                        CategoryId = a.CategoryId,
-                        CategoryName = a.ArticleCategory.CategoryName,
-                        ViewCount = a.ViewCount,
-                        CreateDate = a.CreateDate,
-                        Flag = a.Flag,
-                        Labels = a.ArticleLabelMapping
-                            .Select(mapping => new Label
-                            {
-                                LabelId = mapping.ArticleLabel.LabelId,
-                                LabelName = mapping.ArticleLabel.LabelName
-                            })
-                            .ToList(),
-                        References = a.ArticleReferences.Select(a => a.Link).ToList()
-                    }).SingleOrDefaultAsync(a => a.ArticleId == id && a.Flag == "Y");
-
-            if (data != null)
+            var vwArticle = await _db.VwArticle.Where(a => a.ArticleId == id && a.Flag == "Y")
+                        .GroupBy(a => a.ArticleId)
+                        .SingleOrDefaultAsync();
+            if (vwArticle != null)
             {
+                var article = vwArticle.First();
+                var data = new GetByIdArticleResponse()
+                {
+                    ArticleId = article.ArticleId,
+                    ArticleTitle = article.ArticleTitle,
+                    PreviewContent = article.PreviewContent,
+                    Content = article.Content,
+                    CategoryId = article.CategoryId,
+                    CategoryName = article.CategoryName ?? "",
+                    ViewCount = article.ViewCount,
+                    Flag = article.Flag,
+                    Labels = vwArticle.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList(),
+                    References = vwArticle.Where(a => a.Link != null).Select(a => a.Link!).ToList(),
+                    CreateDate = article.ArticleCreateDate
+                };
                 // 找到下一篇文章
                 var nextArticle = await _db.Article.Where(a => a.CreateDate > data.CreateDate && a.Flag == "Y")
                     .OrderBy(a => a.CreateDate)
-                    .Take(1)
                     .Select(a => new BlogPagination()
                     {
                         ArticleId = a.ArticleId,
@@ -61,7 +56,6 @@ namespace RonWeb.API.Helper
                 // 找到上一篇文章
                 var prevArticle = await _db.Article.Where(a => a.CreateDate < data.CreateDate && a.Flag == "Y")
                     .OrderByDescending(a => a.CreateDate)
-                    .Take(1)
                     .Select(a => new BlogPagination()
                     {
                         ArticleId = a.ArticleId,
@@ -70,7 +64,6 @@ namespace RonWeb.API.Helper
 
                 data.NextArticle = nextArticle;
                 data.PrevArticle = prevArticle;
-                var json = JsonConvert.SerializeObject(data);
                 return data;
             }
             else
@@ -82,29 +75,7 @@ namespace RonWeb.API.Helper
         public async Task<GetArticleResponse> GetListAsync(int? page, string? keyword)
         {
             var curPage = page.GetValueOrDefault(1);
-            var query = _db.Article.Include(a => a.ArticleCategory)
-                    .Include(a => a.ArticleLabelMapping)
-                    .ThenInclude(a => a.ArticleLabel)
-                    .Where(a => a.Flag == "Y")
-                    .Select(a => new ArticleItem()
-                    {
-                        ArticleId = a.ArticleId,
-                        ArticleTitle = a.ArticleTitle,
-                        PreviewContent = a.PreviewContent,
-                        CategoryId = a.CategoryId,
-                        CategoryName = a.ArticleCategory.CategoryName,
-                        Flag = a.Flag,
-                        ViewCount = a.ViewCount,
-                        CreateDate = a.CreateDate,
-                        Labels = a.ArticleLabelMapping
-                            .Select(mapping => new Label
-                            {
-                                LabelId = mapping.ArticleLabel.LabelId,
-                                LabelName = mapping.ArticleLabel.LabelName
-                            })
-                            .ToList()
-                    })
-                    ;
+            var query = _db.VwArticle.Where(a => a.Flag == "Y");
             if (keyword != null)
             {
                 keyword = keyword.Trim();
@@ -112,29 +83,57 @@ namespace RonWeb.API.Helper
                 {
                     query = query.Where(a => a.ArticleTitle.Contains(keyword) ||
                         a.PreviewContent.Contains(keyword) ||
-                        a.CategoryName.Contains(keyword)
+                        (a.CategoryName != null && a.CategoryName.Contains(keyword))
                     );
                 }
             }
-            query = query.OrderByDescending(a => a.CreateDate);
+            query = query.OrderByDescending(a => a.ArticleCreateDate);
             var pageSize = 10;
             var skip = (curPage - 1) * pageSize;
-            var total = query.Count();
+            var group = query.GroupBy(a => a.ArticleId);
+            var total = group.Count();
             List<ArticleItem> list;
             if (skip == 0)
             {
-                list = await query.Take(pageSize).ToListAsync();
+                list = await group.Take(pageSize)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.Key,
+                        ArticleTitle = a.First().ArticleTitle,
+                        PreviewContent = a.First().PreviewContent,
+                        Content = a.First().Content,
+                        CategoryId = a.First().CategoryId,
+                        CategoryName = a.First().CategoryName ?? "",
+                        ViewCount = a.First().ViewCount,
+                        Flag = a.First().Flag,
+                        CreateDate = a.First().ArticleCreateDate,
+                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                    })
+                    .ToListAsync();
             }
             else
             {
-                list = await query.Skip(skip).Take(pageSize).ToListAsync();
+                list = await group.Skip(skip).Take(pageSize)
+                    .Select(a => new ArticleItem()
+                    {
+                        ArticleId = a.Key,
+                        ArticleTitle = a.First().ArticleTitle,
+                        PreviewContent = a.First().PreviewContent,
+                        Content = a.First().Content,
+                        CategoryId = a.First().CategoryId,
+                        CategoryName = a.First().CategoryName ?? "",
+                        ViewCount = a.First().ViewCount,
+                        Flag = a.First().Flag,
+                        CreateDate = a.First().ArticleCreateDate,
+                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                    })
+                    .ToListAsync();
             }
             var data = new GetArticleResponse()
             {
                 Total = total,
                 Articles = list
             };
-            var json = JsonConvert.SerializeObject(data);
             return data;
         }
 

@@ -7,8 +7,7 @@ using MongoDB.Driver;
 using MongoDB.Driver.Linq;
 using RonWeb.API.Models.CustomizeException;
 using Microsoft.EntityFrameworkCore;
-using RonWeb.Database.MySql.RonWeb.Table;
-using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.Login
 {

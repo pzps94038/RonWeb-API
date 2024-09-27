@@ -5,7 +5,7 @@ using Newtonsoft.Json;
 using RonWeb.API.Interface.ArticleCategory;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.Shared;
-using RonWeb.Database.MySql.RonWeb.DataBase;
+using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.ArticleCategory
 {

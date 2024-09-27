@@ -1,46 +1,48 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RonWeb.API.Interface.AdminArticleLabel;
+using RonWeb.API.Interface.AdminArticleHelper;
+using RonWeb.API.Models.Article;
 using RonWeb.API.Models.ArticleLabel;
+using RonWeb.API.Models.CodeType;
 using RonWeb.API.Models.CustomizeException;
-using RonWeb.API.Models.Shared;
 using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Helper.AdminArticleLabel
 {
-    public class AdminArticleLabelHelper : IAdminArticleLabelHelper
+    public class AdminCodeTypeHelper : IAdminCodeTypeHelper
     {
         private readonly RonWebDbContext _db;
 
-        public AdminArticleLabelHelper(RonWebDbContext dbContext)
+        public AdminCodeTypeHelper(RonWebDbContext dbContext)
         {
             _db = dbContext;
         }
 
-        public async Task CreateAsync(CreateArticleLabelRequest data)
+        public async Task CreateAsync(CreateCodeTypeRequest data)
         {
-            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelName == data.LabelName);
-            if (label != null)
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == data.CodeTypeId);
+            if (codeType != null)
             {
                 throw new UniqueException();
             }
             else
             {
-                label = new Database.Entities.ArticleLabel()
+                codeType = new CodeType()
                 {
-                    LabelName = data.LabelName,
+                    CodeTypeId = data.CodeTypeId,
+                    CodeTypeName = data.CodeTypeName,
                     CreateDate = DateTime.Now,
                     CreateBy = data.UserId
                 };
 
-                await _db.AddAsync(label);
+                await _db.AddAsync(codeType);
                 await _db.SaveChangesAsync();
             }
         }
 
-        public async Task DeleteAsync(long id)
+        public async Task DeleteAsync(string id)
         {
-            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
-            if (label != null)
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == id);
+            if (codeType != null)
             {
                 var executionStrategy = _db.Database.CreateExecutionStrategy();
                 await executionStrategy.ExecuteAsync(async () =>
@@ -49,9 +51,12 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                     {
                         try
                         {
-                            var mapping = await _db.ArticleLabelMapping.Where(a => a.LabelId == id).ToListAsync();
-                            _db.ArticleLabelMapping.RemoveRange(mapping);
-                            _db.ArticleLabel.Remove(label);
+                            var mapping = await _db.Code.Where(a => a.CodeTypeId == id).ToListAsync();
+                            if (mapping.Any())
+                            {
+                                _db.Code.RemoveRange(mapping);
+                                _db.CodeType.Remove(codeType);
+                            }
                             await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }
@@ -69,17 +74,12 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             }
         }
 
-        public async Task<Label> GetAsync(long id)
+        public async Task<CodeType> GetAsync(string id)
         {
-            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
-            if (label != null)
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == id);
+            if (codeType != null)
             {
-                return new Label()
-                {
-                    LabelId = label.LabelId,
-                    LabelName = label.LabelName,
-                    CreateDate = label.CreateDate
-                };
+                return codeType;
             }
             else
             {
@@ -87,9 +87,9 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             }
         }
 
-        public async Task<GetArticleLabelResponse> GetListAsync(int? page)
+        public async Task<GetCodeTypeResponse> GetListAsync(int? page)
         {
-            var query = _db.ArticleLabel.AsQueryable();
+            var query = _db.CodeType.AsQueryable();
             var total = query.Count();
             if (page != null)
             {
@@ -104,27 +104,30 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                     query = query.Skip(skip).Take(pageSize);
                 }
             }
-            var labels = await query.Select(a => new Label()
+            var codeTypes = await query.Select(a => new CodeType()
             {
-                LabelId = a.LabelId,
-                LabelName = a.LabelName,
-                CreateDate = a.CreateDate
+                CodeTypeId = a.CodeTypeId,
+                CodeTypeName = a.CodeTypeName,
+                CreateBy = a.CreateBy,
+                CreateDate = a.CreateDate,
+                UpdateBy = a.UpdateBy,
+                UpdateDate = a.UpdateDate,
             }).ToListAsync();
-            return new GetArticleLabelResponse()
+            return new GetCodeTypeResponse()
             {
                 Total = total,
-                Labels = labels
+                CodeTypes = codeTypes
             };
         }
 
-        public async Task UpdateAsync(long id, UpdateArticleLabelRequest data)
+        public async Task UpdateAsync(string id, UpdateCodeTypeRequest data)
         {
-            var label = await _db.ArticleLabel.SingleOrDefaultAsync(a => a.LabelId == id);
-            if (label != null)
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == id);
+            if (codeType != null)
             {
-                label.LabelName = data.LabelName;
-                label.UpdateBy = data.UserId;
-                label.UpdateDate = DateTime.Now;
+                codeType.CodeTypeName = data.CodeTypeName;
+                codeType.UpdateBy = data.UserId;
+                codeType.UpdateDate = DateTime.Now;
                 await _db.SaveChangesAsync();
             }
             else
