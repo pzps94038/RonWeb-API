@@ -87,7 +87,7 @@ namespace RonWeb.API.Helper.Search
             }
             else
             {
-                var query = _db.VwArticle.Where(a => a.CategoryId == id && a.Flag == "Y");
+                var query = _db.VwArticle.Where(a => a.LabelId == id && a.Flag == "Y");
                 var idQuery = query.Select(a => new { a.ArticleId, a.ArticleCreateDate })
                     .Distinct()
                     .OrderByDescending(a => a.ArticleCreateDate)
