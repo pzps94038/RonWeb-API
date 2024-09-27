@@ -3,9 +3,11 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using RonWeb.API.Enum;
+using RonWeb.API.Helper.Shared;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Middleware;
 using RonWeb.Core;
@@ -88,6 +90,7 @@ try
     builder.Services.AddScoped<IExceptionHandlerMiddleware, ExceptionHandlerMiddleware>();
     //配置（解析器、計數器金鑰生成器）
     builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+    builder.Services.AddSingleton<ILogHelper, RonWeb.API.Helper.Shared.LogHelper>();
 
     //swagger
     builder.Services.AddSwaggerGen(c =>
@@ -134,9 +137,9 @@ try
         ForwardedHeaders = ForwardedHeaders.XForwardedFor |
         ForwardedHeaders.XForwardedProto
     });
-    app.Run();
     var logHelper = app.Services.GetService<ILogHelper>();
     logHelper?.Info("Program Start:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+    app.Run();
 }
 catch (Exception ex)
 {

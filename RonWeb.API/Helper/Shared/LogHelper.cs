@@ -13,27 +13,27 @@ namespace RonWeb.API.Helper.Shared
 
     public class LogHelper : ILogHelper
     {
-        private readonly ILogger<LogHelper> _logger;
-        private readonly RonWebDbContext _db;
-        public LogHelper(
-            ILogger<LogHelper> logger,
-             RonWebDbContext db
-        )
+        private readonly IServiceScopeFactory _serviceScopeFactory;
+
+        public LogHelper(IServiceScopeFactory serviceScopeFactory)
         {
-            _db = db;
-            _logger = logger;
+            _serviceScopeFactory = serviceScopeFactory;
         }
 
         public void Info(string msg)
         {
             try
             {
-                var log = new ExceptionLog();
-                log.Message = msg;
-                log.Level = Level.Info.Description();
-                log.CreateDate = DateTime.Now;
-                _db.ExceptionLog.Add(log);
-                _db.SaveChanges();
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<RonWebDbContext>();
+                    var log = new ExceptionLog();
+                    log.Message = msg;
+                    log.Level = Level.Info.Description();
+                    log.CreateDate = DateTime.Now;
+                    db.ExceptionLog.Add(log);
+                    db.SaveChanges();
+                }
             }
             catch (Exception e)
             {
@@ -45,12 +45,16 @@ namespace RonWeb.API.Helper.Shared
         {
             try
             {
-                var log = new ExceptionLog();
-                log.Message = msg;
-                log.Level = Level.Warn.Description();
-                log.CreateDate = DateTime.Now;
-                _db.ExceptionLog.Add(log);
-                _db.SaveChanges();
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<RonWebDbContext>();
+                    var log = new ExceptionLog();
+                    log.Message = msg;
+                    log.Level = Level.Warn.Description();
+                    log.CreateDate = DateTime.Now;
+                    db.ExceptionLog.Add(log);
+                    db.SaveChanges();
+                }
             }
             catch (Exception e)
             {
@@ -62,7 +66,6 @@ namespace RonWeb.API.Helper.Shared
         {
             try
             {
-                var log = new ExceptionLog();
                 Console.WriteLine("======================================================================");
                 Console.WriteLine("錯誤訊息:" + ex.Message);
                 Console.WriteLine("======================================================================");
@@ -76,12 +79,17 @@ namespace RonWeb.API.Helper.Shared
                     Console.WriteLine("InnerException錯誤Stack:" + ex.InnerException.StackTrace);
                     Console.WriteLine("======================================================================");
                 }
-                log.Message = ex.Message;
-                log.StackTrace = ex.StackTrace;
-                log.Level = Level.Error.Description();
-                log.CreateDate = DateTime.Now;
-                _db.ExceptionLog.Add(log);
-                _db.SaveChanges();
+                using (var scope = _serviceScopeFactory.CreateScope())
+                {
+                    var db = scope.ServiceProvider.GetRequiredService<RonWebDbContext>();
+                    var log = new ExceptionLog();
+                    log.Message = ex.Message;
+                    log.StackTrace = ex.StackTrace;
+                    log.Level = Level.Error.Description();
+                    log.CreateDate = DateTime.Now;
+                    db.ExceptionLog.Add(log);
+                    db.SaveChanges();
+                }
                 //var tool = new GmailTool();
                 //var gmailAddress = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_ADDRESS.Description())!;
                 //var gmailDisplayName = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_DISPLAY_NAME.Description())!;
