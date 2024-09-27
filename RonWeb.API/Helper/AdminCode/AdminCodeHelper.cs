@@ -19,7 +19,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task CreateAsync(CreateCodeRequest data)
         {
-            var code = await _db.Code.SingleOrDefaultAsync(a => a.CodeTypeId == a.CodeTypeId && a.CodeId == a.CodeId);
+            var code = await _db.Code.SingleOrDefaultAsync(a => a.CodeTypeId == data.CodeTypeId && a.CodeId == data.CodeId);
             if (code != null)
             {
                 throw new UniqueException();
