@@ -69,30 +69,26 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task<GetCodeResponse> GetListAsync(string codeTypeId, int? page)
         {
-            var query = _db.VwCode.Where(a => a.CodeTypeId == a.CodeTypeId).AsQueryable();
-            if (!query.Any())
+            var codeType = await _db.CodeType.Where(a => a.CodeTypeId == a.CodeTypeId).SingleOrDefaultAsync();
+            if (codeType == null)
             {
                 throw new NotFoundException();
             }
+            var query = _db.Code.Where(a => a.CodeTypeId == codeType.CodeTypeId);
             var total = query.Count();
             if (page != null)
             {
                 var pageSize = 10;
                 int skip = (int)((page - 1) * pageSize);
-                if (skip == 0)
-                {
-                    query = query.Take(pageSize);
-                }
-                else
-                {
-                    query = query.Skip(skip).Take(pageSize);
-                }
+                query = skip == 0 ? query.Take(pageSize) : query.Skip(skip).Take(pageSize);
             }
             var codes = await query.ToListAsync();
             return new GetCodeResponse()
             {
                 Total = total,
-                Codes = codes
+                Codes = codes,
+                CodeTypeId = codeType.CodeTypeId,
+                CodeTypeName = codeType.CodeTypeName
             };
         }
 
