@@ -70,6 +70,10 @@ namespace RonWeb.API.Helper.AdminArticleLabel
         public async Task<GetCodeResponse> GetListAsync(string codeTypeId, int? page)
         {
             var query = _db.Code.Where(a => a.CodeTypeId == a.CodeTypeId).AsQueryable();
+            if (!query.Any())
+            {
+                throw new NotFoundException();
+            }
             var total = query.Count();
             if (page != null)
             {
