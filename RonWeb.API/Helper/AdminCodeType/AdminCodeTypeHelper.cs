@@ -55,8 +55,8 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                             if (mapping.Any())
                             {
                                 _db.Code.RemoveRange(mapping);
-                                _db.CodeType.Remove(codeType);
                             }
+                            _db.CodeType.Remove(codeType);
                             await _db.SaveChangesAsync();
                             await tc.CommitAsync();
                         }

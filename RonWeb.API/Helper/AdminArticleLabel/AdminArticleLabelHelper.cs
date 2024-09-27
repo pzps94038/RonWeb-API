@@ -50,7 +50,10 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                         try
                         {
                             var mapping = await _db.ArticleLabelMapping.Where(a => a.LabelId == id).ToListAsync();
-                            _db.ArticleLabelMapping.RemoveRange(mapping);
+                            if (mapping.Any())
+                            {
+                                _db.ArticleLabelMapping.RemoveRange(mapping);
+                            }
                             _db.ArticleLabel.Remove(label);
                             await _db.SaveChangesAsync();
                             await tc.CommitAsync();
