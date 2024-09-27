@@ -54,9 +54,9 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             }
         }
 
-        public async Task<Code> GetAsync(long id)
+        public async Task<VwCode> GetAsync(long id)
         {
-            var code = await _db.Code.SingleOrDefaultAsync(a => a.Id == id);
+            var code = await _db.VwCode.SingleOrDefaultAsync(a => a.Id == id);
             if (code != null)
             {
                 return code;
@@ -69,7 +69,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task<GetCodeResponse> GetListAsync(string codeTypeId, int? page)
         {
-            var query = _db.Code.Where(a => a.CodeTypeId == a.CodeTypeId).AsQueryable();
+            var query = _db.VwCode.Where(a => a.CodeTypeId == a.CodeTypeId).AsQueryable();
             if (!query.Any())
             {
                 throw new NotFoundException();
@@ -88,16 +88,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                     query = query.Skip(skip).Take(pageSize);
                 }
             }
-            var codes = await query.Select(a => new Code()
-            {
-                Id = a.Id,
-                CodeTypeId = a.CodeTypeId,
-                CodeName = a.CodeName,
-                CreateBy = a.CreateBy,
-                CreateDate = a.CreateDate,
-                UpdateBy = a.UpdateBy,
-                UpdateDate = a.UpdateDate,
-            }).ToListAsync();
+            var codes = await query.ToListAsync();
             return new GetCodeResponse()
             {
                 Total = total,

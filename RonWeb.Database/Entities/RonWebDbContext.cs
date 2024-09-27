@@ -43,6 +43,8 @@ public partial class RonWebDbContext : DbContext
 
     public virtual DbSet<VwArticle> VwArticle { get; set; }
 
+    public virtual DbSet<VwCode> VwCode { get; set; }
+
     public virtual DbSet<VwRefreshTokenLog> VwRefreshTokenLog { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -423,6 +425,31 @@ public partial class RonWebDbContext : DbContext
             entity.Property(e => e.Link).HasComment("參考連結");
             entity.Property(e => e.PreviewContent).HasComment("預覽文章內容");
             entity.Property(e => e.ViewCount).HasComment("瀏覽數");
+        });
+
+        modelBuilder.Entity<VwCode>(entity =>
+        {
+            entity
+                .HasNoKey()
+                .ToView("vw_Code");
+
+            entity.Property(e => e.CodeId)
+                .HasMaxLength(255)
+                .HasComment("代碼Id");
+            entity.Property(e => e.CodeName).HasComment("代碼名稱");
+            entity.Property(e => e.CodeTypeId)
+                .HasMaxLength(255)
+                .HasComment("類型Id");
+            entity.Property(e => e.CodeTypeName).HasComment("類型名稱");
+            entity.Property(e => e.CreateBy).HasComment("創建人員");
+            entity.Property(e => e.CreateDate)
+                .HasMaxLength(6)
+                .HasComment("創建日期");
+            entity.Property(e => e.Id).HasComment("主鍵");
+            entity.Property(e => e.UpdateBy).HasComment("修改人員");
+            entity.Property(e => e.UpdateDate)
+                .HasMaxLength(6)
+                .HasComment("修改日期");
         });
 
         modelBuilder.Entity<VwRefreshTokenLog>(entity =>

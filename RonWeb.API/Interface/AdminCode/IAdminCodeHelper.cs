@@ -9,7 +9,7 @@ using RonWeb.Database.Entities;
 namespace RonWeb.API.Interface.AdminArticleHelper
 {
     public interface IAdminCodeHelper :
-        IGetAsync<long, Code>,
+        IGetAsync<long, VwCode>,
         ICreateAsync<CreateCodeRequest>,
         IUpdateAsync<long, UpdateCodeRequest>,
         IDeleteAsync<long>
