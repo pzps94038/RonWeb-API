@@ -130,6 +130,7 @@ namespace RonWeb.API.Helper
                 .Select(g => g.First())
                 .ToList()
              })
+             .OrderByDescending(a => a.CreateDate)
              .ToList();
             var data = new GetArticleResponse()
             {
