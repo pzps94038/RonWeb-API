@@ -51,7 +51,12 @@ namespace RonWeb.API.Helper.Search
                        ViewCount = a.First().ViewCount,
                        Flag = a.First().Flag,
                        CreateDate = a.First().ArticleCreateDate,
-                       Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                       Labels = a.Select(a => new Models.Shared.Label()
+                       {
+                           LabelId = a.LabelId,
+                           LabelName = a.LabelName,
+                           CreateDate = a.LabelCreateDate,
+                       }).ToList()
                    })
                    .ToListAsync();
                 }
@@ -69,7 +74,12 @@ namespace RonWeb.API.Helper.Search
                         ViewCount = a.First().ViewCount,
                         Flag = a.First().Flag,
                         CreateDate = a.First().ArticleCreateDate,
-                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                        Labels = a.Select(a => new Models.Shared.Label()
+                        {
+                            LabelId = a.LabelId,
+                            LabelName = a.LabelName,
+                            CreateDate = a.LabelCreateDate,
+                        }).ToList()
                     })
                     .ToListAsync();
                 }
@@ -79,7 +89,6 @@ namespace RonWeb.API.Helper.Search
                     Articles = list,
                     Keyword = category.CategoryName
                 };
-                var json = JsonConvert.SerializeObject(data);
                 return data;
             }
         }
@@ -115,7 +124,12 @@ namespace RonWeb.API.Helper.Search
                        ViewCount = a.First().ViewCount,
                        Flag = a.First().Flag,
                        CreateDate = a.First().ArticleCreateDate,
-                       Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                       Labels = a.Select(a => new Models.Shared.Label()
+                       {
+                           LabelId = a.LabelId,
+                           LabelName = a.LabelName,
+                           CreateDate = a.LabelCreateDate,
+                       }).ToList()
                    })
                    .ToListAsync();
                 }
@@ -133,7 +147,12 @@ namespace RonWeb.API.Helper.Search
                         ViewCount = a.First().ViewCount,
                         Flag = a.First().Flag,
                         CreateDate = a.First().ArticleCreateDate,
-                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
+                        Labels = a.Select(a => new Models.Shared.Label()
+                        {
+                            LabelId = a.LabelId,
+                            LabelName = a.LabelName,
+                            CreateDate = a.LabelCreateDate,
+                        }).ToList()
                     })
                     .ToListAsync();
                 }
@@ -143,7 +162,6 @@ namespace RonWeb.API.Helper.Search
                     Articles = list,
                     Keyword = label.LabelName
                 };
-                var json = JsonConvert.SerializeObject(data);
                 return data;
             }
         }

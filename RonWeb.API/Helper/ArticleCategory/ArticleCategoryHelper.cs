@@ -26,14 +26,7 @@ namespace RonWeb.API.Helper.ArticleCategory
             {
                 var pageSize = 10;
                 int skip = (int)((page - 1) * pageSize);
-                if (skip == 0)
-                {
-                    query = query.Take(pageSize);
-                }
-                else
-                {
-                    query = query.Skip(skip).Take(pageSize);
-                }
+                query = skip == 0 ? query.Take(pageSize) : query.Skip(skip).Take(pageSize);
             }
             var categorys = await query.Select(a => new Category()
             {

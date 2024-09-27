@@ -22,44 +22,40 @@ namespace RonWeb.API.Helper.AdminArticle
 
         public async Task<GetByIdArticleResponse> GetAsync(long id)
         {
-            var data = await _db.Article
-                .Select(a => new GetByIdArticleResponse()
-                {
-                    ArticleId = a.ArticleId,
-                    ArticleTitle = a.ArticleTitle,
-                    PreviewContent = a.PreviewContent,
-                    Content = a.Content,
-                    CategoryId = a.CategoryId,
-                    CategoryName = _db.ArticleCategory
-                        .Where(ac => ac.CategoryId == a.CategoryId)
-                        .Select(ac => ac.CategoryName)
-                        .FirstOrDefault() ?? "",
-                    Flag = a.Flag,
-                    ViewCount = a.ViewCount,
-                    CreateDate = a.CreateDate,
-                    Labels = _db.ArticleLabelMapping
-                        .Where(mapping => mapping.ArticleId == a.ArticleId)
-                        .Select(mapping => new Label
-                        {
-                            LabelId = _db.ArticleLabel
-                                .Where(label => label.LabelId == mapping.LabelId)
-                                .Select(label => label.LabelId)
-                                .FirstOrDefault(),
-                            LabelName = _db.ArticleLabel
-                                .Where(label => label.LabelId == mapping.LabelId)
-                                .Select(label => label.LabelName)
-                                .FirstOrDefault() ?? ""
-                        })
-                        .ToList(),
-                    References = _db.ArticleReferences
-                        .Where(ar => ar.ArticleId == a.ArticleId)
-                        .Select(ar => ar.Link)
-                        .ToList()
-                })
-                .SingleOrDefaultAsync(a => a.ArticleId == id);
-
-            if (data != null)
+            var vwArticleList = await _db.VwArticle.Where(a => a.ArticleId == id).ToListAsync();
+            if (vwArticleList.Any())
             {
+                var article = vwArticleList.First();
+                var data = vwArticleList
+                    .GroupBy(a => a.ArticleId)
+                    .Select(a => new GetByIdArticleResponse()
+                    {
+                        ArticleId = article.ArticleId,
+                        ArticleTitle = article.ArticleTitle,
+                        PreviewContent = article.PreviewContent,
+                        Content = article.Content,
+                        CategoryId = article.CategoryId,
+                        CategoryName = article.CategoryName ?? "",
+                        Flag = article.Flag,
+                        ViewCount = article.ViewCount,
+                        CreateDate = article.ArticleCreateDate,
+                        Labels = a.Select(article => new Models.Shared.Label()
+                        {
+                            LabelId = article.LabelId,
+                            LabelName = article.LabelName,
+                            CreateDate = article.LabelCreateDate
+                        })
+                        .OrderBy(label => label.CreateDate)
+                        .GroupBy(label => label.LabelId)
+                        .Select(g => g.First())
+                        .ToList(),
+                        References = a.Select(article => article.Link)
+                        .Where(link => link != null)
+                        .GroupBy(link => link)
+                        .Select(g => g.First()!)
+                        .ToList()
+                    })
+                    .First();
                 // 找到下一篇文章
                 var nextArticle = await _db.Article.Where(a => a.CreateDate > data.CreateDate)
                     .OrderBy(a => a.CreateDate)
@@ -104,48 +100,41 @@ namespace RonWeb.API.Helper.AdminArticle
                     );
                 }
             }
-            query = query.OrderByDescending(a => a.ArticleCreateDate);
+            var idQuery = query.Select(a => new { a.ArticleId, a.ArticleCreateDate })
+                 .Distinct()
+                 .OrderByDescending(a => a.ArticleCreateDate)
+                 .AsQueryable();
             var pageSize = 10;
             var skip = (curPage - 1) * pageSize;
+            idQuery = skip == 0 ? idQuery.Take(pageSize) : idQuery.Skip(skip).Take(pageSize);
+            var idList = idQuery.Select(a => a.ArticleId).ToList();
             var group = query.GroupBy(a => a.ArticleId);
             var total = group.Count();
-            List<ArticleItem> list;
-            if (skip == 0)
-            {
-                list = await group.Take(pageSize)
-                    .Select(a => new ArticleItem()
-                    {
-                        ArticleId = a.Key,
-                        ArticleTitle = a.First().ArticleTitle,
-                        PreviewContent = a.First().PreviewContent,
-                        Content = a.First().Content,
-                        CategoryId = a.First().CategoryId,
-                        CategoryName = a.First().CategoryName ?? "",
-                        ViewCount = a.First().ViewCount,
-                        Flag = a.First().Flag,
-                        CreateDate = a.First().ArticleCreateDate,
-                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
-                    })
-                    .ToListAsync();
-            }
-            else
-            {
-                list = await group.Skip(skip).Take(pageSize)
-                    .Select(a => new ArticleItem()
-                    {
-                        ArticleId = a.Key,
-                        ArticleTitle = a.First().ArticleTitle,
-                        PreviewContent = a.First().PreviewContent,
-                        Content = a.First().Content,
-                        CategoryId = a.First().CategoryId,
-                        CategoryName = a.First().CategoryName ?? "",
-                        ViewCount = a.First().ViewCount,
-                        Flag = a.First().Flag,
-                        CreateDate = a.First().ArticleCreateDate,
-                        Labels = a.Where(a => a.LabelId != null).Select(a => new Models.Shared.Label((long)a.LabelId!, a.LabelName!, (DateTime)a.LabelCreateDate!)).ToList()
-                    })
-                    .ToListAsync();
-            }
+            List<ArticleItem> list = (await _db.VwArticle.Where(a => idList.Contains(a.ArticleId)).ToListAsync())
+             .GroupBy(a => a.ArticleId)
+             .Select(a => new ArticleItem()
+             {
+                 ArticleId = a.Key,
+                 ArticleTitle = a.First().ArticleTitle,
+                 PreviewContent = a.First().PreviewContent,
+                 Content = a.First().Content,
+                 CategoryId = a.First().CategoryId,
+                 CategoryName = a.First().CategoryName ?? "",
+                 ViewCount = a.First().ViewCount,
+                 Flag = a.First().Flag,
+                 CreateDate = a.First().ArticleCreateDate,
+                 Labels = a.Select(article => new Models.Shared.Label()
+                 {
+                     LabelId = article.LabelId,
+                     LabelName = article.LabelName,
+                     CreateDate = article.LabelCreateDate
+                 })
+                .OrderBy(label => label.CreateDate)
+                .GroupBy(label => label.LabelId)
+                .Select(g => g.First())
+                .ToList()
+             })
+             .ToList();
             var data = new GetArticleResponse()
             {
                 Total = total,
@@ -182,7 +171,7 @@ namespace RonWeb.API.Helper.AdminArticle
                             _db.ArticleLabelMapping.RemoveRange(mapping);
                             var labelMapping = data.Labels.Select(a => new ArticleLabelMapping()
                             {
-                                LabelId = a.LabelId,
+                                LabelId = (long)a.LabelId!,
                                 ArticleId = article.ArticleId,
                                 CreateDate = DateTime.Now,
                                 CreateBy = data.UserId
@@ -334,7 +323,7 @@ namespace RonWeb.API.Helper.AdminArticle
                         var mappings = data.Labels.Select(a => new ArticleLabelMapping()
                         {
                             ArticleId = article.ArticleId,
-                            LabelId = a.LabelId,
+                            LabelId = (long)a.LabelId!,
                             CreateBy = data.UserId,
                             CreateDate = DateTime.Now
                         });

@@ -29,7 +29,8 @@ namespace RonWeb.API.Helper.SiteMap
             var result = await _db.ArticleCategory.Select(a => new SiteMapResponse<long>()
             {
                 ID = a.CategoryId
-            }).ToListAsync();
+            })
+            .ToListAsync();
             return result;
         }
 
@@ -38,7 +39,8 @@ namespace RonWeb.API.Helper.SiteMap
             var result = await _db.ArticleLabel.Select(a => new SiteMapResponse<long>()
             {
                 ID = a.LabelId
-            }).ToListAsync();
+            })
+            .ToListAsync();
             return result;
         }
     }
