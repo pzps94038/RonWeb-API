@@ -45,15 +45,16 @@ namespace RonWeb.API.Helper.AdminArticle
                             LabelName = article.LabelName,
                             CreateDate = article.LabelCreateDate
                         })
-                        .OrderBy(label => label.CreateDate)
-                        .GroupBy(label => label.LabelId)
-                        .Select(g => g.First())
-                        .ToList(),
-                        References = a.Select(article => article.Link)
-                        .Where(link => link != null)
-                        .GroupBy(link => link)
-                        .Select(g => g.First()!)
-                        .ToList()
+                            .OrderBy(label => label.CreateDate)
+                            .GroupBy(label => label.LabelId)
+                            .Select(g => g.First())
+                            .ToList(),
+                        References = a.Where(a => a.Link != null)
+                            .Select(a => a.Link!)
+                            .OrderBy(a => a)
+                            .GroupBy(a => a)
+                            .Select(g => g.First())
+                            .ToList(),
                     })
                     .First();
                 // 找到下一篇文章

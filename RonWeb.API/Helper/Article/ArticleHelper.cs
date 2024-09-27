@@ -25,10 +25,8 @@ namespace RonWeb.API.Helper
 
         public async Task<GetByIdArticleResponse> GetAsync(long id)
         {
-            var vwArticle = await _db.VwArticle.Where(a => a.ArticleId == id && a.Flag == "Y")
-                        .GroupBy(a => a.ArticleId)
-                        .SingleOrDefaultAsync();
-            if (vwArticle != null)
+            var vwArticle = await _db.VwArticle.Where(a => a.ArticleId == id && a.Flag == "Y").ToListAsync();
+            if (vwArticle.Any())
             {
                 var article = vwArticle.First();
                 var data = new GetByIdArticleResponse()
@@ -41,15 +39,22 @@ namespace RonWeb.API.Helper
                     CategoryName = article.CategoryName ?? "",
                     ViewCount = article.ViewCount,
                     Flag = article.Flag,
-                    Labels = vwArticle.Where(a => a.LabelId != null)
-                        .Select(a => new Models.Shared.Label()
-                        {
-                            LabelId = article.LabelId,
-                            LabelName = article.LabelName,
-                            CreateDate = article.LabelCreateDate
-                        })
+                    Labels = vwArticle.Select(a => new Models.Shared.Label()
+                    {
+                        LabelId = article.LabelId,
+                        LabelName = article.LabelName,
+                        CreateDate = article.LabelCreateDate
+                    })
+                        .OrderBy(label => label.CreateDate)
+                        .GroupBy(label => label.LabelId)
+                        .Select(g => g.First())
                         .ToList(),
-                    References = vwArticle.Where(a => a.Link != null).Select(a => a.Link!).ToList(),
+                    References = vwArticle.Where(a => a.Link != null)
+                        .Select(a => a.Link!)
+                        .OrderBy(a => a)
+                        .GroupBy(a => a)
+                        .Select(g => g.First())
+                        .ToList(),
                     CreateDate = article.ArticleCreateDate
                 };
                 // 找到下一篇文章

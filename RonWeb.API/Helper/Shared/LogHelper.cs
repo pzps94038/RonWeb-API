@@ -24,6 +24,23 @@ namespace RonWeb.API.Helper.Shared
             _logger = logger;
         }
 
+        public async void Info(string msg)
+        {
+            try
+            {
+                var log = new ExceptionLog();
+                log.Message = msg;
+                log.Level = Level.Info.Description();
+                log.CreateDate = DateTime.Now;
+                await _db.ExceptionLog.AddAsync(log);
+                await _db.SaveChangesAsync();
+            }
+            catch (Exception)
+            {
+
+            }
+        }
+
         public async void Warn(string msg)
         {
             try
@@ -82,9 +99,9 @@ namespace RonWeb.API.Helper.Shared
                 //mail.Priority = System.Net.Mail.MailPriority.High;
                 //await tool.SendMail(mail);
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
         }
     }

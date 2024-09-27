@@ -19,6 +19,7 @@ var builder = WebApplication.CreateBuilder(args);
 Log.Logger = new LoggerConfiguration()
     .ReadFrom.Configuration(builder.Configuration)
     .CreateLogger();
+WebApplication? app = null;
 try
 {
     Log.Information("Program Start:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
@@ -108,7 +109,7 @@ try
 
     // log
     builder.Host.UseSerilog(); // <-- 加入這一行
-    var app = builder.Build();
+    app = builder.Build();
 
     // Configure the HTTP request pipeline.
     if (app.Environment.IsDevelopment())
@@ -134,10 +135,14 @@ try
         ForwardedHeaders.XForwardedProto
     });
     app.Run();
+    var logHelper = app.Services.GetService<ILogHelper>();
+    logHelper?.Info("Program Start:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
 }
 catch (Exception ex)
 {
     Log.Fatal(ex, "Program Fail:" + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
+    var logHelper = app?.Services.GetService<ILogHelper>();
+    logHelper?.Error(ex);
 }
 finally
 {
