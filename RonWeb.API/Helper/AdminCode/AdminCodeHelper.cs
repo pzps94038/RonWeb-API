@@ -69,7 +69,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
 
         public async Task<GetCodeResponse> GetListAsync(string codeTypeId, int? page)
         {
-            var codeType = await _db.CodeType.Where(a => a.CodeTypeId == a.CodeTypeId).SingleOrDefaultAsync();
+            var codeType = await _db.CodeType.Where(a => a.CodeTypeId == codeTypeId).SingleOrDefaultAsync();
             if (codeType == null)
             {
                 throw new NotFoundException();

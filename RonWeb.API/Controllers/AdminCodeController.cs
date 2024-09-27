@@ -10,7 +10,6 @@ using RonWeb.Database.Entities;
 namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
-    [Authorize]
     public class AdminCodeController : Controller
     {
         private readonly IAdminCodeHelper _helper;
@@ -40,9 +39,9 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<Code>> GetCodeTypeById(long id)
+        public async Task<BaseResponse<VwCode>> GetCodeTypeById(long id)
         {
-            var result = new BaseResponse<Code>();
+            var result = new BaseResponse<VwCode>();
             var data = await _helper.GetAsync(id);
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
