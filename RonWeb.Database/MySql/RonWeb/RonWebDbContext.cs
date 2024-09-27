@@ -55,8 +55,8 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
         public DbSet<RefreshTokenLog> RefreshTokenLog { get; set; }
         public DbSet<ExceptionLog> ExceptionLog { get; set; }
         public DbSet<ArticleReferences> ArticleReferences { get; set; }
-        public DbSet<CodeType> CodeTypes { get; set; }
-        public DbSet<Code> Codes { get; set; }
+        public DbSet<CodeType> CodeType { get; set; }
+        public DbSet<Code> Code { get; set; }
         public DbSet<ProjectExperience> ProjectExperience { get; set; }
         public DbSet<ProjectRole> ProjectRole { get; set; }
         public DbSet<TechnologyTool> TechnologyTool { get; set; }
