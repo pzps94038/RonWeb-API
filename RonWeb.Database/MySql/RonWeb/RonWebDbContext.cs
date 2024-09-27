@@ -17,14 +17,32 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // 定義雙主鍵
             modelBuilder.Entity<RefreshTokenLog>()
                 .HasKey(a => new { a.RefreshToken, a.UserId });
             modelBuilder.Entity<ArticleLabelMapping>()
                 .HasKey(a => new { a.ArticleId, a.LabelId });
+            modelBuilder.Entity<ProjectRole>()
+                .HasKey(a => new { a.ProjectExperienceId, a.RoleId });
+            modelBuilder.Entity<TechnologyTool>()
+                .HasKey(a => new { a.ProjectExperienceId, a.TechnologyToolId });
+            // 定義一對多關聯
             modelBuilder.Entity<Article>()
                 .HasMany(a => a.ArticleReferences)
                 .WithOne(r => r.Article)
                 .HasForeignKey(r => r.ArticleId);
+            modelBuilder.Entity<CodeType>()
+                .HasMany(a => a.Codes)
+                .WithOne(r => r.CodeType)
+                .HasForeignKey(r => r.CodeTypeId);
+            modelBuilder.Entity<ProjectExperience>()
+                .HasMany(a => a.ProjectRole)
+                .WithOne(r => r.ProjectExperience)
+                .HasForeignKey(r => r.ProjectExperienceId);
+            modelBuilder.Entity<ProjectExperience>()
+                .HasMany(a => a.TechnologyTool)
+                .WithOne(r => r.ProjectExperience)
+                .HasForeignKey(r => r.ProjectExperienceId);
         }
 
         public DbSet<Article> Article { get; set; }
@@ -37,6 +55,11 @@ namespace RonWeb.Database.MySql.RonWeb.DataBase
         public DbSet<RefreshTokenLog> RefreshTokenLog { get; set; }
         public DbSet<ExceptionLog> ExceptionLog { get; set; }
         public DbSet<ArticleReferences> ArticleReferences { get; set; }
+        public DbSet<CodeType> CodeTypes { get; set; }
+        public DbSet<Code> Codes { get; set; }
+        public DbSet<ProjectExperience> ProjectExperience { get; set; }
+        public DbSet<ProjectRole> ProjectRole { get; set; }
+        public DbSet<TechnologyTool> TechnologyTool { get; set; }
 
     }
 }

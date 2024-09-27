@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using RonWeb.Database.MySql.RonWeb.DataBase;
 
@@ -10,9 +11,11 @@ using RonWeb.Database.MySql.RonWeb.DataBase;
 namespace RonWeb.Database.Migrations
 {
     [DbContext(typeof(RonWebDbContext))]
-    partial class RonWebDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240927073106_增加專案經歷、代碼類型、代碼表、專案角色表")]
+    partial class 增加專案經歷代碼類型代碼表專案角色表
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
