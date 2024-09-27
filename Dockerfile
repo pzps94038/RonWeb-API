@@ -5,9 +5,6 @@ WORKDIR /app
 COPY ["RonWeb.API/RonWeb.API.csproj", "RonWeb.API/"]
 COPY ["RonWeb.Database/RonWeb.Database.csproj", "RonWeb.Database/"]
 COPY ["RonWeb.Core/RonWeb.Core.csproj", "RonWeb.Core/"]
-RUN dotnet restore "RonWeb.API/RonWeb.API.csproj"
-RUN dotnet restore "RonWeb.Database/RonWeb.Database.csproj"
-RUN dotnet restore "RonWeb.Core/RonWeb.Core.csproj"
 # copy everything else and build app
 COPY . .
 
