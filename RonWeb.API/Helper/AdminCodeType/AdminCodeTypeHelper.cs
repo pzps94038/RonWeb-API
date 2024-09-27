@@ -34,14 +34,14 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                     CreateBy = data.UserId
                 };
 
-                await _db.AddAsync(codeType);
+                await _db.CodeType.AddAsync(codeType);
                 await _db.SaveChangesAsync();
             }
         }
 
-        public async Task DeleteAsync(string id)
+        public async Task DeleteAsync(long id)
         {
-            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == id);
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.Id == id);
             if (codeType != null)
             {
                 var executionStrategy = _db.Database.CreateExecutionStrategy();
@@ -51,7 +51,7 @@ namespace RonWeb.API.Helper.AdminArticleLabel
                     {
                         try
                         {
-                            var mapping = await _db.Code.Where(a => a.CodeTypeId == id).ToListAsync();
+                            var mapping = await _db.Code.Where(a => a.CodeTypeId == codeType.CodeTypeId).ToListAsync();
                             if (mapping.Any())
                             {
                                 _db.Code.RemoveRange(mapping);
@@ -74,9 +74,9 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             }
         }
 
-        public async Task<CodeType> GetAsync(string id)
+        public async Task<CodeType> GetAsync(long id)
         {
-            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == id);
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.Id == id);
             if (codeType != null)
             {
                 return codeType;
@@ -120,9 +120,9 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             };
         }
 
-        public async Task UpdateAsync(string id, UpdateCodeTypeRequest data)
+        public async Task UpdateAsync(long id, UpdateCodeTypeRequest data)
         {
-            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.CodeTypeId == id);
+            var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.Id == id);
             if (codeType != null)
             {
                 codeType.CodeTypeName = data.CodeTypeName;

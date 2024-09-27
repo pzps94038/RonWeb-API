@@ -11,10 +11,10 @@ namespace RonWeb.API.Controllers
 {
     [Route("api/[controller]")]
     [Authorize]
-    public class AdminCodeTypeController : Controller
+    public class AdminCodeController : Controller
     {
-        private readonly IAdminCodeTypeHelper _helper;
-        public AdminCodeTypeController(IAdminCodeTypeHelper helper)
+        private readonly IAdminCodeHelper _helper;
+        public AdminCodeController(IAdminCodeHelper helper)
         {
             _helper = helper;
         }
@@ -24,10 +24,10 @@ namespace RonWeb.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<GetCodeTypeResponse>> GetCodeType(int? page)
+        public async Task<BaseResponse<GetCodeResponse>> GetCodeType(string codeTypeId, int? page)
         {
-            var result = new BaseResponse<GetCodeTypeResponse>();
-            var data = await _helper.GetListAsync(page);
+            var result = new BaseResponse<GetCodeResponse>();
+            var data = await _helper.GetListAsync(codeTypeId, page);
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
             result.Data = data;
@@ -40,9 +40,9 @@ namespace RonWeb.API.Controllers
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<CodeType>> GetCodeTypeById(long id)
+        public async Task<BaseResponse<Code>> GetCodeTypeById(long id)
         {
-            var result = new BaseResponse<CodeType>();
+            var result = new BaseResponse<Code>();
             var data = await _helper.GetAsync(id);
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
@@ -57,7 +57,7 @@ namespace RonWeb.API.Controllers
         /// <returns></returns>
         [HttpPost]
         [HttpPost]
-        public async Task<BaseResponse> CreateArticle([FromBody] CreateCodeTypeRequest data)
+        public async Task<BaseResponse> CreateArticle([FromBody] CreateCodeRequest data)
         {
             var result = new BaseResponse();
             await _helper.CreateAsync(data);
@@ -73,7 +73,7 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<BaseResponse> UpdateArticle(long id, [FromBody] UpdateCodeTypeRequest data)
+        public async Task<BaseResponse> UpdateArticle(long id, [FromBody] UpdateCodeRequest data)
         {
             var result = new BaseResponse();
             await _helper.UpdateAsync(id, data);

@@ -1,6 +1,6 @@
 ﻿namespace RonWeb.API.Models.CodeType
 {
-    public class CreateCodeTypeRequest
+    public class CreateCodeRequest
     {
 
         /// <summary>
@@ -9,9 +9,14 @@
         public string CodeTypeId { get; set; } = string.Empty;
 
         /// <summary>
-        /// 代碼類型名稱
+        /// 代碼Id
         /// </summary>
-        public string CodeTypeName { get; set; } = string.Empty;
+        public string CodeId { get; set; } = string.Empty;
+
+        /// <summary>
+        /// 代碼名稱
+        /// </summary>
+        public string CodeName { get; set; } = string.Empty;
 
         /// <summary>
         /// 建立人

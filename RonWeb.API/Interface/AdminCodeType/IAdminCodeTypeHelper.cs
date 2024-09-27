@@ -9,10 +9,10 @@ using RonWeb.Database.Entities;
 namespace RonWeb.API.Interface.AdminArticleHelper
 {
     public interface IAdminCodeTypeHelper :
-        IGetAsync<string, CodeType>,
+        IGetAsync<long, CodeType>,
         ICreateAsync<CreateCodeTypeRequest>,
-        IUpdateAsync<string, UpdateCodeTypeRequest>,
-        IDeleteAsync<string>
+        IUpdateAsync<long, UpdateCodeTypeRequest>,
+        IDeleteAsync<long>
     {
         public Task<GetCodeTypeResponse> GetListAsync(int? page);
     }
