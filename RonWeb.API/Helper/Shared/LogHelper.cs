@@ -24,7 +24,7 @@ namespace RonWeb.API.Helper.Shared
             _logger = logger;
         }
 
-        public async void Info(string msg)
+        public void Info(string msg)
         {
             try
             {
@@ -32,16 +32,16 @@ namespace RonWeb.API.Helper.Shared
                 log.Message = msg;
                 log.Level = Level.Info.Description();
                 log.CreateDate = DateTime.Now;
-                await _db.ExceptionLog.AddAsync(log);
-                await _db.SaveChangesAsync();
+                _db.ExceptionLog.Add(log);
+                _db.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
         }
 
-        public async void Warn(string msg)
+        public void Warn(string msg)
         {
             try
             {
@@ -49,16 +49,16 @@ namespace RonWeb.API.Helper.Shared
                 log.Message = msg;
                 log.Level = Level.Warn.Description();
                 log.CreateDate = DateTime.Now;
-                await _db.ExceptionLog.AddAsync(log);
-                await _db.SaveChangesAsync();
+                _db.ExceptionLog.Add(log);
+                _db.SaveChanges();
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                Console.WriteLine(e.Message);
             }
         }
 
-        public async void Error(Exception ex)
+        public void Error(Exception ex)
         {
             try
             {
@@ -80,8 +80,8 @@ namespace RonWeb.API.Helper.Shared
                 log.StackTrace = ex.StackTrace;
                 log.Level = Level.Error.Description();
                 log.CreateDate = DateTime.Now;
-                await _db.ExceptionLog.AddAsync(log);
-                await _db.SaveChangesAsync();
+                _db.ExceptionLog.Add(log);
+                _db.SaveChanges();
                 //var tool = new GmailTool();
                 //var gmailAddress = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_ADDRESS.Description())!;
                 //var gmailDisplayName = Environment.GetEnvironmentVariable(EnvVarEnum.GMAIL_DISPLAY_NAME.Description())!;
