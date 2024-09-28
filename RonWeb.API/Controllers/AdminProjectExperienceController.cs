@@ -56,7 +56,6 @@ namespace RonWeb.API.Controllers
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        [HttpPost]
         public async Task<BaseResponse> CreateProjectExperience([FromBody] CreateProjectExperienceRequest data)
         {
             var result = new BaseResponse();

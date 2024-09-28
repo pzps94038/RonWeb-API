@@ -125,6 +125,7 @@ try
     app.UseHttpsRedirection();
     app.UseAuthentication();
     app.UseCors("CorsPolicy");
+    app.UseMiddleware<ILogHttpMessagesMiddleware>();
     app.UseMiddleware<IExceptionHandlerMiddleware>();
     app.UseAuthorization();
     app.MapControllers();
