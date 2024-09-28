@@ -20,11 +20,6 @@ namespace RonWeb.API.Models.ProjectExperience
         public string Contributions { get; set; } = null!;
 
         /// <summary>
-        /// 創建人
-        /// </summary>
-        public long UserId { get; set; }
-
-        /// <summary>
         /// 專案描述上傳圖
         /// </summary>
         public List<UploadFile> DescriptionFiles { get; set; } = new List<UploadFile>();
@@ -45,8 +40,8 @@ namespace RonWeb.API.Models.ProjectExperience
         public List<SelectItem<string>> TechnologyTools { get; set; } = new List<SelectItem<string>>();
 
         /// <summary>
-        /// 參考文章
+        /// 創建人
         /// </summary>
-        public List<string> References { get; set; } = new List<string>();
+        public long UserId { get; set; }
     }
 }
