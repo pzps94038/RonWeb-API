@@ -103,16 +103,13 @@ namespace RonWeb.API.Helper.AdminArticle
                 .AsQueryable();
 
             // 條件搜尋
-            if (keyword != null)
+            keyword = keyword?.Trim();
+            if (!string.IsNullOrEmpty(keyword))
             {
-                keyword = keyword.Trim();
-                if (!string.IsNullOrEmpty(keyword))
-                {
-                    query = query.Where(a => a.ArticleTitle.Contains(keyword) ||
-                        a.PreviewContent.Contains(keyword) ||
-                        a.CategoryName.Contains(keyword)
-                    );
-                }
+                query = query.Where(a => a.ArticleTitle.Contains(keyword) ||
+                    a.PreviewContent.Contains(keyword) ||
+                    a.CategoryName.Contains(keyword)
+                );
             }
 
             // 獲取分頁Id
@@ -139,7 +136,7 @@ namespace RonWeb.API.Helper.AdminArticle
                 .ToListAsync();
 
             // 獲取文章列表
-            var articleList = (await query.ToListAsync())
+            var articleList = (await query.Where(a => idList.Contains(a.ArticleId)).ToListAsync())
                 .Select(a => new ArticleItem()
                 {
                     ArticleId = a.ArticleId,
@@ -156,6 +153,7 @@ namespace RonWeb.API.Helper.AdminArticle
                         .Select(a => new Label(a.LabelId, a.LabelName, a.CreateDate))
                         .ToList()
                 })
+                .OrderByDescending(a => a.CreateDate)
                 .ToList();
 
             return new GetArticleResponse()

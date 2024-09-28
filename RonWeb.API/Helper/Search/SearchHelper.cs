@@ -42,10 +42,8 @@ namespace RonWeb.API.Helper.Search
                 .Take(pageSize)
                 .Select(a => a.ArticleId)
                 .ToListAsync();
-
             // 獲取總數
             var total = await query.CountAsync();
-
             // 獲取文章標籤
             var articleLabelList = await _db.ArticleLabelMapping
                 .Join(_db.ArticleLabel, a => a.LabelId, b => b.LabelId, (a, b) => new
@@ -57,9 +55,8 @@ namespace RonWeb.API.Helper.Search
                 })
                 .Where(a => idList.Contains(a.ArticleId))
                 .ToListAsync();
-
             // 獲取文章列表
-            var articleList = (await query.ToListAsync())
+            var articleList = (await query.Where(a => idList.Contains(a.ArticleId)).ToListAsync())
                 .Select(a => new ArticleItem()
                 {
                     ArticleId = a.ArticleId,
@@ -71,10 +68,12 @@ namespace RonWeb.API.Helper.Search
                     ViewCount = a.ViewCount,
                     Flag = a.Flag,
                     CreateDate = a.CreateDate,
-                    Labels = articleLabelList.Where(a => a.ArticleId == a.ArticleId)
+                    Labels = articleLabelList.Where(label => label.ArticleId == a.ArticleId)
+                        .Distinct()
                         .Select(a => new Label(a.LabelId, a.LabelName, a.CreateDate))
                         .ToList()
                 })
+                .OrderByDescending(a => a.CreateDate)
                 .ToList();
             var data = new KeywordeResponse()
             {
@@ -111,10 +110,8 @@ namespace RonWeb.API.Helper.Search
                 .Take(pageSize)
                 .Select(a => a.ArticleId)
                 .ToListAsync();
-
             // 獲取總數
             var total = await query.CountAsync();
-
             // 獲取文章分類
             var articleCategoryList = await _db.ArticleCategory.Where(a => idList.Contains(a.CategoryId))
                 .ToListAsync();
@@ -129,7 +126,6 @@ namespace RonWeb.API.Helper.Search
                 })
                 .Where(a => idList.Contains(a.ArticleId))
                 .ToListAsync();
-
             // 獲取文章列表
             var articleList = (await _db.Article.Where(a => idList.Contains(a.ArticleId)).ToListAsync())
                 .Select(a => new ArticleItem()
@@ -144,9 +140,11 @@ namespace RonWeb.API.Helper.Search
                     Flag = a.Flag,
                     CreateDate = a.CreateDate,
                     Labels = articleLabelList.Where(a => a.ArticleId == a.ArticleId)
+                        .Distinct()
                         .Select(a => new Label(a.LabelId, a.LabelName, a.CreateDate))
                         .ToList()
                 })
+                .OrderByDescending(a => a.CreateDate)
                 .ToList();
             var data = new KeywordeResponse()
             {
