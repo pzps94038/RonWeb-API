@@ -42,8 +42,10 @@ namespace RonWeb.API.Helper.Search
                 .Take(pageSize)
                 .Select(a => a.ArticleId)
                 .ToListAsync();
+
             // 獲取總數
             var total = await query.CountAsync();
+
             // 獲取文章標籤
             var articleLabelList = await _db.ArticleLabelMapping
                 .Join(_db.ArticleLabel, a => a.LabelId, b => b.LabelId, (a, b) => new
@@ -55,6 +57,7 @@ namespace RonWeb.API.Helper.Search
                 })
                 .Where(a => idList.Contains(a.ArticleId))
                 .ToListAsync();
+
             // 獲取文章列表
             var articleList = (await query.Where(a => idList.Contains(a.ArticleId)).ToListAsync())
                 .Select(a => new ArticleItem()
@@ -103,6 +106,7 @@ namespace RonWeb.API.Helper.Search
                 })
                 .Where(a => a.LabelId == id)
                 .Distinct();
+
             // 獲取分頁Id
             var idList = await query
                 .OrderByDescending(a => a.CreateDate)
@@ -110,11 +114,10 @@ namespace RonWeb.API.Helper.Search
                 .Take(pageSize)
                 .Select(a => a.ArticleId)
                 .ToListAsync();
+
             // 獲取總數
             var total = await query.CountAsync();
-            // 獲取文章分類
-            var articleCategoryList = await _db.ArticleCategory.Where(a => idList.Contains(a.CategoryId))
-                .ToListAsync();
+
             // 獲取文章標籤
             var articleLabelList = await _db.ArticleLabelMapping
                 .Join(_db.ArticleLabel, a => a.LabelId, b => b.LabelId, (a, b) => new
@@ -126,8 +129,30 @@ namespace RonWeb.API.Helper.Search
                 })
                 .Where(a => idList.Contains(a.ArticleId))
                 .ToListAsync();
-            // 獲取文章列表
-            var articleList = (await _db.Article.Where(a => idList.Contains(a.ArticleId)).ToListAsync())
+
+            // 串接分類表獲取文章列表
+            var articleList = (
+                await _db.Article
+                    .Where(a => idList.Contains(a.ArticleId))
+                    .Join(
+                        _db.ArticleCategory,
+                        a => a.CategoryId,
+                        b => b.CategoryId,
+                        (a, b) => new
+                        {
+                            a.ArticleId,
+                            a.ArticleTitle,
+                            a.PreviewContent,
+                            a.Content,
+                            a.CategoryId,
+                            b.CategoryName,
+                            a.ViewCount,
+                            a.Flag,
+                            a.CreateDate,
+                        }
+                    )
+                    .ToListAsync()
+                )
                 .Select(a => new ArticleItem()
                 {
                     ArticleId = a.ArticleId,
@@ -135,23 +160,26 @@ namespace RonWeb.API.Helper.Search
                     PreviewContent = a.PreviewContent,
                     Content = a.Content,
                     CategoryId = a.CategoryId,
-                    CategoryName = articleCategoryList.FirstOrDefault(category => a.CategoryId == category.CategoryId)?.CategoryName ?? "",
+                    CategoryName = a.CategoryName,
                     ViewCount = a.ViewCount,
                     Flag = a.Flag,
                     CreateDate = a.CreateDate,
-                    Labels = articleLabelList.Where(label => label.ArticleId == a.ArticleId)
+                    Labels = articleLabelList
+                        .Where(label => label.ArticleId == a.ArticleId)
                         .Distinct()
-                        .Select(a => new Label(a.LabelId, a.LabelName, a.CreateDate))
+                        .Select(l => new Label(l.LabelId, l.LabelName, l.CreateDate))
                         .ToList()
                 })
                 .OrderByDescending(a => a.CreateDate)
                 .ToList();
+
             var data = new KeywordeResponse()
             {
                 Total = total,
                 Articles = articleList,
                 Keyword = label.LabelName
             };
+
             return data;
         }
     }

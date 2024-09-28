@@ -33,7 +33,12 @@ namespace RonWeb.API.Helper.AdminArticle
             // 文章標籤查詢
             var articleLabelQuery = _db.ArticleLabelMapping.Where(a => a.ArticleId == article.ArticleId);
             var articleLabels = await _db.ArticleLabel
-                .Join(articleLabelQuery, a => a.LabelId, b => b.LabelId, (a, b) => new Label(a.LabelId, a.LabelName, b.CreateDate))
+                .Join(
+                    articleLabelQuery,
+                    a => a.LabelId,
+                    b => b.LabelId,
+                    (a, b) => new Label(a.LabelId, a.LabelName, b.CreateDate)
+                )
                 .ToListAsync();
 
             // 參考文章
@@ -88,18 +93,22 @@ namespace RonWeb.API.Helper.AdminArticle
 
             // 串接分類表
             var query = _db.Article
-                .Join(_db.ArticleCategory, a => a.CategoryId, b => b.CategoryId, (a, b) => new
-                {
-                    a.ArticleId,
-                    a.ArticleTitle,
-                    a.PreviewContent,
-                    a.Content,
-                    a.CategoryId,
-                    b.CategoryName,
-                    a.ViewCount,
-                    a.Flag,
-                    a.CreateDate,
-                })
+                .Join(
+                    _db.ArticleCategory,
+                    a => a.CategoryId,
+                    b => b.CategoryId,
+                    (a, b) => new
+                    {
+                        a.ArticleId,
+                        a.ArticleTitle,
+                        a.PreviewContent,
+                        a.Content,
+                        a.CategoryId,
+                        b.CategoryName,
+                        a.ViewCount,
+                        a.Flag,
+                        a.CreateDate,
+                    })
                 .AsQueryable();
 
             // 條件搜尋

@@ -159,6 +159,7 @@ namespace RonWeb.API.Helper.AdminProjectExperience
                         projectExperience.Contributions = sanitizer.Sanitize(data.Contributions);
                         projectExperience.UpdateDate = DateTime.Now;
                         projectExperience.UpdateBy = data.UserId;
+
                         // 專案角色
                         var existProjectRoles = await _db.ProjectRole
                             .Where(a => a.ProjectExperienceId == projectExperience.ProjectExperienceId)
