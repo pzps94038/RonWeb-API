@@ -1,6 +1,4 @@
-﻿using System;
-using RonWeb.Database.Entities;
-namespace RonWeb.API.Models.ArticleLabel
+﻿namespace RonWeb.API.Models.CodeType
 {
     public class GetCodeTypeResponse
     {

@@ -87,6 +87,7 @@ try
     builder.Services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
     builder.Services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
     // middleware
+    builder.Services.AddScoped<ILogHttpMessagesMiddleware, LogHttpMessagesMiddleware>();
     builder.Services.AddScoped<IExceptionHandlerMiddleware, ExceptionHandlerMiddleware>();
     //配置（解析器、計數器金鑰生成器）
     builder.Services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();

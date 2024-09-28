@@ -1,9 +1,8 @@
 ﻿using System;
-using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Models.ArticleLabel
 {
-	public class GetArticleLabelResponse
+    public class GetArticleLabelResponse
 	{
         /// <summary>
         /// 標籤總數

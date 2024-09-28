@@ -16,28 +16,22 @@ namespace RonWeb.API.Helper.ArticleLabel
             _db = dbContext;
         }
 
-        public async Task<GetArticleLabelResponse> GetListAsync(int? page)
+        public async Task<GetArticleLabelResponse> GetListAsync()
         {
             var query = _db.ArticleLabel.AsQueryable();
-            var total = query.Count();
-            if (page != null)
-            {
-                var pageSize = 10;
-                int skip = (int)((page - 1) * pageSize);
-                query = skip == 0 ? query.Take(pageSize) : query.Skip(skip).Take(pageSize);
-            }
+            var total = await query.CountAsync();
             var labels = await query.Select(a => new Label()
             {
                 LabelId = a.LabelId,
                 LabelName = a.LabelName,
                 CreateDate = a.CreateDate
-            }).ToListAsync();
+            })
+            .ToListAsync();
             var data = new GetArticleLabelResponse()
             {
                 Total = total,
                 Labels = labels
             };
-            var json = JsonConvert.SerializeObject(data);
             return data;
         }
     }

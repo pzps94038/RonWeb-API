@@ -1,8 +1,7 @@
-﻿namespace RonWeb.API.Models.CodeType
+﻿namespace RonWeb.API.Models.Code
 {
     public class CreateCodeRequest
     {
-
         /// <summary>
         /// 代碼類型Id
         /// </summary>

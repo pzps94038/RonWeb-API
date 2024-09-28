@@ -1,9 +1,9 @@
 ﻿using System;
-using RonWeb.API.Models.Shared;
+using RonWeb.API.Models.Article;
 
 namespace RonWeb.API.Models.Search
 {
-	public class KeywordeResponse
+    public class KeywordeResponse
 	{
 		/// <summary>
 		/// 總數

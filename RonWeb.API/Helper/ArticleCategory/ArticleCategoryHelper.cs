@@ -18,22 +18,17 @@ namespace RonWeb.API.Helper.ArticleCategory
             _db = dbContext;
         }
 
-        public async Task<GetArticleCategoryResponse> GetListAsync(int? page)
+        public async Task<GetArticleCategoryResponse> GetListAsync()
         {
             var query = _db.ArticleCategory.AsQueryable();
-            var total = query.Count();
-            if (page != null)
-            {
-                var pageSize = 10;
-                int skip = (int)((page - 1) * pageSize);
-                query = skip == 0 ? query.Take(pageSize) : query.Skip(skip).Take(pageSize);
-            }
+            var total = await query.CountAsync();
             var categorys = await query.Select(a => new Category()
             {
                 CategoryId = a.CategoryId,
                 CategoryName = a.CategoryName,
                 CreateDate = a.CreateDate
-            }).ToListAsync();
+            })
+            .ToListAsync();
             var data = new GetArticleCategoryResponse()
             {
                 Total = total,

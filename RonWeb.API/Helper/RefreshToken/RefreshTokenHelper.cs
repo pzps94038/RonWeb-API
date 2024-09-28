@@ -29,39 +29,36 @@ namespace RonWeb.API.Helper.RefreshToken
             {
                 throw new NotFoundException();
             }
-            else if (log.ExpirationDate < DateTime.Now)
+            if (log.ExpirationDate < DateTime.Now)
             {
                 throw new AuthExpiredException();
             }
-            else
+            string refreshToken = JwtTool.CreateRefreshToken();
+            var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
+            string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
+            string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
+            string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
+            var toeknExpTime = DateTime.Now.AddHours(1);
+            var refreshTokenExpTime = DateTime.Now.AddDays(3);
+            var model = new JwtModel()
             {
-                string refreshToken = JwtTool.CreateRefreshToken();
-                var claims = JwtTool.CreateClaims(log.Email ?? "", log.UserId.ToString(), RoleEnum.ManagerUser.Description());
-                string issuer = Environment.GetEnvironmentVariable(EnvVarEnum.ISSUER.Description())!;
-                string audience = Environment.GetEnvironmentVariable(EnvVarEnum.AUDIENCE.Description())!;
-                string jwtKey = Environment.GetEnvironmentVariable(EnvVarEnum.JWTKEY.Description())!;
-                var toeknExpTime = DateTime.Now.AddHours(1);
-                var refreshTokenExpTime = DateTime.Now.AddDays(3);
-                var model = new JwtModel()
-                {
-                    Issuer = issuer,
-                    Audience = audience,
-                    Key = jwtKey,
-                    Claims = claims,
-                    ExpirationTime = toeknExpTime
-                };
-                var token = JwtTool.GenerateToken(model);
-                var tokenLog = new RefreshTokenLog()
-                {
-                    RefreshToken = refreshToken,
-                    UserId = log.UserId,
-                    ExpirationDate = refreshTokenExpTime,
-                    CreateDate = DateTime.Now
-                };
-                await _db.AddAsync(tokenLog);
-                await _db.SaveChangesAsync();
-                return new Token(token, refreshToken);
-            }
+                Issuer = issuer,
+                Audience = audience,
+                Key = jwtKey,
+                Claims = claims,
+                ExpirationTime = toeknExpTime
+            };
+            var token = JwtTool.GenerateToken(model);
+            var tokenLog = new RefreshTokenLog()
+            {
+                RefreshToken = refreshToken,
+                UserId = log.UserId,
+                ExpirationDate = refreshTokenExpTime,
+                CreateDate = DateTime.Now
+            };
+            await _db.AddAsync(tokenLog);
+            await _db.SaveChangesAsync();
+            return new Token(token, refreshToken);
         }
     }
 }

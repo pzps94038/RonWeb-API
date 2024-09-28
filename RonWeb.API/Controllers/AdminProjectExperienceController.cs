@@ -1,34 +1,32 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Interface.AdminArticleLabel;
-using RonWeb.API.Interface.Shared;
-using RonWeb.API.Models.ArticleLabel;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-
+using RonWeb.API.Interface.AdminArticleHelper;
+using RonWeb.API.Models.ProjectExperience;
 namespace RonWeb.API.Controllers
 {
     /// <summary>
-    /// 管理員文章標籤
+    /// 管理員專案經歷
     /// </summary>
     [Route("api/[controller]")]
     [Authorize]
-    public class AdminArticleLabelController : Controller
+    public class AdminProjectExperienceController : Controller
     {
-        private readonly IAdminArticleLabelHelper _helper;
-        public AdminArticleLabelController(IAdminArticleLabelHelper helper)
+        private readonly IAdminProjectExperienceHelper _helper;
+        public AdminProjectExperienceController(IAdminProjectExperienceHelper helper)
         {
             _helper = helper;
         }
 
         /// <summary>
-        /// 取得標籤
+        /// 取得專案經歷列表
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<GetArticleLabelResponse>> GetArticleLabel(int? page)
+        public async Task<BaseResponse<GetProjectExperienceResponse>> GetProjectExperience(int? page)
         {
-            var result = new BaseResponse<GetArticleLabelResponse>();
+            var result = new BaseResponse<GetProjectExperienceResponse>();
             var data = await _helper.GetListAsync(page);
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
@@ -36,16 +34,15 @@ namespace RonWeb.API.Controllers
             return result;
         }
 
-
         /// <summary>
-        /// 取得指定標籤
+        /// 取得專案經歷
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public async Task<BaseResponse<Label>> GetArticleLabelById(long id)
+        public async Task<BaseResponse<GetByIdProjectExperienceResponse>> GetProjectExperienceById(long id)
         {
-            var result = new BaseResponse<Label>();
+            var result = new BaseResponse<GetByIdProjectExperienceResponse>();
             var data = await _helper.GetAsync(id);
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
@@ -54,12 +51,13 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
-        /// 建立標籤
+        /// 新增專案經歷
         /// </summary>
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<BaseResponse> CreateArticleLabel([FromBody] CreateArticleLabelRequest data)
+        [HttpPost]
+        public async Task<BaseResponse> CreateProjectExperience([FromBody] CreateProjectExperienceRequest data)
         {
             var result = new BaseResponse();
             await _helper.CreateAsync(data);
@@ -69,13 +67,13 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
-        /// 修改標籤
+        /// 修改專案經歷
         /// </summary>
         /// <param name="id"></param>
         /// <param name="data"></param>
         /// <returns></returns>
         [HttpPatch("{id}")]
-        public async Task<BaseResponse> UpdateArticleLabel(long id, [FromBody] UpdateArticleLabelRequest data)
+        public async Task<BaseResponse> UpdateProjectExperience(long id, [FromBody] UpdateProjectExperienceRequest data)
         {
             var result = new BaseResponse();
             await _helper.UpdateAsync(id, data);
@@ -85,12 +83,12 @@ namespace RonWeb.API.Controllers
         }
 
         /// <summary>
-        /// 刪除標籤
+        /// 刪除專案經歷
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
         [HttpDelete("{id}")]
-        public async Task<BaseResponse> DeleteArticleLabel(long id)
+        public async Task<BaseResponse> DeleteArticle(long id)
         {
             var result = new BaseResponse();
             await _helper.DeleteAsync(id);

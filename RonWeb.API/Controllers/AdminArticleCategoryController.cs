@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.AdminArticleCategory;
-using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
@@ -10,18 +9,16 @@ using RonWeb.Core;
 namespace RonWeb.API.Controllers
 {
     /// <summary>
-    /// 文章分類
+    /// 管理員文章分類
     /// </summary>
     [Route("api/[controller]")]
     [Authorize]
     public class AdminArticleCategoryController : Controller
     {
         private readonly IAdminArticleCategoryHelper _helper;
-        private readonly ILogHelper _logger;
-        public AdminArticleCategoryController(IAdminArticleCategoryHelper helper, ILogHelper logger)
+        public AdminArticleCategoryController(IAdminArticleCategoryHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

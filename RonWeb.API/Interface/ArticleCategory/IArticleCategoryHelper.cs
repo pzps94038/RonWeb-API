@@ -7,6 +7,6 @@ namespace RonWeb.API.Interface.ArticleCategory
 {
     public interface IArticleCategoryHelper
     {
-        public Task<GetArticleCategoryResponse> GetListAsync(int? page);
+        public Task<GetArticleCategoryResponse> GetListAsync();
     }
 }

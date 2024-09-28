@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.Search;
 using RonWeb.API.Models.Search;
-using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.API.Interface.Shared;
@@ -15,11 +14,9 @@ namespace RonWeb.API.Controllers
     public class SearchController : Controller
     {
         private readonly ISearchHelper _helper;
-        private readonly ILogHelper _logger;
-        public SearchController(ISearchHelper helper, ILogHelper logger)
+        public SearchController(ISearchHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

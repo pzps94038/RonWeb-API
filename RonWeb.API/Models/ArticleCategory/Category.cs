@@ -1,4 +1,4 @@
-﻿namespace RonWeb.API.Models.Shared
+﻿namespace RonWeb.API.Models.ArticleCategory
 {
     public class Category
     {

@@ -1,7 +1,7 @@
 ﻿using RonWeb.API.Models.Shared;
 using System.ComponentModel.DataAnnotations;
 
-namespace RonWeb.API.Models.Article
+namespace RonWeb.API.Models.Code
 {
     public class UpdateCodeRequest
     {

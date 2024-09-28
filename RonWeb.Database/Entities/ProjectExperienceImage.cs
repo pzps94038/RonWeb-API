@@ -4,22 +4,22 @@ using System.Collections.Generic;
 namespace RonWeb.Database.Entities;
 
 /// <summary>
-/// 預覽文章圖片
+/// 專案經歷圖片
 /// </summary>
-public partial class ArticlePrevImage
+public partial class ProjectExperienceImage
 {
     /// <summary>
-    /// 預覽文章圖片Id
+    /// 圖片Id
     /// </summary>
     public long ImageId { get; set; }
 
     /// <summary>
-    /// 文章Id
+    /// 專案經歷Id
     /// </summary>
-    public long ArticleId { get; set; }
+    public long ProjectExperienceId { get; set; }
 
     /// <summary>
-    /// 黨案名稱
+    /// 檔案名稱
     /// </summary>
     public string FileName { get; set; } = null!;
 
@@ -44,12 +44,12 @@ public partial class ArticlePrevImage
     public long CreateBy { get; set; }
 
     /// <summary>
-    /// 更新日期
+    /// 修改日期
     /// </summary>
     public DateTime? UpdateDate { get; set; }
 
     /// <summary>
-    /// 更新人員
+    /// 修改人員
     /// </summary>
     public long? UpdateBy { get; set; }
 }

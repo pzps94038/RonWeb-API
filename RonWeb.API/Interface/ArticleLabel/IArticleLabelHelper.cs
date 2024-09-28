@@ -4,9 +4,9 @@ using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Interface.ArticleLabel
 {
-	public interface IArticleLabelHelper
+    public interface IArticleLabelHelper
     {
-        public Task<GetArticleLabelResponse> GetListAsync(int? page);
+        public Task<GetArticleLabelResponse> GetListAsync();
     }
 }
 

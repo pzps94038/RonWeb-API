@@ -21,8 +21,6 @@ public partial class RonWebDbContext : DbContext
 
     public virtual DbSet<ArticleLabelMapping> ArticleLabelMapping { get; set; }
 
-    public virtual DbSet<ArticlePrevImage> ArticlePrevImage { get; set; }
-
     public virtual DbSet<ArticleReferences> ArticleReferences { get; set; }
 
     public virtual DbSet<Code> Code { get; set; }
@@ -32,6 +30,8 @@ public partial class RonWebDbContext : DbContext
     public virtual DbSet<ExceptionLog> ExceptionLog { get; set; }
 
     public virtual DbSet<ProjectExperience> ProjectExperience { get; set; }
+
+    public virtual DbSet<ProjectExperienceImage> ProjectExperienceImage { get; set; }
 
     public virtual DbSet<ProjectRole> ProjectRole { get; set; }
 
@@ -168,31 +168,6 @@ public partial class RonWebDbContext : DbContext
                 .HasComment("更新日期");
         });
 
-        modelBuilder.Entity<ArticlePrevImage>(entity =>
-        {
-            entity.HasKey(e => e.ImageId).HasName("PRIMARY");
-
-            entity.ToTable(tb => tb.HasComment("預覽文章圖片"));
-
-            entity.HasIndex(e => e.ArticleId, "IX_ArticlePrevImage_ArticleId");
-
-            entity.Property(e => e.ImageId).HasComment("預覽文章圖片Id");
-            entity.Property(e => e.ArticleId).HasComment("文章Id");
-            entity.Property(e => e.CreateBy).HasComment("創建人員");
-            entity.Property(e => e.CreateDate)
-                .HasMaxLength(6)
-                .HasComment("創建日期");
-            entity.Property(e => e.FileName)
-                .HasMaxLength(50)
-                .HasComment("黨案名稱");
-            entity.Property(e => e.Path).HasComment("路徑");
-            entity.Property(e => e.UpdateBy).HasComment("更新人員");
-            entity.Property(e => e.UpdateDate)
-                .HasMaxLength(6)
-                .HasComment("更新日期");
-            entity.Property(e => e.Url).HasComment("對外網址");
-        });
-
         modelBuilder.Entity<ArticleReferences>(entity =>
         {
             entity.HasKey(e => e.ArticleReferencesId).HasName("PRIMARY");
@@ -292,6 +267,29 @@ public partial class RonWebDbContext : DbContext
             entity.Property(e => e.UpdateDate)
                 .HasMaxLength(6)
                 .HasComment("修改日期");
+        });
+
+        modelBuilder.Entity<ProjectExperienceImage>(entity =>
+        {
+            entity.HasKey(e => e.ImageId).HasName("PRIMARY");
+
+            entity.ToTable(tb => tb.HasComment("專案經歷圖片"));
+
+            entity.Property(e => e.ImageId).HasComment("圖片Id");
+            entity.Property(e => e.CreateBy).HasComment("創建人員");
+            entity.Property(e => e.CreateDate)
+                .HasMaxLength(6)
+                .HasComment("創建日期");
+            entity.Property(e => e.FileName)
+                .HasMaxLength(50)
+                .HasComment("檔案名稱");
+            entity.Property(e => e.Path).HasComment("路徑");
+            entity.Property(e => e.ProjectExperienceId).HasComment("專案經歷Id");
+            entity.Property(e => e.UpdateBy).HasComment("修改人員");
+            entity.Property(e => e.UpdateDate)
+                .HasMaxLength(6)
+                .HasComment("修改日期");
+            entity.Property(e => e.Url).HasComment("對外網址");
         });
 
         modelBuilder.Entity<ProjectRole>(entity =>

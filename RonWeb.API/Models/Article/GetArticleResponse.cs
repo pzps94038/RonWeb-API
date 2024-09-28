@@ -1,9 +1,8 @@
 ﻿using System;
-using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Models.Article
 {
-	public class GetArticleResponse
+    public class GetArticleResponse
 	{
 		/// <summary>
 		/// 文章總數

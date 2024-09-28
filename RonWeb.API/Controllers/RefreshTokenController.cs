@@ -15,11 +15,9 @@ namespace RonWeb.API.Controllers
     public class RefreshTokenController : Controller
     {
         private readonly IRefreshTokenHelper _helper;
-        private readonly ILogHelper _logger;
-        public RefreshTokenController(IRefreshTokenHelper helper, ILogHelper logger)
+        public RefreshTokenController(IRefreshTokenHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

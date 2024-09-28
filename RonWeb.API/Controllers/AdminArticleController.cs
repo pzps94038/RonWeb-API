@@ -1,24 +1,23 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Models.Article;
-using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using RonWeb.API.Interface.Shared;
 using RonWeb.API.Interface.AdminArticleHelper;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 管理員文章
+    /// </summary>
     [Route("api/[controller]")]
     [Authorize]
     public class AdminArticleController : Controller
     {
         private readonly IAdminArticleHelper _helper;
-        private readonly ILogHelper _logger;
-        public AdminArticleController(IAdminArticleHelper helper, ILogHelper logger)
+        public AdminArticleController(IAdminArticleHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

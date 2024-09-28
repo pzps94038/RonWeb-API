@@ -79,10 +79,8 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Interface\Article\" />
-    <Folder Include="Models\Article\" />
     <Folder Include="Helper\Article\" />
     <Folder Include="Helper\Shared\" />
-    <Folder Include="Enum\" />
     <Folder Include="Models\CustomizeException\" />
     <Folder Include="Models\Login\" />
     <Folder Include="Helper\Login\" />
@@ -99,7 +97,6 @@
     <Folder Include="Helper\Upload\" />
     <Folder Include="Interface\Upload\" />
     <Folder Include="Models\Upload\" />
-    <Folder Include="Models\ArticleLabel\" />
     <Folder Include="Interface\ArticleLabel\" />
     <Folder Include="Interface\ArticleLabel\" />
     <Folder Include="Helper\ArticleLabel\" />

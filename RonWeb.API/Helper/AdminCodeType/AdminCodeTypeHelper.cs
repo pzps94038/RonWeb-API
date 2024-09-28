@@ -24,96 +24,80 @@ namespace RonWeb.API.Helper.AdminArticleLabel
             {
                 throw new UniqueException();
             }
-            else
+            codeType = new CodeType()
             {
-                codeType = new CodeType()
-                {
-                    CodeTypeId = data.CodeTypeId,
-                    CodeTypeName = data.CodeTypeName,
-                    CreateDate = DateTime.Now,
-                    CreateBy = data.UserId
-                };
+                CodeTypeId = data.CodeTypeId,
+                CodeTypeName = data.CodeTypeName,
+                CreateDate = DateTime.Now,
+                CreateBy = data.UserId
+            };
 
-                await _db.CodeType.AddAsync(codeType);
-                await _db.SaveChangesAsync();
-            }
+            await _db.CodeType.AddAsync(codeType);
+            await _db.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(long id)
         {
             var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.Id == id);
-            if (codeType != null)
-            {
-                var executionStrategy = _db.Database.CreateExecutionStrategy();
-                await executionStrategy.ExecuteAsync(async () =>
-                {
-                    using (var tc = await _db.Database.BeginTransactionAsync())
-                    {
-                        try
-                        {
-                            var mapping = await _db.Code.Where(a => a.CodeTypeId == codeType.CodeTypeId).ToListAsync();
-                            if (mapping.Any())
-                            {
-                                _db.Code.RemoveRange(mapping);
-                            }
-                            _db.CodeType.Remove(codeType);
-                            await _db.SaveChangesAsync();
-                            await tc.CommitAsync();
-                        }
-                        catch
-                        {
-                            await tc.RollbackAsync();
-                            throw;
-                        }
-                    }
-                });
-            }
-            else
+            if (codeType == null)
             {
                 throw new NotFoundException();
             }
+            var executionStrategy = _db.Database.CreateExecutionStrategy();
+            await executionStrategy.ExecuteAsync(async () =>
+            {
+                using (var tc = await _db.Database.BeginTransactionAsync())
+                {
+                    try
+                    {
+                        var mapping = await _db.Code.Where(a => a.CodeTypeId == codeType.CodeTypeId).ToListAsync();
+                        if (mapping.Any())
+                        {
+                            _db.Code.RemoveRange(mapping);
+                        }
+                        _db.CodeType.Remove(codeType);
+                        await _db.SaveChangesAsync();
+                        await tc.CommitAsync();
+                    }
+                    catch
+                    {
+                        await tc.RollbackAsync();
+                        throw;
+                    }
+                }
+            });
         }
 
         public async Task<CodeType> GetAsync(long id)
         {
             var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.Id == id);
-            if (codeType != null)
-            {
-                return codeType;
-            }
-            else
+            if (codeType == null)
             {
                 throw new NotFoundException();
             }
+            return codeType;
         }
 
         public async Task<GetCodeTypeResponse> GetListAsync(int? page)
         {
+            var curPage = page.GetValueOrDefault(1);
+            var pageSize = 10;
+            var skip = (curPage - 1) * pageSize;
             var query = _db.CodeType.AsQueryable();
-            var total = query.Count();
-            if (page != null)
-            {
-                var pageSize = 10;
-                int skip = (int)((page - 1) * pageSize);
-                if (skip == 0)
+            var total = await query.CountAsync();
+            var codeTypes = await query.Skip(skip)
+                .Take(pageSize)
+                .Select(a => new CodeType()
                 {
-                    query = query.Take(pageSize);
-                }
-                else
-                {
-                    query = query.Skip(skip).Take(pageSize);
-                }
-            }
-            var codeTypes = await query.Select(a => new CodeType()
-            {
-                Id = a.Id,
-                CodeTypeId = a.CodeTypeId,
-                CodeTypeName = a.CodeTypeName,
-                CreateBy = a.CreateBy,
-                CreateDate = a.CreateDate,
-                UpdateBy = a.UpdateBy,
-                UpdateDate = a.UpdateDate,
-            }).ToListAsync();
+                    Id = a.Id,
+                    CodeTypeId = a.CodeTypeId,
+                    CodeTypeName = a.CodeTypeName,
+                    CreateBy = a.CreateBy,
+                    CreateDate = a.CreateDate,
+                    UpdateBy = a.UpdateBy,
+                    UpdateDate = a.UpdateDate,
+                })
+                .ToListAsync();
             return new GetCodeTypeResponse()
             {
                 Total = total,
@@ -124,17 +108,14 @@ namespace RonWeb.API.Helper.AdminArticleLabel
         public async Task UpdateAsync(long id, UpdateCodeTypeRequest data)
         {
             var codeType = await _db.CodeType.SingleOrDefaultAsync(a => a.Id == id);
-            if (codeType != null)
-            {
-                codeType.CodeTypeName = data.CodeTypeName;
-                codeType.UpdateBy = data.UserId;
-                codeType.UpdateDate = DateTime.Now;
-                await _db.SaveChangesAsync();
-            }
-            else
+            if (codeType == null)
             {
                 throw new NotFoundException();
             }
+            codeType.CodeTypeName = data.CodeTypeName;
+            codeType.UpdateBy = data.UserId;
+            codeType.UpdateDate = DateTime.Now;
+            await _db.SaveChangesAsync();
         }
     }
 }

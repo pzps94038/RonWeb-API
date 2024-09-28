@@ -1,14 +1,15 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using RonWeb.API.Models.Article;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
 using RonWeb.API.Interface.AdminArticleHelper;
 using RonWeb.API.Models.CodeType;
-using RonWeb.API.Models.ArticleLabel;
 using RonWeb.Database.Entities;
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 管理員代碼類型
+    /// </summary>
     [Route("api/[controller]")]
     [Authorize]
     public class AdminCodeTypeController : Controller

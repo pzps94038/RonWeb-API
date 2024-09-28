@@ -2,7 +2,6 @@
 {
     public class CreateCodeTypeRequest
     {
-
         /// <summary>
         /// 代碼類型Id
         /// </summary>

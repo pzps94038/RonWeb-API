@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.ContactUs;
-using RonWeb.API.Interface.Shared;
 
 namespace RonWeb.API.Controllers
 {
@@ -11,11 +10,9 @@ namespace RonWeb.API.Controllers
     public class ContactUsController : Controller
     {
         private readonly IContactUsHelper _helper;
-        private readonly ILogHelper _logger;
-        public ContactUsController(IContactUsHelper helper, ILogHelper logger)
+        public ContactUsController(IContactUsHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         ///// <summary>

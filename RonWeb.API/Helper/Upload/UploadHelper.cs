@@ -12,8 +12,7 @@ namespace RonWeb.API.Helper.Upload
 {
     public class UploadHelper : IUploadHelper
     {
-
-        public async Task<UploadFileResponse> UploadFile(IFormFile file)
+        public async Task<UploadFileResponse> UploadArticleFile(IFormFile file)
         {
             string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg" };
             string fileExtension = Path.GetExtension(file.FileName); // 取得檔案附檔名
@@ -27,6 +26,41 @@ namespace RonWeb.API.Helper.Upload
                         var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
                         string fileName = Guid.NewGuid().ToString();
                         string path = @$"{DateTime.Now.ToString("yyyy-MM-dd")}/Article/{fileName}{fileExtension}";
+                        var res = await new FireBaseStorageTool(storageBucket).Upload(stream, path);
+                        return new UploadFileResponse()
+                        {
+                            Path = res!.Path,
+                            Url = res.Url,
+                            FileName = fileName
+                        };
+                    }
+                }
+                else
+                {
+                    throw new FileSizeException("檔案大小超過上限，請選擇小於 20MB 的檔案");
+                }
+            }
+            else
+            {
+                throw new ImgExtensionException();
+            }
+
+        }
+
+        public async Task<UploadFileResponse> UploadProjectExperienceFile(IFormFile file)
+        {
+            string[] allowedExtensions = { ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".svg" };
+            string fileExtension = Path.GetExtension(file.FileName); // 取得檔案附檔名
+            if (allowedExtensions.Contains(fileExtension))
+            {
+                long maxSizeInBytes = 20 * 1024 * 1024; // 20MB 限制
+                if (file.Length <= maxSizeInBytes)
+                {
+                    using (var stream = file.OpenReadStream())
+                    {
+                        var storageBucket = Environment.GetEnvironmentVariable(EnvVarEnum.STORAGE_BUCKET.Description())!;
+                        string fileName = Guid.NewGuid().ToString();
+                        string path = @$"{DateTime.Now.ToString("yyyy-MM-dd")}/ProjectExperience/{fileName}{fileExtension}";
                         var res = await new FireBaseStorageTool(storageBucket).Upload(stream, path);
                         return new UploadFileResponse()
                         {

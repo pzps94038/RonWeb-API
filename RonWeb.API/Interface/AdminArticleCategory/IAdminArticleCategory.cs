@@ -1,11 +1,10 @@
 ﻿using System;
 using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleCategory;
-using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Interface.AdminArticleCategory
 {
-	public interface IAdminArticleCategoryHelper : IGetAsync<long, Category>,
+    public interface IAdminArticleCategoryHelper : IGetAsync<long, Category>,
         ICreateAsync<CreateArticleCategoryRequest>,
         IUpdateAsync<long, UpdateArticleCategoryRequest>,
         IDeleteAsync<long>

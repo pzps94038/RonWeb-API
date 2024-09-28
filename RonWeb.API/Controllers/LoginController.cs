@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.Login;
-using RonWeb.API.Interface.Shared;
-using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Login;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
@@ -15,11 +13,9 @@ namespace RonWeb.API.Controllers
     public class LoginController : Controller
     {
         private readonly ILoginHelper _helper;
-        private readonly ILogHelper _logger;
-        public LoginController(ILoginHelper helper, ILogHelper logger)
+        public LoginController(ILoginHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

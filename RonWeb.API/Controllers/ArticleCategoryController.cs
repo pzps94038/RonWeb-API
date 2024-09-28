@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.ArticleCategory;
-using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleCategory;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
@@ -14,11 +13,9 @@ namespace RonWeb.API.Controllers
     public class ArticleCategoryController : Controller
     {
         private readonly IArticleCategoryHelper _helper;
-        private readonly ILogHelper _logger;
-        public ArticleCategoryController(IArticleCategoryHelper helper, ILogHelper logger)
+        public ArticleCategoryController(IArticleCategoryHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>
@@ -26,10 +23,10 @@ namespace RonWeb.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet]
-        public async Task<BaseResponse<GetArticleCategoryResponse>> GetArticleCategory(int? page)
+        public async Task<BaseResponse<GetArticleCategoryResponse>> GetArticleCategory()
         {
             var result = new BaseResponse<GetArticleCategoryResponse>();
-            var data = await _helper.GetListAsync(page);
+            var data = await _helper.GetListAsync();
             result.ReturnCode = ReturnCode.Success.Description();
             result.ReturnMessage = ReturnMessage.Success.Description();
             result.Data = data;

@@ -7,15 +7,16 @@ using RonWeb.Core;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// SEO SiteMap
+    /// </summary>
     [Route("api/[controller]/[action]")]
     public class SiteMapController : Controller
     {
         private readonly ISiteMapHelper _helper;
-        private readonly ILogHelper _logger;
-        public SiteMapController(ISiteMapHelper helper, ILogHelper logger)
+        public SiteMapController(ISiteMapHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

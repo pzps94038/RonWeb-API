@@ -1,10 +1,10 @@
 ﻿using System;
-using RonWeb.API.Models.Shared;
+using RonWeb.API.Models.ArticleLabel;
 
-namespace RonWeb.API.Models.Shared
+namespace RonWeb.API.Models.Article
 {
-	public class ArticleItem
-	{
+    public class ArticleItem
+    {
         /// <summary>
         /// 文章ID
         /// </summary>

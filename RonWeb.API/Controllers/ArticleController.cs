@@ -1,22 +1,21 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Interface.Article;
 using RonWeb.API.Models.Article;
-using RonWeb.API.Models.CustomizeException;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using RonWeb.API.Interface.Shared;
 
 namespace RonWeb.API.Controllers
 {
+    /// <summary>
+    /// 文章
+    /// </summary>
     [Route("api/[controller]")]
     public class ArticleController : Controller
     {
         private readonly IArticleHelper _helper;
-        private readonly ILogHelper _logger;
-        public ArticleController(IArticleHelper helper, ILogHelper logger)
+        public ArticleController(IArticleHelper helper)
         {
             _helper = helper;
-            _logger = logger;
         }
 
         /// <summary>

@@ -27,23 +27,20 @@ namespace RonWeb.API.Helper.Register
             {
                 throw new UniqueException();
             }
-            else
+            string iv = Environment.GetEnvironmentVariable(EnvVarEnum.AESIV.Description())!;
+            string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
+            var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
+            var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
+            user = new UserMain
             {
-                string iv = Environment.GetEnvironmentVariable(EnvVarEnum.AESIV.Description())!;
-                string key = Environment.GetEnvironmentVariable(EnvVarEnum.AESKEY.Description())!;
-                var encrypt = EncryptTool.AESEncrypt(data.Password, iv, key);
-                var encryptPassword = EncryptTool.SHA256Encrypt(encrypt);
-                user = new UserMain
-                {
-                    Account = data.Account,
-                    Password = encryptPassword,
-                    UserName = data.UserName,
-                    Email = data.Email,
-                    CreateDate = DateTime.Now
-                };
-                await _db.UserMain.AddAsync(user);
-                await _db.SaveChangesAsync();
-            }
+                Account = data.Account,
+                Password = encryptPassword,
+                UserName = data.UserName,
+                Email = data.Email,
+                CreateDate = DateTime.Now
+            };
+            await _db.UserMain.AddAsync(user);
+            await _db.SaveChangesAsync();
         }
     }
 }
