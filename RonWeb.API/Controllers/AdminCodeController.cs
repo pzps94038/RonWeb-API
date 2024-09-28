@@ -4,12 +4,14 @@ using RonWeb.Core;
 using RonWeb.API.Interface.AdminArticleHelper;
 using RonWeb.Database.Entities;
 using RonWeb.API.Models.Code;
+using Microsoft.AspNetCore.Authorization;
 namespace RonWeb.API.Controllers
 {
     /// <summary>
     /// 管理員代碼
     /// </summary>
     [Route("api/[controller]")]
+    [Authorize]
     public class AdminCodeController : Controller
     {
         private readonly IAdminCodeHelper _helper;

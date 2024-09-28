@@ -103,8 +103,10 @@ namespace RonWeb.API.Helper.AdminProjectExperience
                 .ToListAsync();
 
             // 建立結果列表
-            var projectExperiences = await _db.ProjectExperience
-                .Where(a => idList.Contains(a.ProjectExperienceId))
+            var projectExperiences = (await _db.ProjectExperience
+                    .Where(a => idList.Contains(a.ProjectExperienceId))
+                    .ToListAsync()
+                )
                 .Select(a => new ProjectExperienceItem
                 {
                     ProjectExperienceId = a.ProjectExperienceId,
@@ -122,7 +124,7 @@ namespace RonWeb.API.Helper.AdminProjectExperience
                     CreateDate = a.CreateDate
                 })
                 .OrderByDescending(a => a.CreateDate)
-                .ToListAsync();
+                .ToList();
 
             // 返回結果
             var data = new GetProjectExperienceResponse
