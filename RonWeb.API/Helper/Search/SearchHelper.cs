@@ -139,7 +139,7 @@ namespace RonWeb.API.Helper.Search
                     ViewCount = a.ViewCount,
                     Flag = a.Flag,
                     CreateDate = a.CreateDate,
-                    Labels = articleLabelList.Where(a => a.ArticleId == a.ArticleId)
+                    Labels = articleLabelList.Where(label => label.ArticleId == a.ArticleId)
                         .Distinct()
                         .Select(a => new Label(a.LabelId, a.LabelName, a.CreateDate))
                         .ToList()
