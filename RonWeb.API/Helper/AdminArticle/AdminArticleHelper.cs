@@ -152,6 +152,7 @@ namespace RonWeb.API.Helper.AdminArticle
                     Flag = a.Flag,
                     CreateDate = a.CreateDate,
                     Labels = articleLabelList.Where(label => label.ArticleId == a.ArticleId)
+                        .Distinct()
                         .Select(a => new Label(a.LabelId, a.LabelName, a.CreateDate))
                         .ToList()
                 })
