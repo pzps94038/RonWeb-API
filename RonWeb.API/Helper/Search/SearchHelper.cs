@@ -12,6 +12,7 @@ using RonWeb.API.Models.ArticleLabel;
 using RonWeb.API.Models.ArticleCategory;
 using System.Collections.Generic;
 using System.Linq;
+using RonWeb.API.Models.Shared;
 
 namespace RonWeb.API.Helper.Search
 {
@@ -34,7 +35,7 @@ namespace RonWeb.API.Helper.Search
             var curPage = page.GetValueOrDefault(1);
             var pageSize = 10;
             var skip = (curPage - 1) * pageSize;
-            var query = _db.Article.Where(a => a.CategoryId == id && a.Flag == "Y");
+            var query = _db.Article.Where(a => a.CategoryId == id && a.Flag == Flag.Y);
             // 獲取分頁Id
             var idList = await query
                 .OrderByDescending(a => a.CreateDate)
@@ -184,4 +185,3 @@ namespace RonWeb.API.Helper.Search
         }
     }
 }
-

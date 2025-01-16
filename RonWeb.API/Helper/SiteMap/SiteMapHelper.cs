@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using RonWeb.API.Interface.SiteMap;
+using RonWeb.API.Models.Shared;
 using RonWeb.API.Models.SiteMap;
 using RonWeb.Database.Entities;
 
@@ -16,7 +17,7 @@ namespace RonWeb.API.Helper.SiteMap
 
         public async Task<List<SiteMapResponse<long>>> Article()
         {
-            var result = await _db.Article.Where(a => a.Flag == "Y")
+            var result = await _db.Article.Where(a => a.Flag == Flag.Y)
                 .Select(a => new SiteMapResponse<long>()
                 {
                     ID = a.ArticleId
@@ -45,4 +46,3 @@ namespace RonWeb.API.Helper.SiteMap
         }
     }
 }
-
