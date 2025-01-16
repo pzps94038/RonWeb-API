@@ -99,6 +99,7 @@ namespace RonWeb.API.Helper.Search
             var pageSize = 10;
             var skip = (curPage - 1) * pageSize;
             var query = _db.Article
+                .Where(a => a.Flag == Flag.Y)
                 .Join(_db.ArticleLabelMapping, a => a.ArticleId, b => b.ArticleId, (a, b) => new
                 {
                     a.ArticleId,
