@@ -126,9 +126,11 @@ namespace RonWeb.API.Helper
                 );
             }
 
+            query = query.Where(a => a.Flag == Flag.Y);
+
             // 獲取分頁Id
             var idList = await query
-                .Where(a => a.Flag == Flag.Y)
+
                 .OrderByDescending(a => a.CreateDate)
                 .Skip(skip)
                 .Take(pageSize)
