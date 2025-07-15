@@ -14,6 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解決方案項目", "解�
 		.editorconfig = .editorconfig
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonWeb.Core.Tests", "RonWeb.Core.Tests\RonWeb.Core.Tests.csproj", "{BA1C7420-0A27-4CD2-9479-C48BB77D5C0C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RonWeb.API.Tests", "RonWeb.API.Tests\RonWeb.API.Tests.csproj", "{719F2D13-9C1B-436E-9149-6FB658C18712}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +36,14 @@ Global
 		{11FA4760-664B-4D74-B2CB-D20B512137BB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11FA4760-664B-4D74-B2CB-D20B512137BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11FA4760-664B-4D74-B2CB-D20B512137BB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA1C7420-0A27-4CD2-9479-C48BB77D5C0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA1C7420-0A27-4CD2-9479-C48BB77D5C0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA1C7420-0A27-4CD2-9479-C48BB77D5C0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA1C7420-0A27-4CD2-9479-C48BB77D5C0C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{719F2D13-9C1B-436E-9149-6FB658C18712}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{719F2D13-9C1B-436E-9149-6FB658C18712}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{719F2D13-9C1B-436E-9149-6FB658C18712}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{719F2D13-9C1B-436E-9149-6FB658C18712}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
