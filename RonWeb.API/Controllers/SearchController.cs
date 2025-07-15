@@ -3,7 +3,6 @@ using RonWeb.API.Interface.Search;
 using RonWeb.API.Models.Search;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using RonWeb.API.Interface.Shared;
 
 namespace RonWeb.API.Controllers
 {
