@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using RonWeb.API.Models.Shared;
 using RonWeb.Core;
-using RonWeb.API.Interface.AdminArticleHelper;
+using RonWeb.API.Interface.AdminCodeType;
 using RonWeb.API.Models.CodeType;
 using RonWeb.Database.Entities;
 namespace RonWeb.API.Controllers

@@ -1,14 +1,12 @@
 ﻿using System;
-using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.Article;
 
 namespace RonWeb.API.Interface.AdminArticleHelper
 {
-    public interface IAdminArticleHelper : IGetByIdAsync<long, GetByIdArticleResponse>,
-
-        IDeleteAsync<long>,
-        IUpdateAsync<long, UpdateArticleRequest>,
-        ICreateAsync<CreateArticleRequest>
+    public interface IAdminArticleHelper : IAdminArticleGet,
+        IAdminArticleDelete,
+        IAdminArticleUpdate,
+        IAdminArticleCreate
     {
         public Task<GetArticleResponse> GetListAsync(int? page, string? keyword);
     }

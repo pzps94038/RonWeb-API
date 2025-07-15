@@ -1,12 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using RonWeb.API.Interface.AdminArticleHelper;
+using RonWeb.API.Interface.AdminCodeType;
 using RonWeb.API.Models.Article;
 using RonWeb.API.Models.ArticleLabel;
 using RonWeb.API.Models.CodeType;
 using RonWeb.API.Models.CustomizeException;
 using RonWeb.Database.Entities;
 
-namespace RonWeb.API.Helper.AdminArticleLabel
+namespace RonWeb.API.Helper.AdminCodeType
 {
     public class AdminCodeTypeHelper : IAdminCodeTypeHelper
     {

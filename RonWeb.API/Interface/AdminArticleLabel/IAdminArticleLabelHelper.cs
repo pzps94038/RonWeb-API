@@ -1,14 +1,13 @@
 ﻿using System;
-using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.ArticleLabel;
 
 namespace RonWeb.API.Interface.AdminArticleLabel
 {
     public interface IAdminArticleLabelHelper :
-        IGetByIdAsync<long, Label>,
-        ICreateAsync<CreateArticleLabelRequest>,
-        IUpdateAsync<long, UpdateArticleLabelRequest>,
-        IDeleteAsync<long>
+        IAdminArticleLabelGet,
+        IAdminArticleLabelCreate,
+        IAdminArticleLabelUpdate,
+        IAdminArticleLabelDelete
     {
         public Task<GetArticleLabelResponse> GetListAsync(int? page);
     }

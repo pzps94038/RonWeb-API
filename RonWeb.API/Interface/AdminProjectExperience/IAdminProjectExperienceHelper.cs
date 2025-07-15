@@ -1,15 +1,12 @@
 ﻿using System;
-using RonWeb.API.Interface.Shared;
-using RonWeb.API.Models.Article;
 using RonWeb.API.Models.ProjectExperience;
 
-namespace RonWeb.API.Interface.AdminArticleHelper
+namespace RonWeb.API.Interface.AdminProjectExperience
 {
-    public interface IAdminProjectExperienceHelper : IGetByIdAsync<long, GetByIdProjectExperienceResponse>,
-
-        IDeleteAsync<long>,
-        IUpdateAsync<long, UpdateProjectExperienceRequest>,
-        ICreateAsync<CreateProjectExperienceRequest>
+    public interface IAdminProjectExperienceHelper : IAdminProjectExperienceGet,
+        IAdminProjectExperienceDelete,
+        IAdminProjectExperienceUpdate,
+        IAdminProjectExperienceCreate
     {
         public Task<GetProjectExperienceResponse> GetListAsync(int? page);
     }
