@@ -4,7 +4,7 @@ using RonWeb.API.Models.ArticleCategory;
 
 namespace RonWeb.API.Interface.AdminArticleCategory
 {
-    public interface IAdminArticleCategoryHelper : IGetAsync<long, Category>,
+    public interface IAdminArticleCategoryHelper : IGetByIdAsync<long, Category>,
         ICreateAsync<CreateArticleCategoryRequest>,
         IUpdateAsync<long, UpdateArticleCategoryRequest>,
         IDeleteAsync<long>

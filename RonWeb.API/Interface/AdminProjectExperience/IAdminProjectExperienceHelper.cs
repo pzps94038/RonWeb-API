@@ -5,7 +5,7 @@ using RonWeb.API.Models.ProjectExperience;
 
 namespace RonWeb.API.Interface.AdminArticleHelper
 {
-    public interface IAdminProjectExperienceHelper : IGetAsync<long, GetByIdProjectExperienceResponse>,
+    public interface IAdminProjectExperienceHelper : IGetByIdAsync<long, GetByIdProjectExperienceResponse>,
 
         IDeleteAsync<long>,
         IUpdateAsync<long, UpdateProjectExperienceRequest>,

@@ -5,7 +5,7 @@ using RonWeb.API.Models.Article;
 
 namespace RonWeb.API.Interface.Article
 {
-	public interface IArticleHelper : IGetAsync<long, GetByIdArticleResponse>
+	public interface IArticleHelper : IGetByIdAsync<long, GetByIdArticleResponse>
 	{
 		public Task<GetArticleResponse> GetListAsync(int? page, string? keyword);
 		public Task UpdateArticleViews(long id);

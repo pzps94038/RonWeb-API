@@ -5,10 +5,5 @@ namespace RonWeb.API.Interface.Shared
 	{
 		public Task<T> GetAsync();
     }
-
-    public interface IGetAsync<T, R>
-    {
-        public Task<R> GetAsync(T id);
-    }
 }
 
