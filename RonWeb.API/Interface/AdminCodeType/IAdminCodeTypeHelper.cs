@@ -1,16 +1,20 @@
 ﻿using System;
+using RonWeb.API.Interface.Shared;
+using RonWeb.API.Models.Article;
+using RonWeb.API.Models.ArticleCategory;
+using RonWeb.API.Models.ArticleLabel;
 using RonWeb.API.Models.CodeType;
 using RonWeb.Database.Entities;
 
 namespace RonWeb.API.Interface.AdminCodeType
 {
-    public interface IAdminCodeTypeHelper
+    public interface IAdminCodeTypeHelper :
+        IGetByIdAsync<long, CodeType>,
+        ICreateAsync<CreateCodeTypeRequest>,
+        IUpdateAsync<long, UpdateCodeTypeRequest>,
+        IDeleteAsync<long>
     {
         public Task<GetCodeTypeResponse> GetListAsync(int? page);
-        public Task<CodeType> GetAsync(long id);
-        public Task CreateAsync(CreateCodeTypeRequest data);
-        public Task UpdateAsync(long id, UpdateCodeTypeRequest data);
-        public Task DeleteAsync(long data);
     }
 }
 

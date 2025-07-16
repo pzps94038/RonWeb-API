@@ -1,14 +1,15 @@
 ﻿using System;
 using RonWeb.API.Enum;
+using RonWeb.API.Interface.Shared;
 using RonWeb.API.Models.Article;
 
 namespace RonWeb.API.Interface.Article
 {
-	public interface IArticleHelper
+	public interface IArticleHelper : IGetByIdAsync<long, GetByIdArticleResponse>
 	{
 		public Task<GetArticleResponse> GetListAsync(int? page, string? keyword);
 		public Task UpdateArticleViews(long id);
-		public Task<GetByIdArticleResponse> GetAsync(long id);
+
     }
 }
 
